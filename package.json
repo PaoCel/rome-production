@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "dev": "./node_modules/.bin/vite",
+    "build": "./node_modules/.bin/tsc --noEmit && ./node_modules/.bin/vite build",
+    "preview": "./node_modules/.bin/vite preview",
+    "lint": "./node_modules/.bin/tsc --noEmit"
   },
   "dependencies": {
     "firebase": "^11.1.0",
