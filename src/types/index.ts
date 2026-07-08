@@ -19,7 +19,16 @@ export type CollectionName =
   | 'risks'
   | 'decisions'
   | 'media'
-  | 'comments';
+  | 'comments'
+  // Two-tier (requirement → option) collections
+  | 'locationRequirements'
+  | 'locationOptions'
+  | 'castRoles'
+  | 'castingOptions'
+  | 'crewRequirements'
+  | 'crewOptions'
+  | 'propItems'
+  | 'propOptions';
 
 export type RelatedType =
   | 'task'
@@ -28,7 +37,16 @@ export type RelatedType =
   | 'productionOption'
   | 'contact'
   | 'risk'
-  | 'decision';
+  | 'decision'
+  // Two-tier related types
+  | 'locationRequirement'
+  | 'locationOption'
+  | 'castRole'
+  | 'castingOption'
+  | 'crewRequirement'
+  | 'crewOption'
+  | 'propItem'
+  | 'propOption';
 
 export type MediaType = 'image' | 'video' | 'document';
 

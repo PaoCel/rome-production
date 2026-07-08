@@ -32,12 +32,12 @@ export default function SidePanel({
         onClick={onClose}
       />
       <div
-        className={`relative flex h-full w-full flex-col bg-slate-50 shadow-xl ${
+        className={`relative flex h-full w-full flex-col rounded-l-2xl bg-slate-50 shadow-panel ${
           wide ? 'max-w-3xl' : 'max-w-xl'
         }`}
       >
-        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
-          <h2 className="text-lg font-semibold text-slate-800">{title}</h2>
+        <header className="flex items-center justify-between rounded-tl-2xl border-b border-slate-200 bg-white px-5 py-4">
+          <h2 className="font-display text-lg font-semibold text-slate-800">{title}</h2>
           <button
             onClick={onClose}
             className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"

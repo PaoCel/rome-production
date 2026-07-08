@@ -34,9 +34,9 @@ export default function EntityCard({
   const cost = config.costField ? item[config.costField] : undefined;
 
   return (
-    <div className="card flex flex-col p-4 transition hover:shadow-md">
+    <div className="card group flex flex-col p-4 transition hover:-translate-y-0.5 hover:shadow-card-hover">
       <button onClick={onOpen} className="flex-1 text-left">
-        <h3 className="break-words pr-2 font-semibold text-slate-800">{title}</h3>
+        <h3 className="break-words pr-2 font-semibold text-slate-800 group-hover:text-brand-700">{title}</h3>
         {subtitle && (
           <p className="mt-0.5 break-words text-sm text-slate-500">{subtitle}</p>
         )}

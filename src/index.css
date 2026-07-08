@@ -9,35 +9,45 @@
     height: 100%;
   }
   body {
-    @apply bg-slate-50 text-slate-800 antialiased;
+    @apply bg-slate-50 font-sans text-slate-800 antialiased;
+    /* Subtle top tint so large light surfaces feel less flat. */
+    background-image:
+      radial-gradient(60rem 40rem at 100% -10%, rgba(99, 102, 241, 0.06), transparent 60%),
+      radial-gradient(50rem 30rem at -10% 0%, rgba(217, 154, 43, 0.05), transparent 55%);
+    background-attachment: fixed;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply tracking-[-0.01em];
   }
 }
 
 @layer components {
   .card {
-    @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-card;
   }
 
   .input {
-    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm
-      text-slate-800 placeholder-slate-400 shadow-sm outline-none
+    @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm
+      text-slate-800 placeholder-slate-400 shadow-sm outline-none transition
       focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
   }
 
   .label {
-    @apply mb-1 block text-xs font-medium text-slate-600;
+    @apply mb-1 block text-xs font-medium text-slate-500;
   }
 
   .btn {
     @apply inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap
-      rounded-lg px-3.5 py-2 text-sm font-medium transition
-      focus:outline-none focus:ring-2 focus:ring-brand-200 disabled:opacity-50;
+      rounded-xl px-3.5 py-2 text-sm font-medium transition
+      focus:outline-none focus:ring-2 focus:ring-brand-200 disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white hover:bg-brand-700;
+    @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800;
   }
   .btn-secondary {
-    @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50;
+    @apply btn border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50;
   }
   .btn-danger {
     @apply btn border border-red-200 bg-red-50 text-red-700 hover:bg-red-100;
@@ -46,5 +56,10 @@
   .pill {
     @apply inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5
       text-xs font-medium ring-1 ring-inset;
+  }
+
+  /* Small uppercase section label used across pages. */
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-wider text-slate-400;
   }
 }
