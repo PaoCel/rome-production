@@ -1,0 +1,24 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Only approved emails may access project media.
+    // Keep this list in sync with src/data/approvedEmails.ts.
+    function isApproved() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'paolocelestini23@gmail.com',
+          'spaminutili24@gmail.com'
+        ];
+    }
+
+    match /projects/{projectId}/{allPaths=**} {
+      allow read, write: if isApproved();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
