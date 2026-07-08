@@ -61,6 +61,26 @@ projects/default-project
 The MVP uses a single project id: `default-project`. Options link to their requirement via a
 `requirementId` field; a requirement stores its chosen option in `selectedOptionId`.
 
+## Seed the "Rejoice" data
+
+`scripts/rejoice-seed-data.json` holds the real Rejoice / Story 4 data extracted from the
+Excel tracker, already mapped to the new schema (with requirement→option links preserved).
+Load it into Firestore once with the Admin SDK:
+
+1. In the Firebase console: **Project settings → Service accounts → Generate new private key**.
+   Save it as `serviceAccountKey.json` in the repo root (it is gitignored).
+2. Run:
+
+   ```bash
+   npm install                 # pulls firebase-admin (devDependency)
+   npm run seed                # writes projects/default-project/*
+   # or preview without writing:
+   node scripts/seed.mjs --dry-run
+   ```
+
+Documents use their Excel IDs as doc IDs (e.g. `ROLE-001`), so the seed is idempotent —
+re-running overwrites instead of duplicating.
+
 ## Setup
 
 1. Install dependencies:

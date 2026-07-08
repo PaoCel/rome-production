@@ -1,0 +1,1146 @@
+{
+  "locationRequirements": [
+    {
+      "_id": "LOC-REQ-000",
+      "requirement": "Aerial Rome",
+      "scenes": "Opening / establishing",
+      "timeLook": "Sunrise",
+      "priority": "Medium",
+      "status": "Researching",
+      "permitNeed": "TBC",
+      "notes": "Could be stock/drone depending permissions."
+    },
+    {
+      "_id": "LOC-REQ-001",
+      "requirement": "Modest apartment (Interior & Exterior)",
+      "scenes": "Apartment morning preparation",
+      "timeLook": "Dawn",
+      "priority": "High",
+      "status": "Researching",
+      "permitNeed": "TBC",
+      "costEstimate": 1000,
+      "notes": "Antonio packs temple bag, laces shoes, gets hat/scarf."
+    },
+    {
+      "_id": "LOC-REQ-002",
+      "requirement": "Narrow Roman cobblestone street",
+      "scenes": "Street exit / car approach",
+      "timeLook": "Golden hour",
+      "priority": "High",
+      "status": "Researching",
+      "permitNeed": "TBC",
+      "notes": "Charming narrow street with apartments and flowers."
+    },
+    {
+      "_id": "LOC-REQ-003",
+      "requirement": "Old/small modest Italian car",
+      "scenes": "Car exterior/interior/driving",
+      "timeLook": "Morning",
+      "priority": "Medium",
+      "status": "Researching",
+      "permitNeed": "TBC",
+      "costEstimate": 400,
+      "notes": "Antonio places temple bag inside; pulls wedding photo in car."
+    },
+    {
+      "_id": "LOC-REQ-004",
+      "requirement": "Cemetery / gravesite",
+      "scenes": "Rose at wife's grave",
+      "timeLook": "Golden hour",
+      "priority": "High",
+      "status": "Researching",
+      "permitNeed": "Yes",
+      "notes": "Weekly routine; rose, gravesite, flowers, dove/beauty shots."
+    },
+    {
+      "_id": "LOC-REQ-005",
+      "requirement": "Rome Italy Temple / Christus",
+      "scenes": "Final meeting with granddaughter",
+      "timeLook": "Golden hour",
+      "priority": "High",
+      "status": "Researching",
+      "permitNeed": "Yes",
+      "costEstimate": 0,
+      "notes": "Antonio arrives, granddaughter hug, journal, Christus final shot."
+    }
+  ],
+  "locationOptions": [
+    {
+      "_id": "LOCOPT-APT-001",
+      "requirementId": "LOC-REQ-001",
+      "optionName": "Modest apartment (Interior & Exterior)",
+      "availability": "To check",
+      "permitNeeded": "TBC",
+      "permitStatus": "Not checked",
+      "costEstimate": 300,
+      "status": "Longlist",
+      "budgetStage": "Estimate only",
+      "notes": "Apartment option 1"
+    },
+    {
+      "_id": "LOCOPT-ST-001",
+      "requirementId": "LOC-REQ-002",
+      "optionName": "Narrow Roman cobblestone street",
+      "availability": "To check",
+      "permitNeeded": "TBC",
+      "permitStatus": "Not checked",
+      "status": "Longlist",
+      "budgetStage": "Estimate only",
+      "notes": "Street option 1"
+    },
+    {
+      "_id": "LOCOPT-CAR-001",
+      "requirementId": "LOC-REQ-003",
+      "optionName": "Old/small modest Italian car",
+      "availability": "To check",
+      "permitNeeded": "No",
+      "permitStatus": "Not needed",
+      "costEstimate": 400,
+      "status": "Researching",
+      "budgetStage": "Estimate only",
+      "notes": "Car option 1"
+    },
+    {
+      "_id": "LOCOPT-CEM-001",
+      "requirementId": "LOC-REQ-004",
+      "optionName": "Cemetery / gravesite",
+      "availability": "To check",
+      "permitNeeded": "Yes",
+      "permitStatus": "Not checked",
+      "status": "Longlist",
+      "budgetStage": "Estimate only",
+      "notes": "Cemetery option 1: insert cost/permit notes here"
+    },
+    {
+      "_id": "LOCOPT-CEM-002",
+      "requirementId": "LOC-REQ-004",
+      "optionName": "Cemetery / gravesite",
+      "availability": "To check",
+      "permitNeeded": "Yes",
+      "permitStatus": "Not checked",
+      "status": "Longlist",
+      "budgetStage": "Estimate only",
+      "notes": "Cemetery option 2"
+    },
+    {
+      "_id": "LOCOPT-TMP-001",
+      "requirementId": "LOC-REQ-005",
+      "optionName": "Rome Italy Temple / Christus",
+      "availability": "To check",
+      "permitNeeded": "Yes",
+      "permitStatus": "Not checked",
+      "status": "To confirm",
+      "budgetStage": "Estimate only",
+      "notes": "Confirm internal approval, access windows, limits, Christus/stand-in"
+    }
+  ],
+  "castRoles": [
+    {
+      "_id": "ROLE-001",
+      "role": "Nonno Antonio Rossi / Elderly Temple worker widower",
+      "type": "Primary Actor",
+      "qty": 1,
+      "ageRange": "65-75",
+      "gender": "Male",
+      "status": "To source",
+      "feeEstimate": 3000,
+      "notes": "Gentle, wise, joyful; classic Italian style; slower-paced warm grandfather energy."
+    },
+    {
+      "_id": "ROLE-002",
+      "role": "Granddaughter at Temple",
+      "type": "Secondary Actor",
+      "qty": 1,
+      "ageRange": "6-12",
+      "gender": "Female",
+      "status": "To source",
+      "feeEstimate": 850,
+      "notes": "Young girl in final Christus shot; runs to Antonio, gives journal."
+    },
+    {
+      "_id": "ROLE-003",
+      "role": "Mother at the Temple",
+      "type": "Secondary Actor",
+      "qty": 1,
+      "ageRange": "40-50",
+      "gender": "Female",
+      "status": "To source",
+      "feeEstimate": 850,
+      "notes": "Daughter reveal in background looking on."
+    },
+    {
+      "_id": "ROLE-004",
+      "role": "Temple extras",
+      "type": "Extras",
+      "qty": 6,
+      "ageRange": "Any",
+      "gender": "Any",
+      "status": "Church provided",
+      "feeEstimate": 300,
+      "notes": "Church provided according to script."
+    }
+  ],
+  "castingOptions": [
+    {
+      "_id": "CAST-ANT-001",
+      "requirementId": "ROLE-001",
+      "candidateName": "Candidate option 1",
+      "availability": "To check",
+      "travelNeeded": "TBC",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Candidate option 1"
+    },
+    {
+      "_id": "CAST-ANT-002",
+      "requirementId": "ROLE-001",
+      "candidateName": "Candidate option 2",
+      "availability": "To check",
+      "travelNeeded": "TBC",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Candidate option 2"
+    },
+    {
+      "_id": "CAST-GD-001",
+      "requirementId": "ROLE-002",
+      "candidateName": "Candidate option 1",
+      "availability": "To check",
+      "travelNeeded": "TBC",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Candidate option 1"
+    },
+    {
+      "_id": "CAST-GD-002",
+      "requirementId": "ROLE-002",
+      "candidateName": "Candidate option 2",
+      "availability": "To check",
+      "travelNeeded": "TBC",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Candidate option 2"
+    },
+    {
+      "_id": "CAST-MOM-001",
+      "requirementId": "ROLE-003",
+      "candidateName": "Candidate option 1",
+      "availability": "To check",
+      "travelNeeded": "TBC",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Candidate option 1"
+    },
+    {
+      "_id": "CAST-EXT-001",
+      "requirementId": "ROLE-004",
+      "candidateName": "Church-provided extras",
+      "availability": "TBC",
+      "feeEstimate": 0,
+      "travelNeeded": "No",
+      "status": "To confirm",
+      "budgetStage": "Estimate only",
+      "notes": "6 extras listed as church provided."
+    }
+  ],
+  "crewRequirements": [
+    {
+      "_id": "CRW-001",
+      "role": "Gaffer",
+      "department": "Lighting",
+      "qty": 1,
+      "neededFor": "Dawn apartment, golden hour street/cemetery/temple",
+      "responsibilities": "Lighting plan, practical control, diffusion/negative fill, consistency across golden hour windows.",
+      "priority": "High",
+      "status": "To source",
+      "notes": "Estimated market fee tracked in crew options/budget: €1,200."
+    },
+    {
+      "_id": "CRW-002",
+      "role": "Grip",
+      "department": "Grip",
+      "qty": 1,
+      "neededFor": "Street/car/cemetery/temple setups",
+      "responsibilities": "Stands, flags, diffusion, safe small rigging, light shaping support.",
+      "priority": "High",
+      "status": "To source",
+      "notes": "Estimated market fee tracked in crew options/budget: €1,200."
+    },
+    {
+      "_id": "CRW-003",
+      "role": "Assistant Camera",
+      "department": "Camera",
+      "qty": 1,
+      "neededFor": "All shooting blocks",
+      "responsibilities": "Camera prep, lens swaps, focus support, media/camera notes if needed.",
+      "priority": "High",
+      "status": "To source",
+      "notes": "Estimated market fee tracked in crew options/budget: €1,200."
+    },
+    {
+      "_id": "CRW-004",
+      "role": "Make-up Artist / Hair Stylist",
+      "department": "Makeup & Hair",
+      "qty": 1,
+      "neededFor": "Antonio, granddaughter, mother",
+      "responsibilities": "Natural screen makeup, reduce shine, hair styling and continuity; classic Italian look for Antonio and natural look for child/mother.",
+      "priority": "Medium",
+      "status": "To source",
+      "notes": "Combined role on one line as requested. Estimated market fee tracked in crew options/budget: €1,200."
+    }
+  ],
+  "crewOptions": [
+    {
+      "_id": "CRWOPT-001",
+      "requirementId": "CRW-001",
+      "candidateName": "Candidato",
+      "role": "Gaffer",
+      "availability": "To check",
+      "feeEstimate": 1200,
+      "travelNeeded": "TBC",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Estimated crew cost: €1,200."
+    },
+    {
+      "_id": "CRWOPT-002",
+      "requirementId": "CRW-002",
+      "candidateName": "Candidato",
+      "role": "Grip",
+      "availability": "To check",
+      "feeEstimate": 1200,
+      "travelNeeded": "TBC",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Estimated crew cost: €1,200."
+    },
+    {
+      "_id": "CRWOPT-003",
+      "requirementId": "CRW-003",
+      "candidateName": "Candidato",
+      "role": "Assistant Camera",
+      "availability": "To check",
+      "feeEstimate": 1200,
+      "travelNeeded": "TBC",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Estimated crew cost: €1,200."
+    },
+    {
+      "_id": "CRWOPT-004",
+      "requirementId": "CRW-004",
+      "candidateName": "Candidato",
+      "role": "Make-up Artist / Hair Stylist",
+      "availability": "To check",
+      "feeEstimate": 1200,
+      "travelNeeded": "TBC",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Combined MUA/Hair role. Estimated crew cost: €1,200."
+    }
+  ],
+  "propItems": [
+    {
+      "_id": "PROP-001",
+      "item": "Old wedding photo + 'Per sempre' note",
+      "category": "Hero Prop",
+      "sceneUse": "Car close-up / emotional memory",
+      "priority": "High",
+      "status": "Not sourced",
+      "notes": "Black & white or warm-toned photo; visible note."
+    },
+    {
+      "_id": "PROP-002",
+      "item": "Temple bag",
+      "category": "Hero Prop",
+      "sceneUse": "Apartment + car",
+      "priority": "High",
+      "status": "Not sourced",
+      "notes": "Simple elegant bag with temple clothes."
+    },
+    {
+      "_id": "PROP-003",
+      "item": "Temple worker nametag (white)",
+      "category": "Hero Prop",
+      "sceneUse": "Temple worker identity",
+      "priority": "Medium",
+      "status": "Not sourced",
+      "notes": "Confirm accuracy/permissions."
+    },
+    {
+      "_id": "PROP-004",
+      "item": "White temple shoes",
+      "category": "Hero Prop",
+      "sceneUse": "Apartment / bag insert",
+      "priority": "Medium",
+      "status": "Not sourced",
+      "notes": "In bag."
+    },
+    {
+      "_id": "PROP-005",
+      "item": "Classic Italian jacket",
+      "category": "Wardrobe",
+      "sceneUse": "Antonio wardrobe",
+      "priority": "High",
+      "status": "Not sourced",
+      "notes": "Stylish, classic, not extravagant."
+    },
+    {
+      "_id": "PROP-006",
+      "item": "Scarf and hat",
+      "category": "Wardrobe",
+      "sceneUse": "Antonio wardrobe",
+      "priority": "High",
+      "status": "Not sourced",
+      "notes": "Favorite hat and scarf in script."
+    },
+    {
+      "_id": "PROP-007",
+      "item": "Simple car keys",
+      "category": "Personal Prop",
+      "sceneUse": "Apartment/car transition",
+      "priority": "Low",
+      "status": "Not sourced"
+    },
+    {
+      "_id": "PROP-008",
+      "item": "Small modest Italian car",
+      "category": "Set/Vehicle",
+      "sceneUse": "Exterior/interior/driving",
+      "priority": "Medium",
+      "status": "Not sourced",
+      "notes": "Could be location/vehicle item as well."
+    },
+    {
+      "_id": "PROP-009",
+      "item": "Cemetery gravesite + wife's headstone + flowers",
+      "category": "Set Dressing",
+      "sceneUse": "Cemetery sequence",
+      "priority": "High",
+      "status": "Not sourced",
+      "notes": "Requires location approval and sensitivity."
+    },
+    {
+      "_id": "PROP-010",
+      "item": "White dove",
+      "category": "Nature/Visual",
+      "sceneUse": "Cemetery symbolic shot",
+      "priority": "Medium",
+      "status": "Researching",
+      "notes": "Practical or stock footage."
+    },
+    {
+      "_id": "PROP-011",
+      "item": "Leather-bound journal with child note/drawing",
+      "category": "Temple Area",
+      "sceneUse": "Temple handoff",
+      "priority": "High",
+      "status": "Not sourced",
+      "notes": "Text: HAPPY ANNIVERSARY NONNO TONI."
+    },
+    {
+      "_id": "PROP-012",
+      "item": "Christus statue or practical stand-in",
+      "category": "Temple Area",
+      "sceneUse": "Final shot",
+      "priority": "High",
+      "status": "To confirm",
+      "notes": "Confirm if actual Christus can be filmed."
+    }
+  ],
+  "propOptions": [
+    {
+      "_id": "PROPOPT-001",
+      "requirementId": "PROP-001",
+      "optionSource": "Designed/printed in-house",
+      "availability": "To check",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Need photo + handwritten note. \n\nPer le foto serve lui da giovane o uno molto simile a lui da giovane in vestito"
+    },
+    {
+      "_id": "PROPOPT-002",
+      "requirementId": "PROP-002",
+      "optionSource": "Borrow from member/production",
+      "costEstimate": 50,
+      "availability": "To check",
+      "status": "To source",
+      "budgetStage": "Estimate only"
+    },
+    {
+      "_id": "PROPOPT-003",
+      "requirementId": "PROP-005",
+      "optionSource": "Wardrobe source option 1",
+      "availability": "To check",
+      "status": "To source",
+      "budgetStage": "Estimate only"
+    },
+    {
+      "_id": "PROPOPT-004",
+      "requirementId": "PROP-006",
+      "optionSource": "Wardrobe source option 1",
+      "availability": "To check",
+      "status": "To source",
+      "budgetStage": "Estimate only"
+    },
+    {
+      "_id": "PROPOPT-005",
+      "requirementId": "PROP-009",
+      "optionSource": "Location/art dept plan",
+      "availability": "To check",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Coordinate with selected cemetery."
+    },
+    {
+      "_id": "PROPOPT-006",
+      "requirementId": "PROP-010",
+      "optionSource": "Stock footage / practical dove",
+      "availability": "To check",
+      "status": "Researching",
+      "budgetStage": "Estimate only",
+      "notes": "Decide practical vs stock."
+    },
+    {
+      "_id": "PROPOPT-007",
+      "requirementId": "PROP-011",
+      "optionSource": "Handmade/source locally",
+      "availability": "To check",
+      "status": "To source",
+      "budgetStage": "Estimate only",
+      "notes": "Include child drawing and note."
+    }
+  ],
+  "tasks": [
+    {
+      "_id": "T-001",
+      "title": "Confermare brief creativo e obiettivi della Story 4",
+      "area": "Production management",
+      "description": "Allineare producer/assistant producer su arc, tono e priorità del video.",
+      "owner": "Daniele",
+      "priority": "High",
+      "status": "In progress",
+      "notes": "Base: Nonno Antonio, vedovo, tempio, famiglia eterna.",
+      "relatedType": "decision",
+      "relatedId": "D-001"
+    },
+    {
+      "_id": "T-002",
+      "title": "Trovare candidati per Nonno Antonio",
+      "area": "Casting",
+      "description": "Raccogliere almeno 2-3 profili papabili prima della scelta finale.",
+      "owner": "Daniele",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "castRole",
+      "relatedId": "ROLE-001"
+    },
+    {
+      "_id": "T-003",
+      "title": "Trovare candidata nipote 6-12",
+      "area": "Casting",
+      "description": "Raccogliere opzioni e verificare disponibilità per riprese al Tempio.",
+      "owner": "Daniele",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "castRole",
+      "relatedId": "ROLE-002"
+    },
+    {
+      "_id": "T-004",
+      "title": "Trovare madre 40-50",
+      "area": "Casting",
+      "description": "Ruolo secondario nel reveal al Tempio.",
+      "priority": "Medium",
+      "status": "To do",
+      "relatedType": "castRole",
+      "relatedId": "ROLE-003"
+    },
+    {
+      "_id": "T-005",
+      "title": "Confermare 6 extras al Tempio",
+      "area": "Casting",
+      "description": "Extras church-provided secondo brief.",
+      "priority": "Medium",
+      "status": "To do",
+      "relatedType": "castRole",
+      "relatedId": "ROLE-004"
+    },
+    {
+      "_id": "T-006",
+      "title": "Trovare appartamento modesto interior/exterior",
+      "area": "Locations",
+      "description": "Serve per dawn: preparazione, temple bag, scarpe, cappello/sciarpa.",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "locationRequirement",
+      "relatedId": "LOC-REQ-001"
+    },
+    {
+      "_id": "T-007",
+      "title": "Trovare strada romana stretta/cobblestone",
+      "area": "Locations",
+      "description": "Deve avere vibe charming Roman street, appartamenti/fiori.",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "locationRequirement",
+      "relatedId": "LOC-REQ-002"
+    },
+    {
+      "_id": "T-008",
+      "title": "Trovare opzioni per cimitero",
+      "area": "Locations",
+      "description": "Creare rosa opzioni con costi, permessi e disponibilità golden hour.",
+      "owner": "Paolo",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "locationRequirement",
+      "relatedId": "LOC-REQ-004"
+    },
+    {
+      "_id": "T-009",
+      "title": "Verificare accesso Tempio/Christus",
+      "area": "Locations",
+      "description": "Confermare permessi, orari, limiti troupe e accesso alla statua/stand-in.",
+      "owner": "Paolo",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "locationRequirement",
+      "relatedId": "LOC-REQ-005"
+    },
+    {
+      "_id": "T-010",
+      "title": "Trovare piccola auto italiana/modesta",
+      "area": "Vehicle",
+      "description": "Serve exterior, interior, driving shots e inserimento temple bag.",
+      "owner": "Daniele",
+      "priority": "Medium",
+      "status": "To do",
+      "relatedType": "propItem",
+      "relatedId": "PROP-008"
+    },
+    {
+      "_id": "T-011",
+      "title": "Creare vecchia foto matrimonio + nota 'Per sempre'",
+      "area": "Props",
+      "description": "Hero close-up in auto: foto calda o b/n, nota leggibile.",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "propItem",
+      "relatedId": "PROP-001"
+    },
+    {
+      "_id": "T-012",
+      "title": "Preparare temple bag, name tag e white temple shoes",
+      "area": "Props",
+      "description": "Props legati al temple worker e alla preparazione mattutina.",
+      "owner": "Mirko",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "propItem",
+      "relatedId": "PROP-002"
+    },
+    {
+      "_id": "T-013",
+      "title": "Definire look classico italiano per Antonio",
+      "area": "Wardrobe",
+      "description": "Giacca, cappello, sciarpa: elegante, non esagerato, vissuto.",
+      "priority": "Medium",
+      "status": "To do",
+      "relatedType": "propItem",
+      "relatedId": "PROP-005"
+    },
+    {
+      "_id": "T-014",
+      "title": "Preparare leather-bound journal con disegno/note",
+      "area": "Props",
+      "description": "Deve contenere 'HAPPY ANNIVERSARY NONNO TONI'.",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "propItem",
+      "relatedId": "PROP-011"
+    },
+    {
+      "_id": "T-015",
+      "title": "Organizzare gravesite/headstone/fiori/rosa",
+      "area": "Locations/Props",
+      "description": "Cimitero: tomba moglie, rosa, fiori, atmosfera intima.",
+      "priority": "High",
+      "status": "To do",
+      "notes": "Da aggiornare quando scelta la location cimitero."
+    },
+    {
+      "_id": "T-016",
+      "title": "Trovare Gaffer",
+      "area": "Crew",
+      "description": "Necessario per controllo luce, soprattutto dawn/golden hour e interni.",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "crewRequirement",
+      "relatedId": "CRW-001"
+    },
+    {
+      "_id": "T-017",
+      "title": "Trovare Grip",
+      "area": "Crew",
+      "description": "Supporto stands, rigging leggero, diffusion/negative fill, movement support.",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "crewRequirement",
+      "relatedId": "CRW-002"
+    },
+    {
+      "_id": "T-018",
+      "title": "Trovare Assistant Camera",
+      "area": "Crew",
+      "description": "Supporto camera, lens/camera prep, focus, media notes se richiesto.",
+      "priority": "High",
+      "status": "To do",
+      "relatedType": "crewRequirement",
+      "relatedId": "CRW-003"
+    },
+    {
+      "_id": "T-019",
+      "title": "Trovare Make-up Artist",
+      "area": "Crew",
+      "description": "Look naturale e continuity su Antonio, nipote, madre.",
+      "priority": "Medium",
+      "status": "To do",
+      "relatedType": "crewRequirement",
+      "relatedId": "CRW-004"
+    },
+    {
+      "_id": "T-020",
+      "title": "Trovare Hair Stylist",
+      "area": "Crew",
+      "description": "Capelli naturali/classici e continuity durante le scene.",
+      "priority": "Medium",
+      "status": "To do",
+      "relatedType": "crewRequirement",
+      "relatedId": "CRW-005"
+    },
+    {
+      "_id": "T-021",
+      "title": "Costruire schedule per luce dawn/golden hour",
+      "area": "Scheduling",
+      "description": "Ordinare blocchi: apartment, street/car, cemetery, temple.",
+      "priority": "High",
+      "status": "To do"
+    },
+    {
+      "_id": "T-022",
+      "title": "Creare preventivi per location/cast/crew/props",
+      "area": "Budget",
+      "description": "Compilare options e poi committare solo le scelte vere nel budget.",
+      "priority": "High",
+      "status": "To do"
+    },
+    {
+      "_id": "T-023",
+      "title": "Verificare permessi cimitero/strada/Tempio",
+      "area": "Permits",
+      "description": "Creare righe risk se qualcosa è bloccante.",
+      "priority": "High",
+      "status": "To do"
+    },
+    {
+      "_id": "T-024",
+      "title": "Definire alternativa per colomba bianca",
+      "area": "Creative",
+      "description": "Practical o stock footage; verificare fattibilità/costo/licenze.",
+      "priority": "Medium",
+      "status": "To do",
+      "relatedType": "propItem",
+      "relatedId": "PROP-010"
+    },
+    {
+      "_id": "T-025",
+      "title": "Ricerca assicurazione generale con le opzioni che stiamo valutando",
+      "area": "Production",
+      "status": "To do"
+    },
+    {
+      "_id": "T-026",
+      "title": "Ricerca crew option con le opzioni che stiamo valutando",
+      "area": "Crew",
+      "status": "To do"
+    }
+  ],
+  "budgetItems": [
+    {
+      "_id": "B-CAST-001",
+      "lineItem": "Primary actor - Nonno Antonio",
+      "category": "Cast",
+      "estimatedCost": 3000,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid",
+      "notes": "Commit only after selecting casting option."
+    },
+    {
+      "_id": "B-CAST-002",
+      "lineItem": "Granddaughter actor",
+      "category": "Cast",
+      "estimatedCost": 850,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-CAST-003",
+      "lineItem": "Mother actor",
+      "category": "Cast",
+      "estimatedCost": 850,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-LOC-001",
+      "lineItem": "Apartment location fee",
+      "category": "Location",
+      "estimatedCost": 3000,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-LOC-002",
+      "lineItem": "Street / permit / fee",
+      "category": "Location",
+      "estimatedCost": 700,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-LOC-003",
+      "lineItem": "Cemetery location / permit fee",
+      "category": "Location",
+      "estimatedCost": 700,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid",
+      "notes": "Update source ID when cemetery selected."
+    },
+    {
+      "_id": "B-LOC-004",
+      "lineItem": "Temple / Christus access cost if any",
+      "category": "Location",
+      "estimatedCost": 0,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not needed",
+      "notes": "Likely internal/no fee, but keep track."
+    },
+    {
+      "_id": "B-PROP-001",
+      "lineItem": "Old wedding photo + Per sempre note",
+      "category": "Props / Wardrobe",
+      "estimatedCost": 50,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-PROP-002",
+      "lineItem": "Leather-bound journal",
+      "category": "Props / Wardrobe",
+      "estimatedCost": 50,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-PROP-003",
+      "lineItem": "Flowers / rose / cemetery dressing",
+      "category": "Props / Wardrobe",
+      "estimatedCost": 100,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-PROP-004",
+      "lineItem": "White dove practical or stock",
+      "category": "Props / Wardrobe",
+      "estimatedCost": 100,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-CREW-001",
+      "lineItem": "Gaffer fee",
+      "category": "Crew",
+      "estimatedCost": 1200,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid",
+      "notes": "Estimated crew cost: €1,200."
+    },
+    {
+      "_id": "B-CREW-002",
+      "lineItem": "Grip fee",
+      "category": "Crew",
+      "estimatedCost": 1200,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid",
+      "notes": "Estimated crew cost: €1,200."
+    },
+    {
+      "_id": "B-CREW-003",
+      "lineItem": "Assistant Camera fee",
+      "category": "Crew",
+      "estimatedCost": 1200,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid",
+      "notes": "Estimated crew cost: €1,200."
+    },
+    {
+      "_id": "B-CREW-004",
+      "lineItem": "Make-up Artist / Hair Stylist fee",
+      "category": "Crew",
+      "estimatedCost": 1200,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid",
+      "notes": "Combined MUA/Hair role. Estimated crew cost: €1,200."
+    },
+    {
+      "_id": "B-TRV-001",
+      "lineItem": "Parking / transport / local travel",
+      "category": "Transport",
+      "estimatedCost": 500,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-EQP-001",
+      "lineItem": "Totale provvisorio, vedi file lista",
+      "category": "Equipment",
+      "estimatedCost": 3000,
+      "budgetStage": "Estimate only",
+      "committed": false,
+      "paymentStatus": "Not paid"
+    },
+    {
+      "_id": "B-503",
+      "lineItem": "Local Producer",
+      "category": "Local production",
+      "estimatedCost": 3000,
+      "committed": false
+    },
+    {
+      "_id": "B-505",
+      "lineItem": "Assistant to local producer",
+      "category": "Local production",
+      "estimatedCost": 1500,
+      "committed": false
+    },
+    {
+      "_id": "B-508",
+      "lineItem": "assistant to local producer",
+      "category": "Local production",
+      "estimatedCost": 400,
+      "committed": false
+    },
+    {
+      "_id": "B-502",
+      "lineItem": "3 days meals + supply",
+      "category": "Catering",
+      "estimatedCost": 900,
+      "committed": false
+    },
+    {
+      "_id": "B-503",
+      "lineItem": "insurance covering everything for the three days.",
+      "category": "insurance",
+      "estimatedCost": 1500,
+      "committed": false
+    },
+    {
+      "_id": "B-504",
+      "lineItem": "car",
+      "category": "Location",
+      "estimatedCost": 500,
+      "committed": false
+    }
+  ],
+  "contacts": [
+    {
+      "_id": "CONT-001",
+      "name": "Producer",
+      "type": "Internal",
+      "status": "Active",
+      "notes": "Next: Confirm priorities"
+    },
+    {
+      "_id": "CONT-002",
+      "name": "Assistant Producer",
+      "type": "Internal",
+      "status": "Active",
+      "notes": "Next: Maintain tracker/budget"
+    },
+    {
+      "_id": "CONT-003",
+      "name": "Rome Italy Temple contact",
+      "type": "Church/Temple",
+      "status": "To identify",
+      "notes": "Next: Confirm filming permissions"
+    },
+    {
+      "_id": "CONT-004",
+      "name": "Casting contact",
+      "type": "Supplier",
+      "status": "To identify",
+      "notes": "Next: Send role requirements"
+    },
+    {
+      "_id": "CONT-005",
+      "name": "Location scout / location owner",
+      "type": "Supplier",
+      "status": "To identify",
+      "notes": "Next: Find apartment/street/cemetery options"
+    },
+    {
+      "_id": "CONT-006",
+      "name": "Gaffer candidate",
+      "type": "Crew",
+      "status": "To identify",
+      "notes": "Next: Collect quote/availability"
+    },
+    {
+      "_id": "CONT-007",
+      "name": "Grip candidate",
+      "type": "Crew",
+      "status": "To identify",
+      "notes": "Next: Collect quote/availability"
+    },
+    {
+      "_id": "CONT-008",
+      "name": "Assistant Camera candidate",
+      "type": "Crew",
+      "status": "To identify",
+      "notes": "Next: Collect quote/availability"
+    },
+    {
+      "_id": "CONT-009",
+      "name": "Make-up Artist candidate",
+      "type": "Crew",
+      "status": "To identify",
+      "notes": "Next: Collect quote/availability"
+    },
+    {
+      "_id": "CONT-010",
+      "name": "Hair Stylist candidate",
+      "type": "Crew",
+      "status": "To identify",
+      "notes": "Next: Collect quote/availability"
+    }
+  ],
+  "risks": [
+    {
+      "_id": "R-001",
+      "title": "Cemetery filming permission may be complex/sensitive",
+      "area": "Permissions",
+      "severity": "High",
+      "probability": "Medium",
+      "mitigation": "Shortlist more than one cemetery; ask early; consider controlled stand-in gravesite.",
+      "status": "Open"
+    },
+    {
+      "_id": "R-002",
+      "title": "Temple/Christus filming access may have restrictions",
+      "area": "Permissions",
+      "severity": "High",
+      "probability": "Medium",
+      "mitigation": "Confirm access windows, crew size, allowed shots, practical stand-in if needed.",
+      "status": "Open"
+    },
+    {
+      "_id": "R-003",
+      "title": "Golden hour/dawn scenes create tight timing",
+      "area": "Schedule",
+      "severity": "High",
+      "probability": "High",
+      "mitigation": "Create realistic blocks and backups; keep crew nimble.",
+      "status": "Open"
+    },
+    {
+      "_id": "R-004",
+      "title": "Finding right elderly actor with warmth/physical steadiness",
+      "area": "Casting",
+      "severity": "High",
+      "probability": "Medium",
+      "mitigation": "Longlist multiple options; test wardrobe/look; consider church members if appropriate.",
+      "status": "Open"
+    },
+    {
+      "_id": "R-005",
+      "title": "White dove may be impractical",
+      "area": "Props",
+      "severity": "Medium",
+      "probability": "High",
+      "mitigation": "Use stock footage or substitute symbolic beauty/nature shot.",
+      "status": "Open"
+    },
+    {
+      "_id": "R-006",
+      "title": "Adding gaffer/grip/AC/MUA/hair may increase budget",
+      "area": "Crew/Budget",
+      "severity": "Medium",
+      "probability": "High",
+      "mitigation": "Collect fee ranges; combine MUA+hair if acceptable; prioritize based on look requirements.",
+      "status": "Open"
+    }
+  ],
+  "decisions": [
+    {
+      "_id": "D-001",
+      "title": "Confirm whether dashboard/budget should count only Committed/Approved/Paid items",
+      "status": "Needed",
+      "impactOnBudget": "High",
+      "impactOnSchedule": "Low",
+      "notes": "Recommended: do not count all options."
+    },
+    {
+      "_id": "D-002",
+      "title": "Decide whether cemetery will be real cemetery or controlled stand-in",
+      "status": "Needed",
+      "impactOnBudget": "High",
+      "impactOnSchedule": "High",
+      "relatedType": "locationRequirement",
+      "relatedId": "LOC-REQ-004"
+    },
+    {
+      "_id": "D-003",
+      "title": "Decide practical white dove vs stock footage",
+      "status": "Needed",
+      "impactOnBudget": "Medium",
+      "impactOnSchedule": "Medium",
+      "relatedType": "propItem",
+      "relatedId": "PROP-010"
+    },
+    {
+      "_id": "D-004",
+      "title": "Decide if MUA and Hair can be one person or separate roles",
+      "status": "Needed",
+      "impactOnBudget": "Medium",
+      "impactOnSchedule": "Low",
+      "relatedType": "crewRequirement",
+      "relatedId": "CRW-004/CRW-005"
+    },
+    {
+      "_id": "D-005",
+      "title": "Decide if casting fees are paid/pro bono/church-provided",
+      "status": "Needed",
+      "impactOnBudget": "High",
+      "impactOnSchedule": "Medium",
+      "relatedType": "castRole"
+    }
+  ]
+}
