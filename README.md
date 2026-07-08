@@ -10,15 +10,24 @@ Hosting).
 ## Features
 
 - 🔐 Auth: email/password + Google sign-in, protected routes
-- 📊 Dashboard with live counts and budget totals
+- 📊 Dashboard: KPI tiles, budget-by-category bars, selection progress, "needs attention"
 - ✅ Tasks: board + list views, filters, priority colours
-- 💶 Budget: totals, category cards, editable line items
-- 📍 Locations · 🎬 Casting · 📦 Production options: cards, detail panels, media galleries, comments
-- 📇 Reusable contacts referenced across entities
-- ⚠️ Risks & decisions
-- 🖼️ Media uploads (photos / video / documents) via Firebase Storage
+- 💶 Budget: per-category summary, budget stages (Estimate → Committed → Approved → Paid), est/actual/difference
+- 🎬 **Two-tier planning** for Locations, Cast, Crew and Props & Wardrobe:
+  each *requirement* holds several *options* — compare them, pick one, then commit it to the budget
+- 📦 Production options and 📇 contacts as flat lists; ⚠️ risks & decisions
+- 🖼️ Media uploads (photos / video / documents) on every option via Firebase Storage
 - 💬 Comments on every entity
-- 🔗 "Add to budget" from any selected item (de-duplicated by source)
+- 🔗 One-click "Commit to budget" from a selected option (de-duplicated by source)
+
+### Two-tier model (requirement → options)
+
+Locations, Cast, Crew and Props each split into a **requirement** collection (what the
+production needs) and an **option** collection (candidates that could fulfil it), driven
+declaratively: a requirement's `EntityConfig` points at its option config via `optionConfig`,
+and the shared `LinkedOptions` component (rendered inside `EntityDetail`) lists options, picks
+the winner, and commits it to the budget. Adding a new two-tier area is two `EntityConfig`
+objects plus a one-line page.
 
 ## Project structure
 
@@ -41,11 +50,40 @@ src/
 
 ```
 projects/default-project
-  /tasks /budgetItems /locations /castingCandidates /productionOptions
-  /contacts /risks /decisions /media /comments
+  /tasks /budgetItems /productionOptions /contacts /risks /decisions /media /comments
+  # two-tier (requirement → option) collections
+  /locationRequirements /locationOptions
+  /castRoles            /castingOptions
+  /crewRequirements     /crewOptions
+  /propItems            /propOptions
 ```
 
-The MVP uses a single project id: `default-project`.
+The MVP uses a single project id: `default-project`. Options link to their requirement via a
+`requirementId` field; a requirement stores its chosen option in `selectedOptionId`.
+
+## Seed the "Rejoice" data
+
+`src/data/rejoiceSeed.json` holds the real Rejoice / Story 4 data extracted from the Excel
+tracker, already mapped to the new schema (with requirement→option links preserved). It powers
+two things:
+
+- **In-app (easiest):** the **Settings** page has *Import Excel data* and *Remove Excel data*
+  buttons — run them while signed in, no key needed (`src/services/seed.ts`).
+- **Offline / CLI:** load it into Firestore with the Admin SDK:
+
+1. In the Firebase console: **Project settings → Service accounts → Generate new private key**.
+   Save it as `serviceAccountKey.json` in the repo root (it is gitignored).
+2. Run:
+
+   ```bash
+   npm install                 # pulls firebase-admin (devDependency)
+   npm run seed                # writes projects/default-project/*
+   # or preview without writing:
+   node scripts/seed.mjs --dry-run
+   ```
+
+Documents use their Excel IDs as doc IDs (e.g. `ROLE-001`), so the seed is idempotent —
+re-running overwrites instead of duplicating.
 
 ## Setup
 

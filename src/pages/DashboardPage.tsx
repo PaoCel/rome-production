@@ -1,145 +1,230 @@
 import { Link } from 'react-router-dom';
 import { useCollection } from '../hooks/useCollection';
 import { useAuth } from '../contexts/AuthContext';
-import { NAV_ITEMS } from '../layouts/navItems';
-import PageHeader from '../components/PageHeader';
+import { useSettings } from '../contexts/SettingsContext';
+import { BUDGET_CATEGORIES } from '../data/constants';
+import { formatMoney } from '../utils/format';
 import Money from '../components/ui/Money';
+
+const COMMITTED_STAGES = ['Committed', 'Approved', 'Paid'];
 
 export default function DashboardPage() {
   const { displayName } = useAuth();
+  const { settings } = useSettings();
   const tasks = useCollection('tasks').items;
   const budget = useCollection('budgetItems').items;
-  const locations = useCollection('locations').items;
-  const casting = useCollection('castingCandidates').items;
-  const production = useCollection('productionOptions').items;
   const risks = useCollection('risks').items;
   const decisions = useCollection('decisions').items;
+
+  // Two-tier requirement collections (for selection progress).
+  const locationReqs = useCollection('locationRequirements').items;
+  const castRoles = useCollection('castRoles').items;
+  const crewReqs = useCollection('crewRequirements').items;
+  const propItems = useCollection('propItems').items;
 
   const openTasks = tasks.filter((t) => t.status && t.status !== 'Done').length;
   const highTasks = tasks.filter((t) => t.priority === 'High' && t.status !== 'Done').length;
   const blockedTasks = tasks.filter((t) => t.status === 'Blocked').length;
 
   const estimated = sum(budget, 'estimatedCost');
-  const committed = budget.filter((b) => b.committed).reduce((s, b) => s + num(b.estimatedCost), 0);
+  const committed = budget
+    .filter((b) => b.committed || COMMITTED_STAGES.includes(b.budgetStage))
+    .reduce((s, b) => s + num(b.estimatedCost), 0);
   const actual = sum(budget, 'actualCost');
-  const paid = budget
-    .filter((b) => b.paymentStatus === 'Paid')
-    .reduce((s, b) => s + num(b.actualCost), 0);
-
-  const selectedLoc = locations.filter((l) => l.selected).length;
-  const selectedCast = casting.filter((c) => c.selected).length;
-  const selectedProd = production.filter((p) => p.selected).length;
 
   const openRisks = risks.filter((r) => r.status === 'Open').length;
   const pendingDecisions = decisions.filter(
-    (d) => d.status === 'Needed' || d.status === 'Pending',
+    (d) => d.status === 'Needed' || d.status === 'Pending' || d.status === 'Open',
   ).length;
 
+  const selections = [
+    { label: 'Locations', to: '/locations', items: locationReqs },
+    { label: 'Cast', to: '/casting', items: castRoles },
+    { label: 'Crew', to: '/crew', items: crewReqs },
+    { label: 'Props', to: '/props', items: propItems },
+  ].map((s) => ({
+    ...s,
+    total: s.items.length,
+    chosen: s.items.filter((i) => i.selectedOptionId).length,
+  }));
+
+  // Budget by category (estimate vs committed), master-list order.
+  const categoryRollup = BUDGET_CATEGORIES.map((cat) => {
+    const rows = budget.filter((b) => b.category === cat);
+    return {
+      cat,
+      estimated: rows.reduce((s, b) => s + num(b.estimatedCost), 0),
+      committed: rows
+        .filter((b) => b.committed || COMMITTED_STAGES.includes(b.budgetStage))
+        .reduce((s, b) => s + num(b.estimatedCost), 0),
+    };
+  }).filter((c) => c.estimated > 0);
+  const maxCat = Math.max(1, ...categoryRollup.map((c) => c.estimated));
+
   return (
-    <div>
-      <PageHeader title={`Welcome, ${displayName}`} subtitle="Production overview at a glance" />
-
-      {/* Tasks */}
-      <Section title="Tasks">
-        <StatCard label="Open tasks" value={openTasks} to="/tasks" tone="indigo" />
-        <StatCard label="High priority" value={highTasks} to="/tasks" tone="red" />
-        <StatCard label="Blocked" value={blockedTasks} to="/tasks" tone="amber" />
-      </Section>
-
-      {/* Budget */}
-      <Section title="Budget">
-        <MoneyCard label="Estimated" value={estimated} to="/budget" tone="slate" />
-        <MoneyCard label="Committed" value={committed} to="/budget" tone="amber" />
-        <MoneyCard label="Actual" value={actual} to="/budget" tone="indigo" />
-        <MoneyCard label="Paid" value={paid} to="/budget" tone="emerald" />
-      </Section>
-
-      {/* Selections */}
-      <Section title="Selections">
-        <StatCard label="Selected locations" value={selectedLoc} to="/locations" tone="emerald" />
-        <StatCard label="Selected casting" value={selectedCast} to="/casting" tone="emerald" />
-        <StatCard label="Selected production" value={selectedProd} to="/production" tone="emerald" />
-      </Section>
-
-      {/* Risks & decisions */}
-      <Section title="Risks & Decisions">
-        <StatCard label="Open risks" value={openRisks} to="/risks" tone="red" />
-        <StatCard label="Pending decisions" value={pendingDecisions} to="/risks" tone="amber" />
-      </Section>
-
-      {/* Quick links */}
-      <div className="mt-8">
-        <h2 className="mb-3 text-sm font-semibold text-slate-500">Quick links</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {NAV_ITEMS.filter((n) => n.to !== '/').map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              className="card flex items-center gap-3 p-4 transition hover:shadow-md"
-            >
-              <span className="text-xl">{n.icon}</span>
-              <span className="text-sm font-medium text-slate-700">{n.label}</span>
-            </Link>
-          ))}
-        </div>
+    <div className="space-y-8">
+      {/* Hero */}
+      <div>
+        <p className="section-label">Production overview</p>
+        <h1 className="mt-1 font-display text-3xl font-semibold text-slate-900">
+          Ciao, {displayName}
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">
+          {settings.productionSubtitle} — everything you're tracking, at a glance.
+        </p>
       </div>
+
+      {/* KPI row */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Kpi to="/tasks" icon="✅" label="Open tasks" value={openTasks} sub={`${highTasks} high priority`} tone="indigo" />
+        <Kpi to="/budget" icon="💶" label="Committed budget" money={committed} sub={`of ${formatMoney(estimated)} estimated`} tone="amber" />
+        <Kpi to="/budget" icon="🧾" label="Actual spend" money={actual} sub="paid & incurred" tone="emerald" />
+        <Kpi to="/risks" icon="⚠️" label="Open risks" value={openRisks} sub={`${pendingDecisions} decisions pending`} tone="rose" />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Budget by category */}
+        <section className="card p-5 lg:col-span-2">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-semibold text-slate-800">Budget by category</h2>
+            <Link to="/budget" className="text-xs font-medium text-brand-600 hover:underline">
+              View budget →
+            </Link>
+          </div>
+          {categoryRollup.length === 0 ? (
+            <p className="py-6 text-center text-sm text-slate-400">
+              No budget yet. Commit a selected option to start tracking spend.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {categoryRollup.map((c) => (
+                <div key={c.cat}>
+                  <div className="mb-1 flex items-center justify-between text-sm">
+                    <span className="font-medium text-slate-700">{c.cat}</span>
+                    <span className="tabular-nums text-slate-500">
+                      <span className="text-amber-600">{formatMoney(c.committed)}</span>
+                      <span className="text-slate-300"> / </span>
+                      {formatMoney(c.estimated)}
+                    </span>
+                  </div>
+                  <div className="relative h-2 overflow-hidden rounded-full bg-slate-100">
+                    {/* estimate track */}
+                    <div
+                      className="absolute inset-y-0 left-0 rounded-full bg-brand-200"
+                      style={{ width: `${(c.estimated / maxCat) * 100}%` }}
+                    />
+                    {/* committed fill */}
+                    <div
+                      className="absolute inset-y-0 left-0 rounded-full bg-amber-500"
+                      style={{ width: `${(c.committed / maxCat) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+              <div className="flex items-center gap-4 pt-1 text-xs text-slate-400">
+                <span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-amber-500" /> Committed</span>
+                <span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-brand-200" /> Estimated</span>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Needs attention */}
+        <section className="card p-5">
+          <h2 className="mb-4 font-semibold text-slate-800">Needs attention</h2>
+          <div className="space-y-2.5">
+            <Attn to="/tasks" label="Blocked tasks" value={blockedTasks} tone="rose" />
+            <Attn to="/tasks" label="High-priority open" value={highTasks} tone="amber" />
+            <Attn to="/risks" label="Open risks" value={openRisks} tone="rose" />
+            <Attn to="/risks" label="Pending decisions" value={pendingDecisions} tone="amber" />
+          </div>
+        </section>
+      </div>
+
+      {/* Selection progress */}
+      <section>
+        <h2 className="mb-3 font-semibold text-slate-800">Selection progress</h2>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {selections.map((s) => {
+            const pct = s.total ? Math.round((s.chosen / s.total) * 100) : 0;
+            return (
+              <Link key={s.label} to={s.to} className="card p-4 transition hover:shadow-card-hover">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-sm font-medium text-slate-700">{s.label}</span>
+                  <span className="text-xs text-slate-400">{s.chosen}/{s.total}</span>
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-full rounded-full bg-brand-500" style={{ width: `${pct}%` }} />
+                </div>
+                <div className="mt-1.5 text-xs text-slate-400">
+                  {s.total === 0 ? 'No requirements yet' : `${pct}% selected`}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
 
-const TONES: Record<string, string> = {
-  indigo: 'text-indigo-600',
-  red: 'text-red-600',
+const KPI_TONES: Record<string, string> = {
+  indigo: 'text-brand-600',
   amber: 'text-amber-600',
   emerald: 'text-emerald-600',
-  slate: 'text-slate-800',
+  rose: 'text-rose-600',
 };
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-5">
-      <h2 className="mb-2 text-sm font-semibold text-slate-500">{title}</h2>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">{children}</div>
-    </div>
-  );
-}
-
-function StatCard({
+function Kpi({
+  to,
+  icon,
   label,
   value,
-  to,
+  money,
+  sub,
   tone,
 }: {
-  label: string;
-  value: number;
   to: string;
+  icon: string;
+  label: string;
+  value?: number;
+  money?: number;
+  sub: string;
   tone: string;
 }) {
   return (
-    <Link to={to} className="card p-4 transition hover:shadow-md">
-      <div className="text-xs font-medium uppercase tracking-wide text-slate-400">{label}</div>
-      <div className={`mt-1 text-3xl font-semibold ${TONES[tone]}`}>{value}</div>
+    <Link to={to} className="card p-4 transition hover:shadow-card-hover">
+      <div className="flex items-center justify-between">
+        <span className="section-label">{label}</span>
+        <span className="text-base">{icon}</span>
+      </div>
+      <div className={`mt-2 text-2xl font-semibold ${KPI_TONES[tone]}`}>
+        {money !== undefined ? <Money value={money} /> : value}
+      </div>
+      <div className="mt-0.5 text-xs text-slate-400">{sub}</div>
     </Link>
   );
 }
 
-function MoneyCard({
-  label,
-  value,
-  to,
-  tone,
-}: {
-  label: string;
-  value: number;
-  to: string;
-  tone: string;
-}) {
+const ATTN_TONES: Record<string, string> = {
+  rose: 'bg-rose-50 text-rose-700',
+  amber: 'bg-amber-50 text-amber-700',
+};
+
+function Attn({ to, label, value, tone }: { to: string; label: string; value: number; tone: string }) {
   return (
-    <Link to={to} className="card p-4 transition hover:shadow-md">
-      <div className="text-xs font-medium uppercase tracking-wide text-slate-400">{label}</div>
-      <div className={`mt-1 text-2xl font-semibold ${TONES[tone]}`}>
-        <Money value={value} />
-      </div>
+    <Link
+      to={to}
+      className="flex items-center justify-between rounded-xl border border-slate-100 px-3 py-2.5 transition hover:bg-slate-50"
+    >
+      <span className="text-sm text-slate-600">{label}</span>
+      <span
+        className={`min-w-[1.75rem] rounded-full px-2 py-0.5 text-center text-xs font-semibold ${
+          value > 0 ? ATTN_TONES[tone] : 'bg-slate-100 text-slate-400'
+        }`}
+      >
+        {value}
+      </span>
     </Link>
   );
 }

@@ -1,9 +1,18 @@
-// Money formatting in EUR. Falls back to 0.
+// Active currency, controlled from Settings (SettingsProvider calls setCurrency).
+let CURRENCY = 'EUR';
+export function setCurrency(code: string) {
+  CURRENCY = code || 'EUR';
+}
+export function getCurrency() {
+  return CURRENCY;
+}
+
+// Money formatting in the active currency. Falls back to 0.
 export function formatMoney(value: number | undefined | null): string {
   const n = Number(value) || 0;
   return new Intl.NumberFormat('en-GB', {
     style: 'currency',
-    currency: 'EUR',
+    currency: CURRENCY,
     maximumFractionDigits: 0,
   }).format(n);
 }
