@@ -9,15 +9,20 @@ import type { EntityDoc, RelatedType } from '../types';
 export default function MediaGallery({
   relatedType,
   relatedId,
+  hero = false,
 }: {
   relatedType: RelatedType;
   relatedId: string;
+  hero?: boolean; // show the first image as a large cover above the grid
 }) {
   const media = useRelated('media', relatedType, relatedId);
   const { displayName } = useAuth();
   const [busy, setBusy] = useState(false);
   const [viewing, setViewing] = useState<EntityDoc | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const heroImg = hero ? media.find((m) => m.type === 'image') : undefined;
+  const gridMedia = heroImg ? media.filter((m) => m.id !== heroImg.id) : media;
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -60,13 +65,27 @@ export default function MediaGallery({
         />
       </div>
 
+      {/* Large cover (hero mode) */}
+      {heroImg && (
+        <button
+          onClick={() => setViewing(heroImg)}
+          className="mb-3 block w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
+        >
+          <img
+            src={heroImg.downloadUrl}
+            alt={heroImg.fileName}
+            className="aspect-[16/9] w-full object-cover transition hover:scale-[1.02]"
+          />
+        </button>
+      )}
+
       {media.length === 0 ? (
         <p className="rounded-lg border border-dashed border-slate-300 px-3 py-6 text-center text-xs text-slate-400">
           No media uploaded yet.
         </p>
-      ) : (
+      ) : gridMedia.length === 0 ? null : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {media.map((m) => {
+          {gridMedia.map((m) => {
             const pdf = isPdf(m.fileName);
             const preview = canPreview(m);
             return (
