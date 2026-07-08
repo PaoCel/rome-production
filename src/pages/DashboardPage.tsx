@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useCollection } from '../hooks/useCollection';
 import { useAuth } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
 import { BUDGET_CATEGORIES } from '../data/constants';
 import { formatMoney } from '../utils/format';
 import Money from '../components/ui/Money';
@@ -9,6 +10,7 @@ const COMMITTED_STAGES = ['Committed', 'Approved', 'Paid'];
 
 export default function DashboardPage() {
   const { displayName } = useAuth();
+  const { settings } = useSettings();
   const tasks = useCollection('tasks').items;
   const budget = useCollection('budgetItems').items;
   const risks = useCollection('risks').items;
@@ -68,7 +70,7 @@ export default function DashboardPage() {
           Ciao, {displayName}
         </h1>
         <p className="mt-1 text-sm text-slate-500">
-          Rejoice · Story 4 — everything you're tracking, at a glance.
+          {settings.productionSubtitle} — everything you're tracking, at a glance.
         </p>
       </div>
 

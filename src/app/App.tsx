@@ -13,6 +13,7 @@ import PropsPage from '../pages/PropsPage';
 import ProductionOptionsPage from '../pages/ProductionOptionsPage';
 import ContactsPage from '../pages/ContactsPage';
 import RisksDecisionsPage from '../pages/RisksDecisionsPage';
+import SettingsPage from '../pages/SettingsPage';
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
               <Route path="/production" element={<ProductionOptionsPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
               <Route path="/risks" element={<RisksDecisionsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Route>
           </Route>
 

@@ -1,7 +1,10 @@
 /**
  * One-off seed script: loads the real "Rejoice" production data
- * (scripts/rejoice-seed-data.json, extracted from the Excel tracker) into
+ * (src/data/rejoiceSeed.json, extracted from the Excel tracker) into
  * Firestore under projects/default-project/{collection}.
+ *
+ * The same dataset also powers the in-app "Import Excel data" button on the
+ * Settings page (src/services/seed.ts). This script is the offline equivalent.
  *
  * Uses the Firebase Admin SDK (bypasses security rules), so you need a
  * service-account key from the Firebase console:
@@ -46,7 +49,7 @@ async function resolveCredential() {
 }
 
 async function main() {
-  const dataPath = join(__dirname, 'rejoice-seed-data.json');
+  const dataPath = join(__dirname, '..', 'src', 'data', 'rejoiceSeed.json');
   const data = JSON.parse(await readFile(dataPath, 'utf8'));
 
   if (DRY_RUN) {

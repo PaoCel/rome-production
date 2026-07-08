@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { NAV_GROUPS } from './navItems';
 import { useAuth } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
 
 export default function AppLayout() {
   const { displayName, logout } = useAuth();
+  const { settings } = useSettings();
   const [open, setOpen] = useState(false);
 
   const nav = (
@@ -80,7 +82,7 @@ export default function AppLayout() {
             </svg>
           </button>
           <span className="flex items-center gap-2 font-semibold text-slate-800">
-            <span>🎬</span> Rome Production
+            <span>🎬</span> {settings.productionName}
           </span>
         </header>
 
@@ -93,15 +95,18 @@ export default function AppLayout() {
 }
 
 function Brand() {
+  const { settings } = useSettings();
   return (
     <div className="flex items-center gap-2.5 px-1">
       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-lg shadow-sm">
         🎬
       </div>
       <div className="leading-tight">
-        <div className="font-display text-[15px] font-semibold text-slate-800">Rome Production</div>
+        <div className="font-display text-[15px] font-semibold text-slate-800">
+          {settings.productionName}
+        </div>
         <div className="text-[11px] font-medium uppercase tracking-wider text-accent-600">
-          Rejoice · Story 4
+          {settings.productionSubtitle}
         </div>
       </div>
     </div>

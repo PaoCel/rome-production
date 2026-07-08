@@ -18,6 +18,8 @@ export const NAV_ITEMS: NavItem[] = [
 
   { to: '/contacts', label: 'Contacts', icon: '📇', group: 'Resources' },
   { to: '/risks', label: 'Risks & Decisions', icon: '⚠️', group: 'Resources' },
+
+  { to: '/settings', label: 'Settings', icon: '⚙️', group: 'System' },
 ];
 
 // Nav grouped by section, preserving order — used to render the sidebar.
