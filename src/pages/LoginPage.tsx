@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
 
 export default function LoginPage() {
   const { user, loading, login, register, loginWithGoogle } = useAuth();
+  const { settings } = useSettings();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,9 +47,11 @@ export default function LoginPage() {
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-600 text-2xl shadow-sm">
             🎬
           </div>
-          <h1 className="font-display text-2xl font-semibold text-slate-900">Rome Production</h1>
+          <h1 className="font-display text-2xl font-semibold text-slate-900">
+            {settings.productionName}
+          </h1>
           <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-accent-600">
-            Rejoice · Story 4
+            {settings.productionSubtitle}
           </p>
           <p className="mt-1 text-sm text-slate-500">Sign in to manage the production</p>
         </div>

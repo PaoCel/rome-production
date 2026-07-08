@@ -63,9 +63,13 @@ The MVP uses a single project id: `default-project`. Options link to their requi
 
 ## Seed the "Rejoice" data
 
-`scripts/rejoice-seed-data.json` holds the real Rejoice / Story 4 data extracted from the
-Excel tracker, already mapped to the new schema (with requirement→option links preserved).
-Load it into Firestore once with the Admin SDK:
+`src/data/rejoiceSeed.json` holds the real Rejoice / Story 4 data extracted from the Excel
+tracker, already mapped to the new schema (with requirement→option links preserved). It powers
+two things:
+
+- **In-app (easiest):** the **Settings** page has *Import Excel data* and *Remove Excel data*
+  buttons — run them while signed in, no key needed (`src/services/seed.ts`).
+- **Offline / CLI:** load it into Firestore with the Admin SDK:
 
 1. In the Firebase console: **Project settings → Service accounts → Generate new private key**.
    Save it as `serviceAccountKey.json` in the repo root (it is gitignored).
