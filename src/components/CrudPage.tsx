@@ -74,7 +74,7 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
         }
       />
 
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <SearchInput value={search} onChange={setSearch} />
         <FilterBar
           filters={filterDefs}

@@ -120,7 +120,7 @@ export default function BudgetPage() {
       />
 
       {/* Total budget card */}
-      <div className="card mb-5 grid grid-cols-2 gap-4 p-5 lg:grid-cols-4">
+      <div className="card mb-5 grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
         <Stat label="Estimated total" value={totals.estimated} accent="text-slate-800" />
         <Stat label="Committed / approved" value={totals.committed} accent="text-amber-600" />
         <Stat label="Actual" value={totals.actual} accent="text-indigo-600" />
@@ -130,7 +130,7 @@ export default function BudgetPage() {
       {/* Per-category summary */}
       {byCategory.length > 0 && (
         <div className="card mb-6 overflow-x-auto p-0">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[38rem] text-sm">
             <thead>
               <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-400">
                 <th className="px-4 py-3 font-medium">Category</th>
@@ -156,7 +156,7 @@ export default function BudgetPage() {
       )}
 
       {/* Editable list */}
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-semibold text-slate-800">Line items</h2>
         <SearchInput value={search} onChange={setSearch} />
       </div>
@@ -170,7 +170,7 @@ export default function BudgetPage() {
           {filtered.map((it) => {
             const diff = (Number(it.actualCost) || 0) - (Number(it.estimatedCost) || 0);
             return (
-              <div key={it.id} className="flex flex-wrap items-center gap-3 p-3 sm:flex-nowrap">
+              <div key={it.id} className="flex flex-col gap-3 p-3 md:flex-row md:items-center">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="break-words font-medium text-slate-800">
@@ -200,7 +200,7 @@ export default function BudgetPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-x-5 text-right text-sm">
+                <div className="grid w-full grid-cols-3 gap-x-3 text-left text-sm sm:text-right md:w-auto md:gap-x-5">
                   <div>
                     <div className="text-xs text-slate-400">Est.</div>
                     <Money value={it.estimatedCost} className="font-medium text-slate-700" />
@@ -220,7 +220,7 @@ export default function BudgetPage() {
                   </div>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-1.5">
+                <div className="grid grid-cols-2 gap-1.5 md:flex md:shrink-0 md:items-center">
                   <button className="btn-secondary px-2.5 py-1.5 text-xs" onClick={() => setEditing(it)}>
                     Edit
                   </button>

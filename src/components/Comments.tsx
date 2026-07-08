@@ -47,12 +47,12 @@ export default function Comments({
       <div className="space-y-2">
         {sorted.map((c) => (
           <div key={c.id} className="group rounded-lg border border-slate-200 bg-white px-3 py-2">
-            <div className="mb-0.5 flex items-center justify-between">
+            <div className="mb-0.5 flex flex-wrap items-center justify-between gap-2">
               <span className="text-xs font-medium text-slate-700">{c.authorName}</span>
               <div className="flex items-center gap-2">
                 <span className="text-[11px] text-slate-400">{formatDate(c.createdAt)}</span>
                 <button
-                  className="text-slate-300 opacity-0 transition group-hover:opacity-100 hover:text-red-500"
+                  className="text-slate-400 transition hover:text-red-500 sm:text-slate-300 sm:opacity-0 sm:group-hover:opacity-100"
                   onClick={() => deleteItem('comments', c.id)}
                   aria-label="Delete comment"
                 >
@@ -69,14 +69,14 @@ export default function Comments({
         ))}
       </div>
 
-      <div className="mt-2 flex items-end gap-2">
+      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end">
         <textarea
           className="input min-h-[42px] resize-y"
           placeholder="Write a comment…"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <button className="btn-primary" onClick={post} disabled={posting || !text.trim()}>
+        <button className="btn-primary w-full sm:w-auto" onClick={post} disabled={posting || !text.trim()}>
           Post
         </button>
       </div>

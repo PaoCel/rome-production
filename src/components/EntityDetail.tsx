@@ -65,9 +65,9 @@ export default function EntityDetail({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <h3 className="break-words text-xl font-semibold text-slate-800">{title}</h3>
-          <button className="btn-secondary shrink-0" onClick={onEdit}>
+          <button className="btn-secondary w-full sm:w-auto sm:shrink-0" onClick={onEdit}>
             Edit
           </button>
         </div>
@@ -82,9 +82,9 @@ export default function EntityDetail({
 
       {/* Add to budget */}
       {config.budgetSource && (
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
           <button
-            className="btn-primary"
+            className="btn-primary w-full sm:w-auto"
             onClick={handleAddToBudget}
             disabled={!isSelected}
             title={isSelected ? '' : 'Mark as Selected first'}
