@@ -5,6 +5,7 @@ import {
   BUDGET_CATEGORIES,
   BUDGET_STAGES,
   PAYMENT_STATUSES,
+  isCommittedItem,
 } from '../data/constants';
 import type { EntityDoc, FieldConfig } from '../types';
 import PageHeader from '../components/PageHeader';
@@ -39,10 +40,6 @@ const SOURCE_LABEL: Record<string, string> = {
   propOption: 'From props',
 };
 
-const COMMITTED_STAGES = ['Committed', 'Approved', 'Paid'];
-const isCommitted = (it: EntityDoc) =>
-  !!it.committed || COMMITTED_STAGES.includes(it.budgetStage);
-
 export default function BudgetPage() {
   const { items, loading } = useCollection('budgetItems');
   const [search, setSearch] = useState('');
@@ -59,7 +56,7 @@ export default function BudgetPage() {
       const act = Number(it.actualCost) || 0;
       estimated += est;
       actual += act;
-      if (isCommitted(it)) committed += est;
+      if (isCommittedItem(it)) committed += est;
       if (it.paymentStatus === 'Paid' || it.budgetStage === 'Paid') paid += act;
     }
     return { estimated, committed, actual, paid };
@@ -74,7 +71,7 @@ export default function BudgetPage() {
       const est = Number(it.estimatedCost) || 0;
       entry.estimated += est;
       entry.actual += Number(it.actualCost) || 0;
-      if (isCommitted(it)) entry.committed += est;
+      if (isCommittedItem(it)) entry.committed += est;
       entry.count += 1;
       map.set(cat, entry);
     }

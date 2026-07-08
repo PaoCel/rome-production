@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react';
 import type { EntityConfig } from '../data/entities';
 import type { EntityDoc } from '../types';
 import { useCollection } from '../hooks/useCollection';
-import { createItem, deleteItem, updateItem } from '../services/firestore';
+import { createItem, updateItem } from '../services/firestore';
+import { deleteEntityCascade } from '../services/cascade';
 import { OWNERS } from '../data/owners';
 import PageHeader from './PageHeader';
 import SearchInput from './ui/SearchInput';
@@ -58,7 +59,8 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
 
   async function handleDelete(item: EntityDoc) {
     if (!confirm(`Delete "${item[config.titleField] || 'this item'}"?`)) return;
-    await deleteItem(config.collection, item.id);
+    // Cascade: also removes linked options, media, comments and budget items.
+    await deleteEntityCascade(config, item);
     if (detail?.id === item.id) setDetail(null);
   }
 

@@ -2,8 +2,9 @@ import { useState } from 'react';
 import type { EntityConfig } from '../data/entities';
 import type { EntityDoc } from '../types';
 import { useCollection } from '../hooks/useCollection';
-import { createItem, deleteItem, updateItem } from '../services/firestore';
+import { createItem, updateItem } from '../services/firestore';
 import { addToBudget } from '../services/budget';
+import { deleteOptionCascade } from '../services/cascade';
 import EntityForm from './form/EntityForm';
 import MediaGallery from './MediaGallery';
 import Pill from './ui/Pill';
@@ -29,6 +30,7 @@ export default function LinkedOptions({
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<EntityDoc | null>(null);
   const [budgetMsg, setBudgetMsg] = useState('');
+  const [committingId, setCommittingId] = useState<string | null>(null);
 
   const options = allOptions.filter((o) => o[linkField] === requirement.id);
   const selectedId = requirement[selectedField] as string | undefined;
@@ -45,7 +47,8 @@ export default function LinkedOptions({
 
   async function handleDelete(o: EntityDoc) {
     if (!confirm(`Delete "${o[optionConfig.titleField] || 'this option'}"?`)) return;
-    await deleteItem(optionConfig.collection, o.id);
+    // Cascade: also removes the option's media, comments and budget item.
+    await deleteOptionCascade(optionConfig, o);
     if (selectedId === o.id) {
       await updateItem(config.collection, requirement.id, { [selectedField]: '' });
     }
@@ -57,10 +60,18 @@ export default function LinkedOptions({
   }
 
   async function commit(o: EntityDoc) {
-    if (!optionConfig.budgetSource) return;
-    const res = await addToBudget(optionConfig.budgetSource, o);
-    setBudgetMsg(res === 'created' ? 'Committed to budget ✓' : 'Budget updated ✓');
-    setTimeout(() => setBudgetMsg(''), 2500);
+    if (!optionConfig.budgetSource || committingId) return;
+    setCommittingId(o.id);
+    try {
+      const res = await addToBudget(optionConfig.budgetSource, o);
+      setBudgetMsg(res === 'created' ? 'Committed to budget ✓' : 'Budget updated ✓');
+    } catch (err) {
+      console.error(err);
+      setBudgetMsg('Could not commit to budget. Try again.');
+    } finally {
+      setCommittingId(null);
+      setTimeout(() => setBudgetMsg(''), 2500);
+    }
   }
 
   const showForm = creating || !!editing;
@@ -144,10 +155,10 @@ export default function LinkedOptions({
                   <button
                     className="btn-secondary px-2.5 py-1.5 text-xs"
                     onClick={() => commit(o)}
-                    disabled={!isSelected}
+                    disabled={!isSelected || committingId === o.id}
                     title={isSelected ? '' : 'Select this option first'}
                   >
-                    Commit to budget
+                    {committingId === o.id ? 'Committing…' : 'Commit to budget'}
                   </button>
                 )}
                 <button

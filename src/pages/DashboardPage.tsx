@@ -2,11 +2,9 @@ import { Link } from 'react-router-dom';
 import { useCollection } from '../hooks/useCollection';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
-import { BUDGET_CATEGORIES } from '../data/constants';
+import { BUDGET_CATEGORIES, isCommittedItem } from '../data/constants';
 import { formatMoney } from '../utils/format';
 import Money from '../components/ui/Money';
-
-const COMMITTED_STAGES = ['Committed', 'Approved', 'Paid'];
 
 export default function DashboardPage() {
   const { displayName } = useAuth();
@@ -28,7 +26,7 @@ export default function DashboardPage() {
 
   const estimated = sum(budget, 'estimatedCost');
   const committed = budget
-    .filter((b) => b.committed || COMMITTED_STAGES.includes(b.budgetStage))
+    .filter(isCommittedItem)
     .reduce((s, b) => s + num(b.estimatedCost), 0);
   const actual = sum(budget, 'actualCost');
 
@@ -54,9 +52,7 @@ export default function DashboardPage() {
     return {
       cat,
       estimated: rows.reduce((s, b) => s + num(b.estimatedCost), 0),
-      committed: rows
-        .filter((b) => b.committed || COMMITTED_STAGES.includes(b.budgetStage))
-        .reduce((s, b) => s + num(b.estimatedCost), 0),
+      committed: rows.filter(isCommittedItem).reduce((s, b) => s + num(b.estimatedCost), 0),
     };
   }).filter((c) => c.estimated > 0);
   const maxCat = Math.max(1, ...categoryRollup.map((c) => c.estimated));

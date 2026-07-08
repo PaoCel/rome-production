@@ -26,6 +26,17 @@ export const PAYMENT_STATUSES = ['Not paid', 'Partially paid', 'Paid', 'Not need
 // Budget stage — the lifecycle of a real budget commitment (richer than BUDGET_STATUSES).
 export const BUDGET_STAGES = ['Estimate only', 'Committed', 'Approved', 'Paid', 'Cancelled'];
 
+// Which budget stages count as a real commitment. Single source of truth for the
+// budget/dashboard rollups (previously duplicated in three places).
+export const COMMITTED_STAGES = ['Committed', 'Approved', 'Paid'];
+export function isCommittedItem(it: {
+  committed?: boolean;
+  budgetStage?: string;
+  [key: string]: any;
+}): boolean {
+  return !!it.committed || COMMITTED_STAGES.includes(it.budgetStage || '');
+}
+
 // Master list of budget categories (from Excel 19_BUDGET_CATEGORIES).
 export const BUDGET_CATEGORIES = [
   'Cast',

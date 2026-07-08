@@ -30,6 +30,7 @@ export default function EntityDetail({
   onEdit: () => void;
 }) {
   const [budgetMsg, setBudgetMsg] = useState('');
+  const [committing, setCommitting] = useState(false);
 
   const title = item[config.titleField] || 'Untitled';
 
@@ -55,10 +56,18 @@ export default function EntityDetail({
   const isSelected = config.selectedField ? !!item[config.selectedField] : false;
 
   async function handleAddToBudget() {
-    if (!config.budgetSource) return;
-    const res = await addToBudget(config.budgetSource, item);
-    setBudgetMsg(res === 'created' ? 'Added to budget ✓' : 'Budget item updated ✓');
-    setTimeout(() => setBudgetMsg(''), 2500);
+    if (!config.budgetSource || committing) return;
+    setCommitting(true);
+    try {
+      const res = await addToBudget(config.budgetSource, item);
+      setBudgetMsg(res === 'created' ? 'Added to budget ✓' : 'Budget item updated ✓');
+    } catch (err) {
+      console.error(err);
+      setBudgetMsg('Could not add to budget. Try again.');
+    } finally {
+      setCommitting(false);
+      setTimeout(() => setBudgetMsg(''), 2500);
+    }
   }
 
   return (
@@ -86,10 +95,10 @@ export default function EntityDetail({
           <button
             className="btn-primary w-full sm:w-auto"
             onClick={handleAddToBudget}
-            disabled={!isSelected}
+            disabled={!isSelected || committing}
             title={isSelected ? '' : 'Mark as Selected first'}
           >
-            Add to budget
+            {committing ? 'Adding…' : 'Add to budget'}
           </button>
           {budgetMsg && <span className="text-sm text-emerald-600">{budgetMsg}</span>}
           {!isSelected && <span className="text-xs text-slate-400">Selected items only</span>}

@@ -1,4 +1,5 @@
 import { createItem, findWhere, updateItem, where } from './firestore';
+import { COMMITTED_STAGES } from '../data/constants';
 import type { EntityDoc } from '../types';
 
 export type BudgetSourceType =
@@ -86,7 +87,7 @@ export async function addToBudget(
     estimatedCost: Number(source[cfg.estimateField]) || 0,
     actualCost: Number(source[cfg.actualField]) || 0,
     budgetStage: stage || 'Committed',
-    committed: stage === 'Committed' || stage === 'Approved' || stage === 'Paid',
+    committed: COMMITTED_STAGES.includes(stage || ''),
     paymentStatus: paymentFromStage(stage),
     supplierContact: source.contactName || '',
     sourceType,
