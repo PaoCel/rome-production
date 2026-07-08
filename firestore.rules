@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Only approved emails may access app data.
+    // Keep this list in sync with src/data/approvedEmails.ts.
+    function isApproved() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'paolocelestini23@gmail.com',
+          'spaminutili24@gmail.com'
+        ];
+    }
+
+    match /projects/{projectId} {
+      allow read, write: if isApproved();
+
+      match /{subCollection}/{docId} {
+        allow read, write: if isApproved();
+      }
+    }
+
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
