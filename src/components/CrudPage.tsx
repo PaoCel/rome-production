@@ -11,6 +11,7 @@ import EmptyState from './ui/EmptyState';
 import EntityCard from './EntityCard';
 import EntityForm from './form/EntityForm';
 import EntityDetail from './EntityDetail';
+import MediaGallery from './MediaGallery';
 import SidePanel from './ui/SidePanel';
 
 // One reusable page powering every card-based CRUD section.
@@ -124,6 +125,18 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
             setEditing(null);
           }}
         />
+
+        {/* Media upload while editing an existing item. */}
+        {config.media && config.relatedType && editing && (
+          <div className="mt-6 border-t border-slate-200 pt-5">
+            <MediaGallery relatedType={config.relatedType} relatedId={editing.id} />
+          </div>
+        )}
+        {config.media && config.relatedType && creating && !editing && (
+          <p className="mt-6 border-t border-slate-200 pt-5 text-xs text-slate-400">
+            Save this {config.singular.toLowerCase()} first, then reopen it to upload photos and files.
+          </p>
+        )}
       </SidePanel>
 
       {/* Detail */}
