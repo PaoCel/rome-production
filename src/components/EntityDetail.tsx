@@ -6,10 +6,17 @@ import Money from './ui/Money';
 import MediaGallery from './MediaGallery';
 import Comments from './Comments';
 import RelatedTasks from './RelatedTasks';
+import LinkedOptions from './LinkedOptions';
 import { addToBudget } from '../services/budget';
 import { formatDate } from '../utils/format';
 
-const MONEY_FIELDS = new Set(['costEstimate', 'actualCost', 'feeEstimate', 'estimatedCost']);
+const MONEY_FIELDS = new Set([
+  'costEstimate',
+  'actualCost',
+  'feeEstimate',
+  'actualFee',
+  'estimatedCost',
+]);
 const LINKY = /(link|website)/i;
 
 // Read-only detail view for a CRUD entity, assembled from its config.
@@ -118,6 +125,9 @@ export default function EntityDetail({
           )}
         </div>
       )}
+
+      {/* Linked options (two-tier requirement → options) */}
+      {config.optionConfig && <LinkedOptions config={config} requirement={item} />}
 
       {/* Media */}
       {config.media && config.relatedType && (

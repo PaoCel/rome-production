@@ -10,15 +10,24 @@ Hosting).
 ## Features
 
 - 🔐 Auth: email/password + Google sign-in, protected routes
-- 📊 Dashboard with live counts and budget totals
+- 📊 Dashboard: KPI tiles, budget-by-category bars, selection progress, "needs attention"
 - ✅ Tasks: board + list views, filters, priority colours
-- 💶 Budget: totals, category cards, editable line items
-- 📍 Locations · 🎬 Casting · 📦 Production options: cards, detail panels, media galleries, comments
-- 📇 Reusable contacts referenced across entities
-- ⚠️ Risks & decisions
-- 🖼️ Media uploads (photos / video / documents) via Firebase Storage
+- 💶 Budget: per-category summary, budget stages (Estimate → Committed → Approved → Paid), est/actual/difference
+- 🎬 **Two-tier planning** for Locations, Cast, Crew and Props & Wardrobe:
+  each *requirement* holds several *options* — compare them, pick one, then commit it to the budget
+- 📦 Production options and 📇 contacts as flat lists; ⚠️ risks & decisions
+- 🖼️ Media uploads (photos / video / documents) on every option via Firebase Storage
 - 💬 Comments on every entity
-- 🔗 "Add to budget" from any selected item (de-duplicated by source)
+- 🔗 One-click "Commit to budget" from a selected option (de-duplicated by source)
+
+### Two-tier model (requirement → options)
+
+Locations, Cast, Crew and Props each split into a **requirement** collection (what the
+production needs) and an **option** collection (candidates that could fulfil it), driven
+declaratively: a requirement's `EntityConfig` points at its option config via `optionConfig`,
+and the shared `LinkedOptions` component (rendered inside `EntityDetail`) lists options, picks
+the winner, and commits it to the budget. Adding a new two-tier area is two `EntityConfig`
+objects plus a one-line page.
 
 ## Project structure
 
@@ -41,11 +50,16 @@ src/
 
 ```
 projects/default-project
-  /tasks /budgetItems /locations /castingCandidates /productionOptions
-  /contacts /risks /decisions /media /comments
+  /tasks /budgetItems /productionOptions /contacts /risks /decisions /media /comments
+  # two-tier (requirement → option) collections
+  /locationRequirements /locationOptions
+  /castRoles            /castingOptions
+  /crewRequirements     /crewOptions
+  /propItems            /propOptions
 ```
 
-The MVP uses a single project id: `default-project`.
+The MVP uses a single project id: `default-project`. Options link to their requirement via a
+`requirementId` field; a requirement stores its chosen option in `selectedOptionId`.
 
 ## Setup
 
