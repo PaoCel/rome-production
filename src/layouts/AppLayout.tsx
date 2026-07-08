@@ -49,7 +49,7 @@ export default function AppLayout() {
   );
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-dvh min-w-0">
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-slate-200/80 bg-white/70 p-4 backdrop-blur-sm md:flex">
         <Brand />
@@ -61,7 +61,7 @@ export default function AppLayout() {
       {open && (
         <div className="fixed inset-0 z-30 md:hidden">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-slate-200 bg-white p-4 shadow-panel">
+          <aside className="absolute inset-y-0 left-0 flex w-[min(18rem,85vw)] flex-col border-r border-slate-200 bg-white p-4 shadow-panel">
             <Brand />
             <div className="mt-6 flex-1 overflow-y-auto">{nav}</div>
             <UserBox name={displayName} onLogout={logout} />
@@ -70,7 +70,7 @@ export default function AppLayout() {
       )}
 
       {/* Main */}
-      <div className="flex min-h-screen flex-1 flex-col md:pl-64">
+      <div className="flex min-h-dvh min-w-0 flex-1 flex-col md:pl-64">
         <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-slate-200/80 bg-white/80 px-4 py-3 backdrop-blur md:hidden">
           <button
             className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100"
@@ -81,12 +81,13 @@ export default function AppLayout() {
               <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
           </button>
-          <span className="flex items-center gap-2 font-semibold text-slate-800">
-            <span>🎬</span> {settings.productionName}
+          <span className="min-w-0 flex items-center gap-2 font-semibold text-slate-800">
+            <span className="shrink-0">🎬</span>
+            <span className="truncate">{settings.productionName}</span>
           </span>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 lg:py-8">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-5 sm:px-6 lg:py-8">
           <Outlet />
         </main>
       </div>

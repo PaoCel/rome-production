@@ -27,11 +27,11 @@ export default function MediaViewer({
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-slate-900/80 backdrop-blur-sm">
-      <div className="flex items-center justify-between gap-3 px-4 py-3 text-white">
+      <div className="flex flex-col gap-2 px-4 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <span className="truncate text-sm font-medium" title={item.fileName}>
           {item.fileName}
         </span>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:shrink-0 sm:items-center">
           <a
             href={item.downloadUrl}
             target="_blank"

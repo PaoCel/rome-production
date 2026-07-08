@@ -67,14 +67,14 @@ export default function LinkedOptions({
 
   return (
     <section>
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h4 className="text-sm font-semibold text-slate-700">
           Options{' '}
           {options.length > 0 && <span className="text-slate-400">({options.length})</span>}
         </h4>
         {!showForm && (
           <button
-            className="btn-secondary px-2.5 py-1.5 text-xs"
+            className="btn-secondary w-full px-2.5 py-1.5 text-xs sm:w-auto"
             onClick={() => {
               setEditing(null);
               setCreating(true);
@@ -102,7 +102,7 @@ export default function LinkedOptions({
                 isSelected ? 'border-brand-400 ring-1 ring-brand-200' : 'border-slate-200'
               }`}
             >
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="break-words font-medium text-slate-800">
@@ -123,13 +123,13 @@ export default function LinkedOptions({
                   )}
                 </div>
                 {cost ? (
-                  <span className="shrink-0 text-sm font-medium text-slate-700">
+                  <span className="text-sm font-medium text-slate-700 sm:shrink-0">
                     <Money value={cost} />
                   </span>
                 ) : null}
               </div>
 
-              <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-slate-100 pt-2.5">
+              <div className="mt-3 grid grid-cols-2 gap-1.5 border-t border-slate-100 pt-2.5 sm:flex sm:flex-wrap sm:items-center">
                 <button
                   className={
                     isSelected

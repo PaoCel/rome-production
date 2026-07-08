@@ -66,7 +66,7 @@ export default function DashboardPage() {
       {/* Hero */}
       <div>
         <p className="section-label">Production overview</p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-slate-900">
+        <h1 className="mt-1 break-words font-display text-2xl font-semibold text-slate-900 sm:text-3xl">
           Ciao, {displayName}
         </h1>
         <p className="mt-1 text-sm text-slate-500">
@@ -75,7 +75,7 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI row */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi to="/tasks" icon="✅" label="Open tasks" value={openTasks} sub={`${highTasks} high priority`} tone="indigo" />
         <Kpi to="/budget" icon="💶" label="Committed budget" money={committed} sub={`of ${formatMoney(estimated)} estimated`} tone="amber" />
         <Kpi to="/budget" icon="🧾" label="Actual spend" money={actual} sub="paid & incurred" tone="emerald" />
@@ -85,7 +85,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Budget by category */}
         <section className="card p-5 lg:col-span-2">
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="font-semibold text-slate-800">Budget by category</h2>
             <Link to="/budget" className="text-xs font-medium text-brand-600 hover:underline">
               View budget →
@@ -99,7 +99,7 @@ export default function DashboardPage() {
             <div className="space-y-3">
               {categoryRollup.map((c) => (
                 <div key={c.cat}>
-                  <div className="mb-1 flex items-center justify-between text-sm">
+                  <div className="mb-1 flex flex-col gap-0.5 text-sm sm:flex-row sm:items-center sm:justify-between">
                     <span className="font-medium text-slate-700">{c.cat}</span>
                     <span className="tabular-nums text-slate-500">
                       <span className="text-amber-600">{formatMoney(c.committed)}</span>
@@ -121,7 +121,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
-              <div className="flex items-center gap-4 pt-1 text-xs text-slate-400">
+              <div className="flex flex-wrap items-center gap-4 pt-1 text-xs text-slate-400">
                 <span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-amber-500" /> Committed</span>
                 <span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-brand-200" /> Estimated</span>
               </div>
@@ -144,7 +144,7 @@ export default function DashboardPage() {
       {/* Selection progress */}
       <section>
         <h2 className="mb-3 font-semibold text-slate-800">Selection progress</h2>
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {selections.map((s) => {
             const pct = s.total ? Math.round((s.chosen / s.total) * 100) : 0;
             return (
@@ -194,11 +194,11 @@ function Kpi({
 }) {
   return (
     <Link to={to} className="card p-4 transition hover:shadow-card-hover">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <span className="section-label">{label}</span>
         <span className="text-base">{icon}</span>
       </div>
-      <div className={`mt-2 text-2xl font-semibold ${KPI_TONES[tone]}`}>
+      <div className={`mt-2 break-words text-2xl font-semibold ${KPI_TONES[tone]}`}>
         {money !== undefined ? <Money value={money} /> : value}
       </div>
       <div className="mt-0.5 text-xs text-slate-400">{sub}</div>
@@ -215,7 +215,7 @@ function Attn({ to, label, value, tone }: { to: string; label: string; value: nu
   return (
     <Link
       to={to}
-      className="flex items-center justify-between rounded-xl border border-slate-100 px-3 py-2.5 transition hover:bg-slate-50"
+      className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3 py-2.5 transition hover:bg-slate-50"
     >
       <span className="text-sm text-slate-600">{label}</span>
       <span

@@ -46,11 +46,11 @@ export default function EntityForm({
         ))}
       </div>
 
-      <div className="flex items-center justify-end gap-2 pt-2">
-        <button type="button" className="btn-secondary" onClick={onCancel}>
+      <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:items-center sm:justify-end">
+        <button type="button" className="btn-secondary w-full sm:w-auto" onClick={onCancel}>
           Cancel
         </button>
-        <button type="submit" className="btn-primary" disabled={saving}>
+        <button type="submit" className="btn-primary w-full sm:w-auto" disabled={saving}>
           {saving ? 'Saving…' : submitLabel}
         </button>
       </div>

@@ -41,7 +41,7 @@ export default function MediaGallery({
 
   return (
     <section>
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex items-center justify-between gap-3">
         <h4 className="text-sm font-semibold text-slate-700">Media</h4>
         <button
           className="btn-secondary py-1.5 text-xs"
@@ -65,7 +65,7 @@ export default function MediaGallery({
           No media uploaded yet.
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {media.map((m) => {
             const pdf = isPdf(m.fileName);
             const preview = canPreview(m);

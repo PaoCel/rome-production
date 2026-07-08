@@ -113,7 +113,7 @@ export default function SettingsPage() {
               Writes {REJOICE_DOC_COUNT} items (locations, cast, crew, props, tasks, budget,
               contacts, risks, decisions) into the app. Safe to re-run — it overwrites by ID.
             </p>
-            <button className="btn-primary mt-3" onClick={doImport} disabled={!!busy}>
+            <button className="btn-primary mt-3 w-full sm:w-auto" onClick={doImport} disabled={!!busy}>
               {busy === 'import' ? 'Importing…' : 'Import from Excel'}
             </button>
           </div>
@@ -124,7 +124,7 @@ export default function SettingsPage() {
               Deletes the items that came from the Excel import so you can build everything
               manually. Items you added yourself are kept.
             </p>
-            <button className="btn-danger mt-3" onClick={doClear} disabled={!!busy}>
+            <button className="btn-danger mt-3 w-full sm:w-auto" onClick={doClear} disabled={!!busy}>
               {busy === 'clear' ? 'Removing…' : 'Remove Excel data'}
             </button>
           </div>
@@ -151,7 +151,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="card mb-5 p-5">
+    <section className="card mb-5 p-4 sm:p-5">
       <h2 className="font-display text-lg font-semibold text-slate-800">{title}</h2>
       {desc && <p className="mt-0.5 text-sm text-slate-500">{desc}</p>}
       <div className="mt-4 flex flex-col gap-4">{children}</div>
@@ -179,9 +179,9 @@ function Field({
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 last:pb-0">
+    <div className="flex flex-col gap-1 border-b border-slate-100 pb-2 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
       <span className="text-sm text-slate-500">{label}</span>
-      <span className="text-sm font-medium text-slate-700">{value}</span>
+      <span className="break-words text-sm font-medium text-slate-700 sm:text-right">{value}</span>
     </div>
   );
 }

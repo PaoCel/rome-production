@@ -105,9 +105,9 @@ export default function TasksPage() {
       />
 
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <SearchInput value={search} onChange={setSearch} />
-          <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5">
+          <div className="grid grid-cols-2 rounded-lg border border-slate-200 bg-white p-0.5 sm:inline-flex">
             {(['board', 'list'] as const).map((v) => (
               <button
                 key={v}
@@ -189,11 +189,11 @@ function BoardView({
   onMove: (t: EntityDoc, status: string) => void;
 }) {
   return (
-    <div className="flex gap-4 overflow-x-auto pb-2">
+    <div className="-mx-3 flex gap-3 overflow-x-auto px-3 pb-2 sm:mx-0 sm:gap-4 sm:px-0">
       {TASK_STATUSES.map((status) => {
         const col = tasks.filter((t) => (t.status || 'To do') === status);
         return (
-          <div key={status} className="w-72 shrink-0">
+          <div key={status} className="w-[82vw] max-w-80 shrink-0 sm:w-72">
             <div className="mb-2 flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
                 <Pill value={status} />
@@ -254,7 +254,7 @@ function ListView({
   return (
     <div className="flex flex-col gap-2">
       {tasks.map((t) => (
-        <div key={t.id} className="card flex items-center gap-3 p-3">
+        <div key={t.id} className="card flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
           <button onClick={() => onOpen(t)} className="min-w-0 flex-1 text-left">
             <p className="break-words font-medium text-slate-800">{t.title}</p>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
@@ -263,13 +263,13 @@ function ListView({
               {t.dueDate && <span>· Due {formatDate(t.dueDate)}</span>}
             </div>
           </button>
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0">
             <Pill value={t.priority} />
             <Pill value={t.status} />
-            <button className="btn-secondary px-2.5 py-1.5 text-xs" onClick={() => onEdit(t)}>
+            <button className="btn-secondary flex-1 px-2.5 py-1.5 text-xs sm:flex-none" onClick={() => onEdit(t)}>
               Edit
             </button>
-            <button className="btn-danger px-2.5 py-1.5 text-xs" onClick={() => onDelete(t)}>
+            <button className="btn-danger flex-1 px-2.5 py-1.5 text-xs sm:flex-none" onClick={() => onDelete(t)}>
               Delete
             </button>
           </div>

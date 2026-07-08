@@ -53,10 +53,10 @@ export default function RelatedTasks({
         {related.map((t) => (
           <div
             key={t.id}
-            className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2"
+            className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
           >
             <span className="break-words text-sm text-slate-700">{t.title}</span>
-            <div className="flex shrink-0 items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0">
               <Pill value={t.priority} />
               <Pill value={t.status} />
             </div>
@@ -64,7 +64,7 @@ export default function RelatedTasks({
         ))}
       </div>
 
-      <div className="mt-2 flex items-center gap-2">
+      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
         <input
           className="input"
           placeholder="Add a task…"
@@ -72,7 +72,7 @@ export default function RelatedTasks({
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && add()}
         />
-        <button className="btn-secondary" onClick={add} disabled={adding || !title.trim()}>
+        <button className="btn-secondary w-full sm:w-auto" onClick={add} disabled={adding || !title.trim()}>
           Add
         </button>
       </div>

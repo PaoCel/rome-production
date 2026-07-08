@@ -32,12 +32,12 @@ export default function SidePanel({
         onClick={onClose}
       />
       <div
-        className={`relative flex h-full w-full flex-col rounded-l-2xl bg-slate-50 shadow-panel ${
-          wide ? 'max-w-3xl' : 'max-w-xl'
+        className={`relative flex h-dvh w-full flex-col bg-slate-50 shadow-panel sm:rounded-l-2xl ${
+          wide ? 'sm:max-w-3xl' : 'sm:max-w-xl'
         }`}
       >
-        <header className="flex items-center justify-between rounded-tl-2xl border-b border-slate-200 bg-white px-5 py-4">
-          <h2 className="font-display text-lg font-semibold text-slate-800">{title}</h2>
+        <header className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3 sm:rounded-tl-2xl sm:px-5 sm:py-4">
+          <h2 className="min-w-0 truncate font-display text-lg font-semibold text-slate-800">{title}</h2>
           <button
             onClick={onClose}
             className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
@@ -54,7 +54,7 @@ export default function SidePanel({
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-5 py-5">{children}</div>
+        <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">{children}</div>
 
         {footer && (
           <footer className="flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-5 py-3">

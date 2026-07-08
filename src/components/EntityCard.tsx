@@ -49,7 +49,7 @@ export default function EntityCard({
         )}
       </button>
 
-      <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
+      <div className="mt-3 flex flex-col gap-3 border-t border-slate-100 pt-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm">
           {cost ? (
             <span className="font-medium text-slate-700">
@@ -59,7 +59,7 @@ export default function EntityCard({
             <span className="text-slate-300">—</span>
           )}
         </div>
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="grid grid-cols-2 gap-1 sm:flex sm:shrink-0 sm:items-center">
           <button className="btn-secondary px-2.5 py-1.5 text-xs" onClick={onEdit}>
             Edit
           </button>
