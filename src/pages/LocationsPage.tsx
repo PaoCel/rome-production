@@ -1,6 +1,6 @@
-import CrudPage from '../components/CrudPage';
+import TwoTierPage from '../components/TwoTierPage';
 import { LOCATION_REQ_CONFIG } from '../data/entities';
 
 export default function LocationsPage() {
-  return <CrudPage config={LOCATION_REQ_CONFIG} />;
+  return <TwoTierPage config={LOCATION_REQ_CONFIG} />;
 }
