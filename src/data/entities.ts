@@ -2,9 +2,11 @@ import type { CollectionName, FieldConfig, RelatedType } from '../types';
 import type { BudgetSourceType } from '../services/budget';
 import {
   AVAILABILITY_OPTIONS,
+  BUDGET_CATEGORIES,
   BUDGET_STAGES,
   BUDGET_STATUSES,
   CONTACT_TYPES,
+  INVOICE_STATUSES,
   DECISION_STATUSES,
   DEPARTMENTS,
   OPTION_STATUSES,
@@ -289,6 +291,30 @@ export const PRODUCTION_OPTION_CONFIG: EntityConfig = {
     { name: 'budgetStatus', label: 'Budget status', type: 'select', options: BUDGET_STATUSES },
     { name: 'selected', label: 'Selected', type: 'checkbox' },
     { name: 'link', label: 'Link', type: 'text', full: true },
+    { name: 'notes', label: 'Notes', type: 'textarea', full: true },
+  ],
+};
+
+export const INVOICE_CONFIG: EntityConfig = {
+  collection: 'invoices',
+  singular: 'Invoice',
+  titleField: 'vendor',
+  subtitleFields: ['invoiceNumber', 'category'],
+  pillFields: ['status', 'category'],
+  costField: 'amount',
+  filters: ['status', 'category'],
+  relatedType: 'invoice',
+  media: true,
+  comments: true,
+  fields: [
+    { name: 'vendor', label: 'Vendor / supplier', type: 'text', full: true },
+    { name: 'invoiceNumber', label: 'Invoice number', type: 'text' },
+    { name: 'category', label: 'Category', type: 'select', options: BUDGET_CATEGORIES },
+    { name: 'amount', label: 'Amount', type: 'number' },
+    { name: 'status', label: 'Payment status', type: 'select', options: INVOICE_STATUSES },
+    { name: 'issueDate', label: 'Issue date', type: 'date' },
+    { name: 'dueDate', label: 'Due date', type: 'date' },
+    { name: 'owner', label: 'Owner', type: 'owner' },
     { name: 'notes', label: 'Notes', type: 'textarea', full: true },
   ],
 };

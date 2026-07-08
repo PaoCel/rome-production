@@ -16,6 +16,7 @@ const MONEY_FIELDS = new Set([
   'feeEstimate',
   'actualFee',
   'estimatedCost',
+  'amount',
 ]);
 const LINKY = /(link|website)/i;
 

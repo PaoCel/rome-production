@@ -3,15 +3,22 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { NAV_GROUPS } from './navItems';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
+import { canAccess } from '../data/access';
 
 export default function AppLayout() {
-  const { displayName, logout } = useAuth();
+  const { user, displayName, logout } = useAuth();
   const { settings } = useSettings();
   const [open, setOpen] = useState(false);
 
+  // Only show the sections this user is allowed to see (drops empty groups).
+  const visibleGroups = NAV_GROUPS.map((g) => ({
+    ...g,
+    items: g.items.filter((item) => canAccess(user?.email, item.section)),
+  })).filter((g) => g.items.length > 0);
+
   const nav = (
     <nav className="flex flex-col gap-5">
-      {NAV_GROUPS.map((section) => (
+      {visibleGroups.map((section) => (
         <div key={section.group}>
           <div className="mb-1.5 px-3 section-label">{section.group}</div>
           <div className="flex flex-col gap-0.5">

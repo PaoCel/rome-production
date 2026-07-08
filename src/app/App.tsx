@@ -1,11 +1,13 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from '../contexts/AuthContext';
 import ProtectedRoute from './ProtectedRoute';
+import SectionGuard from './SectionGuard';
 import AppLayout from '../layouts/AppLayout';
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import TasksPage from '../pages/TasksPage';
 import BudgetPage from '../pages/BudgetPage';
+import InvoicesPage from '../pages/InvoicesPage';
 import LocationsPage from '../pages/LocationsPage';
 import CastingPage from '../pages/CastingPage';
 import CrewPage from '../pages/CrewPage';
@@ -24,17 +26,18 @@ export default function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/budget" element={<BudgetPage />} />
-              <Route path="/locations" element={<LocationsPage />} />
-              <Route path="/casting" element={<CastingPage />} />
-              <Route path="/crew" element={<CrewPage />} />
-              <Route path="/props" element={<PropsPage />} />
-              <Route path="/production" element={<ProductionOptionsPage />} />
-              <Route path="/contacts" element={<ContactsPage />} />
-              <Route path="/risks" element={<RisksDecisionsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/" element={<SectionGuard section="dashboard"><DashboardPage /></SectionGuard>} />
+              <Route path="/tasks" element={<SectionGuard section="tasks"><TasksPage /></SectionGuard>} />
+              <Route path="/budget" element={<SectionGuard section="budget"><BudgetPage /></SectionGuard>} />
+              <Route path="/invoices" element={<SectionGuard section="invoices"><InvoicesPage /></SectionGuard>} />
+              <Route path="/locations" element={<SectionGuard section="locations"><LocationsPage /></SectionGuard>} />
+              <Route path="/casting" element={<SectionGuard section="casting"><CastingPage /></SectionGuard>} />
+              <Route path="/crew" element={<SectionGuard section="crew"><CrewPage /></SectionGuard>} />
+              <Route path="/props" element={<SectionGuard section="props"><PropsPage /></SectionGuard>} />
+              <Route path="/production" element={<SectionGuard section="production"><ProductionOptionsPage /></SectionGuard>} />
+              <Route path="/contacts" element={<SectionGuard section="contacts"><ContactsPage /></SectionGuard>} />
+              <Route path="/risks" element={<SectionGuard section="risks"><RisksDecisionsPage /></SectionGuard>} />
+              <Route path="/settings" element={<SectionGuard section="settings"><SettingsPage /></SectionGuard>} />
             </Route>
           </Route>
 
