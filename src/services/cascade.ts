@@ -24,18 +24,25 @@ async function deleteMediaAndComments(relatedType: string, relatedId: string) {
   await Promise.all(comments.map((c) => deleteItem('comments', c.id)));
 }
 
-// Delete budget items that were derived from an entity (matched on sourceId).
-async function deleteLinkedBudgetItems(sourceId: string) {
+// Delete budget items derived from a flat entity (matched on sourceId).
+async function deleteBudgetItemsBySource(sourceId: string) {
   const rows = await findWhere('budgetItems', where('sourceId', '==', sourceId));
   await Promise.all(rows.map((r) => deleteItem('budgetItems', r.id)));
 }
 
-// Delete a single option: its media/comments, any budget item, then the doc.
+// Delete the budget item committed from a specific option. Option budget lines
+// are keyed on the requirement (sourceId), so match on sourceOptionId instead.
+async function deleteBudgetItemsByOption(optionId: string) {
+  const rows = await findWhere('budgetItems', where('sourceOptionId', '==', optionId));
+  await Promise.all(rows.map((r) => deleteItem('budgetItems', r.id)));
+}
+
+// Delete a single option: its media/comments, any budget line, then the doc.
 export async function deleteOptionCascade(optionConfig: EntityConfig, option: EntityDoc) {
   if (optionConfig.relatedType) {
     await deleteMediaAndComments(optionConfig.relatedType, option.id);
   }
-  await deleteLinkedBudgetItems(option.id);
+  await deleteBudgetItemsByOption(option.id);
   await deleteItem(optionConfig.collection, option.id);
 }
 
@@ -49,7 +56,7 @@ export async function deleteEntityCascade(config: EntityConfig, item: EntityDoc)
     await Promise.all(options.map((o) => deleteOptionCascade(oc, o)));
   }
   // Flat entity that can be committed to budget (e.g. production option).
-  if (config.budgetSource) await deleteLinkedBudgetItems(item.id);
+  if (config.budgetSource) await deleteBudgetItemsBySource(item.id);
   if (config.relatedType) await deleteMediaAndComments(config.relatedType, item.id);
   await deleteItem(config.collection, item.id);
 }
