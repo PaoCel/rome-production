@@ -21,8 +21,11 @@ export default function MediaGallery({
   const [viewing, setViewing] = useState<EntityDoc | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const heroImg = hero ? media.find((m) => m.type === 'image') : undefined;
-  const gridMedia = heroImg ? media.filter((m) => m.id !== heroImg.id) : media;
+  // Hero cover: prefer a photo, fall back to a video.
+  const heroMedia = hero
+    ? media.find((m) => m.type === 'image') || media.find((m) => m.type === 'video')
+    : undefined;
+  const gridMedia = heroMedia ? media.filter((m) => m.id !== heroMedia.id) : media;
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -66,16 +69,31 @@ export default function MediaGallery({
       </div>
 
       {/* Large cover (hero mode) */}
-      {heroImg && (
+      {heroMedia && (
         <button
-          onClick={() => setViewing(heroImg)}
-          className="mb-3 block w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
+          onClick={() => setViewing(heroMedia)}
+          className="relative mb-3 block w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
         >
-          <img
-            src={heroImg.downloadUrl}
-            alt={heroImg.fileName}
-            className="aspect-[16/9] w-full object-cover transition hover:scale-[1.02]"
-          />
+          {heroMedia.type === 'video' ? (
+            <>
+              <video
+                src={heroMedia.downloadUrl}
+                muted
+                playsInline
+                preload="metadata"
+                className="aspect-[16/9] w-full bg-black object-cover"
+              />
+              <span className="absolute inset-0 flex items-center justify-center text-5xl text-white/90">
+                ▶
+              </span>
+            </>
+          ) : (
+            <img
+              src={heroMedia.downloadUrl}
+              alt={heroMedia.fileName}
+              className="aspect-[16/9] w-full object-cover transition hover:scale-[1.02]"
+            />
+          )}
         </button>
       )}
 

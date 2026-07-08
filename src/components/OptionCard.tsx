@@ -30,8 +30,10 @@ export default function OptionCard({
   onDelete: () => void;
 }) {
   const media = useRelated('media', optionConfig.relatedType!, option.id);
-  const cover = media.find((m) => m.type === 'image');
-  const photoCount = media.filter((m) => m.type === 'image').length;
+  // Prefer a photo for the cover; fall back to a video so video-only options
+  // still show something at a glance.
+  const cover = media.find((m) => m.type === 'image') || media.find((m) => m.type === 'video');
+  const shotCount = media.filter((m) => m.type === 'image' || m.type === 'video').length;
 
   const title = option[optionConfig.titleField] || 'Untitled option';
   const pills = optionConfig.pillFields.map((n) => option[n]).filter(Boolean) as string[];
@@ -45,12 +47,25 @@ export default function OptionCard({
     >
       {/* Cover */}
       <button onClick={onOpen} className="relative block aspect-[4/3] w-full overflow-hidden bg-slate-100">
-        {cover ? (
+        {cover?.type === 'image' ? (
           <img
             src={cover.downloadUrl}
             alt={title}
             className="h-full w-full object-cover transition group-hover:scale-[1.03]"
           />
+        ) : cover?.type === 'video' ? (
+          <>
+            <video
+              src={cover.downloadUrl}
+              muted
+              playsInline
+              preload="metadata"
+              className="h-full w-full bg-black object-cover"
+            />
+            <span className="absolute inset-0 flex items-center justify-center text-4xl text-white/90">
+              ▶
+            </span>
+          </>
         ) : (
           <div className="flex h-full w-full items-center justify-center text-4xl text-slate-300">
             🏷️
@@ -61,9 +76,9 @@ export default function OptionCard({
             ✓ Selected
           </span>
         )}
-        {photoCount > 1 && (
+        {shotCount > 1 && (
           <span className="absolute bottom-2 right-2 rounded-full bg-slate-900/60 px-2 py-0.5 text-[11px] font-medium text-white">
-            📷 {photoCount}
+            📎 {shotCount}
           </span>
         )}
       </button>
