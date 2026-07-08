@@ -8,9 +8,12 @@ import TasksPage from '../pages/TasksPage';
 import BudgetPage from '../pages/BudgetPage';
 import LocationsPage from '../pages/LocationsPage';
 import CastingPage from '../pages/CastingPage';
+import CrewPage from '../pages/CrewPage';
+import PropsPage from '../pages/PropsPage';
 import ProductionOptionsPage from '../pages/ProductionOptionsPage';
 import ContactsPage from '../pages/ContactsPage';
 import RisksDecisionsPage from '../pages/RisksDecisionsPage';
+import SettingsPage from '../pages/SettingsPage';
 
 export default function App() {
   return (
@@ -26,9 +29,12 @@ export default function App() {
               <Route path="/budget" element={<BudgetPage />} />
               <Route path="/locations" element={<LocationsPage />} />
               <Route path="/casting" element={<CastingPage />} />
+              <Route path="/crew" element={<CrewPage />} />
+              <Route path="/props" element={<PropsPage />} />
               <Route path="/production" element={<ProductionOptionsPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
               <Route path="/risks" element={<RisksDecisionsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Route>
           </Route>
 
