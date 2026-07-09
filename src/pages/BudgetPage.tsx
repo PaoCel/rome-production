@@ -13,9 +13,10 @@ import SearchInput from '../components/ui/SearchInput';
 import Pill from '../components/ui/Pill';
 import Money from '../components/ui/Money';
 import EmptyState from '../components/ui/EmptyState';
-import SidePanel from '../components/ui/SidePanel';
+import BottomSheet from '../components/ui/BottomSheet';
 import EntityForm from '../components/form/EntityForm';
 import CardMenu from '../components/ui/CardMenu';
+import { formatMoney } from '../utils/format';
 
 const BUDGET_FIELDS: FieldConfig[] = [
   { name: 'lineItem', label: 'Line item', type: 'text', full: true },
@@ -131,6 +132,28 @@ export default function BudgetPage() {
         <Stat label="Paid" value={totals.paid} accent="text-emerald-600" />
       </div>
 
+      <div className="card mb-6 border-amber-200 bg-amber-50 p-4 sm:p-5">
+        <h3 className="text-sm font-semibold text-amber-900">Come funziona il budget</h3>
+        <dl className="mt-2 grid grid-cols-1 gap-x-6 gap-y-1.5 text-sm text-amber-900/80 sm:grid-cols-2">
+          <div className="flex gap-1.5">
+            <dt className="font-medium text-amber-900">Stimato:</dt>
+            <dd>quanto pensi di spendere</dd>
+          </div>
+          <div className="flex gap-1.5">
+            <dt className="font-medium text-amber-900">Impegnato:</dt>
+            <dd>la stima confermata o approvata</dd>
+          </div>
+          <div className="flex gap-1.5">
+            <dt className="font-medium text-amber-900">Reale:</dt>
+            <dd>quanto hai speso davvero</dd>
+          </div>
+          <div className="flex gap-1.5">
+            <dt className="font-medium text-amber-900">Pagato:</dt>
+            <dd>la parte del reale già saldata</dd>
+          </div>
+        </dl>
+      </div>
+
       {/* Per-category summary */}
       {byCategory.length > 0 && (
         <div className="card mb-6">
@@ -234,42 +257,53 @@ export default function BudgetPage() {
                   </div>
                 </div>
 
-                <div className="grid w-full grid-cols-3 gap-x-3 text-left text-sm md:w-auto md:gap-x-5">
-                  <div className="min-w-0">
-                    <div className="text-xs text-slate-400">Est.</div>
-                    <input
-                      key={`est-${it.id}`}
-                      type="number"
-                      className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
-                      defaultValue={it.estimatedCost ?? ''}
-                      onBlur={(e) => handleInlineChange(it, 'estimatedCost', e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-                      }}
-                    />
+                <div className="flex w-full flex-col gap-2 md:w-auto md:min-w-[19rem]">
+                  <div className="grid grid-cols-2 gap-x-3 text-left text-sm">
+                    <div className="min-w-0">
+                      <div className="text-xs text-slate-400">Stima</div>
+                      <input
+                        key={`est-${it.id}`}
+                        type="number"
+                        className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
+                        defaultValue={it.estimatedCost ?? ''}
+                        onBlur={(e) => handleInlineChange(it, 'estimatedCost', e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                        }}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs text-slate-400">Reale</div>
+                      <input
+                        key={`actual-${it.id}`}
+                        type="number"
+                        className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
+                        defaultValue={it.actualCost ?? ''}
+                        onBlur={(e) => handleInlineChange(it, 'actualCost', e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-xs text-slate-400">Actual</div>
-                    <input
-                      key={`actual-${it.id}`}
-                      type="number"
-                      className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
-                      defaultValue={it.actualCost ?? ''}
-                      onBlur={(e) => handleInlineChange(it, 'actualCost', e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-400">Diff.</div>
-                    <Money
-                      value={diff}
-                      className={
-                        diff > 0 ? 'font-medium text-rose-600' : 'font-medium text-emerald-600'
-                      }
-                    />
-                  </div>
+
+                  {!(Number(it.actualCost) || 0) && (Number(it.estimatedCost) || 0) > 0 ? (
+                    <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">
+                      In attesa del costo reale
+                    </span>
+                  ) : diff > 0 ? (
+                    <span className="inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-700">
+                      +{formatMoney(diff)} sopra la stima
+                    </span>
+                  ) : diff < 0 ? (
+                    <span className="inline-flex w-fit items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                      -{formatMoney(Math.abs(diff))} sotto la stima
+                    </span>
+                  ) : (
+                    <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">
+                      In linea con la stima
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-end md:shrink-0">
@@ -281,7 +315,7 @@ export default function BudgetPage() {
         </div>
       )}
 
-      <SidePanel
+      <BottomSheet
         open={creating || !!editing}
         title={editing ? 'Edit budget item' : 'New budget item'}
         onClose={() => {
@@ -300,7 +334,7 @@ export default function BudgetPage() {
             setEditing(null);
           }}
         />
-      </SidePanel>
+      </BottomSheet>
     </div>
   );
 }

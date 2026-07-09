@@ -7,13 +7,14 @@ import { deleteEntityCascade } from '../services/cascade';
 import { OWNERS } from '../data/owners';
 import PageHeader from './PageHeader';
 import SearchInput from './ui/SearchInput';
-import FilterBar, { type FilterDef } from './ui/FilterBar';
+import FilterControl, { type FilterDef } from './ui/FilterControl';
 import EmptyState from './ui/EmptyState';
 import EntityCard from './EntityCard';
 import EntityForm from './form/EntityForm';
 import EntityDetail from './EntityDetail';
 import MediaGallery from './MediaGallery';
 import SidePanel from './ui/SidePanel';
+import BottomSheet from './ui/BottomSheet';
 
 // One reusable page powering every card-based CRUD section.
 export default function CrudPage({ config }: { config: EntityConfig }) {
@@ -77,12 +78,17 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
       />
 
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <SearchInput value={search} onChange={setSearch} />
-        <FilterBar
-          filters={filterDefs}
-          values={filters}
-          onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
-        />
+        <div className="flex items-center gap-2">
+          <SearchInput value={search} onChange={setSearch} />
+          {filterDefs.length > 0 && (
+            <FilterControl
+              filters={filterDefs}
+              values={filters}
+              onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
+              onClear={() => setFilters({})}
+            />
+          )}
+        </div>
       </div>
 
       {loading ? (
@@ -108,7 +114,7 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
       )}
 
       {/* Create / Edit */}
-      <SidePanel
+      <BottomSheet
         open={creating || !!editing}
         title={editing ? `Edit ${config.singular.toLowerCase()}` : `New ${config.singular.toLowerCase()}`}
         onClose={() => {
@@ -139,7 +145,7 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
             Save this {config.singular.toLowerCase()} first, then reopen it to upload photos and files.
           </p>
         )}
-      </SidePanel>
+      </BottomSheet>
 
       {/* Detail */}
       <SidePanel

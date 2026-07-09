@@ -8,6 +8,7 @@ import { addToBudget } from '../services/budget';
 import SearchInput from './ui/SearchInput';
 import EmptyState from './ui/EmptyState';
 import SidePanel from './ui/SidePanel';
+import BottomSheet from './ui/BottomSheet';
 import EntityForm from './form/EntityForm';
 import MediaGallery from './MediaGallery';
 import OptionCard from './OptionCard';
@@ -183,7 +184,7 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
       )}
 
       {/* Create / edit option */}
-      <SidePanel
+      <BottomSheet
         open={creating || !!editing}
         title={editing ? `Edit ${optionConfig.singular.toLowerCase()}` : `New ${optionConfig.singular.toLowerCase()}`}
         onClose={() => {
@@ -230,7 +231,7 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
             Save this option first, then reopen it to add photos and files.
           </p>
         )}
-      </SidePanel>
+      </BottomSheet>
 
       {/* Option detail */}
       <SidePanel
