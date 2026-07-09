@@ -40,19 +40,19 @@ export default function Comments({
 
   return (
     <section>
-      <h4 className="mb-2 text-sm font-semibold text-slate-700">
-        Comments {comments.length > 0 && <span className="text-slate-400">({comments.length})</span>}
+      <h4 className="mb-2 text-sm font-semibold text-ink">
+        Comments {comments.length > 0 && <span className="text-faint">({comments.length})</span>}
       </h4>
 
       <div className="space-y-2">
         {sorted.map((c) => (
-          <div key={c.id} className="group rounded-lg border border-slate-200 bg-white px-3 py-2">
+          <div key={c.id} className="group rounded-lg border border-line bg-surface px-3 py-2">
             <div className="mb-0.5 flex flex-wrap items-center justify-between gap-2">
-              <span className="text-xs font-medium text-slate-700">{c.authorName}</span>
+              <span className="text-xs font-medium text-ink">{c.authorName}</span>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] text-slate-400">{formatDate(c.createdAt)}</span>
+                <span className="text-[11px] text-faint">{formatDate(c.createdAt)}</span>
                 <button
-                  className="text-slate-400 transition hover:text-red-500 sm:text-slate-300 sm:opacity-0 sm:group-hover:opacity-100"
+                  className="text-faint transition hover:text-red-500 sm:text-faint sm:opacity-0 sm:group-hover:opacity-100"
                   onClick={() => deleteItem('comments', c.id)}
                   aria-label="Delete comment"
                 >
@@ -62,7 +62,7 @@ export default function Comments({
                 </button>
               </div>
             </div>
-            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700">
+            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-ink">
               {c.text}
             </p>
           </div>

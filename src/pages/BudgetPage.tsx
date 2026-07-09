@@ -15,6 +15,7 @@ import EmptyState from '../components/ui/EmptyState';
 import BottomSheet from '../components/ui/BottomSheet';
 import EntityForm from '../components/form/EntityForm';
 import CardMenu from '../components/ui/CardMenu';
+import Fab from '../components/ui/Fab';
 import { formatMoney } from '../utils/format';
 
 const BUDGET_FIELDS: FieldConfig[] = [
@@ -117,6 +118,7 @@ export default function BudgetPage() {
 
   return (
     <div>
+      <Fab onClick={() => setCreating(true)} label="New budget item" />
       <PageHeader
         title="Budget"
         subtitle="Estimates become real spend only once committed or approved."
@@ -127,32 +129,32 @@ export default function BudgetPage() {
         }
       />
 
-      {/* Total budget card */}
-      <div className="card mb-5 grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
-        <Stat label="Estimated total" value={totals.estimated} accent="text-slate-800" />
-        <Stat label="Committed / approved" value={totals.committed} accent="text-amber-600" />
-        <Stat label="Actual" value={totals.actual} accent="text-indigo-600" />
-        <Stat label="Paid" value={totals.paid} accent="text-emerald-600" />
+      {/* Total budget — 4 KPI tiles */}
+      <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Stat label="Estimated" value={totals.estimated} tone="kpi-ink" />
+        <Stat label="Committed" value={totals.committed} tone="kpi-amber" />
+        <Stat label="Actual" value={totals.actual} tone="kpi-good" />
+        <Stat label="Paid" value={totals.paid} tone="kpi-brand" />
       </div>
 
       {/* Explainer */}
-      <div className="card mb-6 border-amber-200 bg-amber-50 p-4 sm:p-5">
-        <h3 className="text-sm font-semibold text-amber-900">💡 Come funziona il budget</h3>
-        <dl className="mt-2 grid grid-cols-1 gap-x-6 gap-y-1.5 text-sm text-amber-900/80 sm:grid-cols-2">
+      <div className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 shadow-card sm:p-5">
+        <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-200">💡 Come funziona il budget</h3>
+        <dl className="mt-2 grid grid-cols-1 gap-x-6 gap-y-1.5 text-sm text-amber-800/90 dark:text-amber-200/90 sm:grid-cols-2">
           <div className="flex gap-1.5">
-            <dt className="font-medium text-amber-900">Stimato:</dt>
+            <dt className="font-semibold">Stimato:</dt>
             <dd>quanto pensi di spendere</dd>
           </div>
           <div className="flex gap-1.5">
-            <dt className="font-medium text-amber-900">Impegnato:</dt>
+            <dt className="font-semibold">Impegnato:</dt>
             <dd>la stima confermata/approvata</dd>
           </div>
           <div className="flex gap-1.5">
-            <dt className="font-medium text-amber-900">Reale:</dt>
+            <dt className="font-semibold">Reale:</dt>
             <dd>quanto hai speso davvero</dd>
           </div>
           <div className="flex gap-1.5">
-            <dt className="font-medium text-amber-900">Pagato:</dt>
+            <dt className="font-semibold">Pagato:</dt>
             <dd>la parte del reale già saldata</dd>
           </div>
         </dl>
@@ -165,7 +167,7 @@ export default function BudgetPage() {
           <div className="hidden p-0 md:block">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-400">
+                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-faint">
                   <th className="px-4 py-3 font-medium">Category</th>
                   <th className="px-4 py-3 text-right font-medium">Estimate</th>
                   <th className="px-4 py-3 text-right font-medium">Committed</th>
@@ -173,14 +175,14 @@ export default function BudgetPage() {
                   <th className="px-4 py-3 text-right font-medium">Items</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-line">
                 {byCategory.map(([cat, v]) => (
-                  <tr key={cat} className="text-slate-700">
-                    <td className="px-4 py-2.5 font-medium text-slate-800">{cat}</td>
+                  <tr key={cat} className="text-ink">
+                    <td className="px-4 py-2.5 font-medium text-ink">{cat}</td>
                     <td className="px-4 py-2.5 text-right"><Money value={v.estimated} /></td>
-                    <td className="px-4 py-2.5 text-right text-amber-600"><Money value={v.committed} /></td>
-                    <td className="px-4 py-2.5 text-right text-indigo-600"><Money value={v.actual} /></td>
-                    <td className="px-4 py-2.5 text-right text-slate-400">{v.count}</td>
+                    <td className="px-4 py-2.5 text-right text-amber-600 dark:text-amber-400"><Money value={v.committed} /></td>
+                    <td className="px-4 py-2.5 text-right text-indigo-600 dark:text-indigo-400"><Money value={v.actual} /></td>
+                    <td className="px-4 py-2.5 text-right text-faint">{v.count}</td>
                   </tr>
                 ))}
               </tbody>
@@ -188,26 +190,26 @@ export default function BudgetPage() {
           </div>
 
           {/* Mobile: stacked list */}
-          <div className="divide-y divide-slate-100 p-4 md:hidden">
+          <div className="divide-y divide-line p-4 md:hidden">
             {byCategory.map(([cat, v]) => (
               <div key={cat} className="py-3 first:pt-0 last:pb-0">
-                <div className="font-medium text-slate-800">{cat}</div>
+                <div className="font-medium text-ink">{cat}</div>
                 <div className="mt-1.5 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                   <div>
-                    <div className="text-xs text-slate-400">Estimate</div>
+                    <div className="text-xs text-faint">Estimate</div>
                     <Money value={v.estimated} />
                   </div>
                   <div>
-                    <div className="text-xs text-slate-400">Committed</div>
-                    <Money value={v.committed} className="text-amber-600" />
+                    <div className="text-xs text-faint">Committed</div>
+                    <Money value={v.committed} className="text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <div className="text-xs text-slate-400">Actual</div>
-                    <Money value={v.actual} className="text-indigo-600" />
+                    <div className="text-xs text-faint">Actual</div>
+                    <Money value={v.actual} className="text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <div>
-                    <div className="text-xs text-slate-400">Items</div>
-                    <span className="text-slate-500">{v.count}</span>
+                    <div className="text-xs text-faint">Items</div>
+                    <span className="text-muted">{v.count}</span>
                   </div>
                 </div>
               </div>
@@ -218,16 +220,16 @@ export default function BudgetPage() {
 
       {/* Editable list */}
       <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-semibold text-slate-800">Line items</h2>
+        <h2 className="text-lg font-semibold text-ink">Line items</h2>
         <SearchInput value={search} onChange={setSearch} />
       </div>
 
       {loading ? (
-        <p className="text-sm text-slate-400">Loading…</p>
+        <p className="text-sm text-faint">Loading…</p>
       ) : filtered.length === 0 ? (
         <EmptyState title="No budget items" hint="Add one, or commit a selected option from any area." />
       ) : (
-        <div className="card divide-y divide-slate-100">
+        <div className="card divide-y divide-line">
           {filtered.map((it) => {
             const estimated = Number(it.estimatedCost) || 0;
             const actual = Number(it.actualCost) || 0;
@@ -237,16 +239,16 @@ export default function BudgetPage() {
               <div key={it.id} className="flex flex-col gap-3 p-3 md:flex-row md:items-center">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="break-words font-medium text-slate-800">
+                    <span className="break-words font-medium text-ink">
                       {it.lineItem || 'Untitled'}
                     </span>
                     {it.category && (
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">
+                      <span className="rounded bg-surface-2 px-1.5 py-0.5 text-xs text-muted">
                         {it.category}
                       </span>
                     )}
                     {it.sourceType && SOURCE_LABEL[it.sourceType] && (
-                      <span className="rounded bg-brand-50 px-1.5 py-0.5 text-xs text-brand-600">
+                      <span className="rounded bg-brand-50 dark:bg-brand-500/15 px-1.5 py-0.5 text-xs text-brand-600">
                         {SOURCE_LABEL[it.sourceType]}
                       </span>
                     )}
@@ -259,7 +261,7 @@ export default function BudgetPage() {
                     )}
                     <Pill value={it.paymentStatus} />
                     {it.supplierContact && (
-                      <span className="text-xs text-slate-400">{it.supplierContact}</span>
+                      <span className="text-xs text-faint">{it.supplierContact}</span>
                     )}
                   </div>
                 </div>
@@ -267,11 +269,11 @@ export default function BudgetPage() {
                 <div className="flex w-full flex-col gap-2 md:w-auto md:min-w-[19rem]">
                   <div className="grid grid-cols-2 gap-x-3 text-left text-sm">
                     <div className="min-w-0">
-                      <div className="text-xs text-slate-400">Stima</div>
+                      <div className="text-xs text-faint">Stima</div>
                       <input
                         key={`est-${it.id}`}
                         type="number"
-                        className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
+                        className="w-full rounded-md border border-line bg-surface px-2 py-1 text-sm font-medium text-ink outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
                         defaultValue={it.estimatedCost ?? ''}
                         onBlur={(e) => handleInlineChange(it, 'estimatedCost', e.target.value)}
                         onKeyDown={(e) => {
@@ -280,11 +282,11 @@ export default function BudgetPage() {
                       />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs text-slate-400">Reale</div>
+                      <div className="text-xs text-faint">Reale</div>
                       <input
                         key={`actual-${it.id}`}
                         type="number"
-                        className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
+                        className="w-full rounded-md border border-line bg-surface px-2 py-1 text-sm font-medium text-ink outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
                         defaultValue={it.actualCost ?? ''}
                         onBlur={(e) => handleInlineChange(it, 'actualCost', e.target.value)}
                         onKeyDown={(e) => {
@@ -295,21 +297,13 @@ export default function BudgetPage() {
                   </div>
 
                   {awaitingActual ? (
-                    <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">
-                      In attesa del costo reale
-                    </span>
+                    <span className="variance variance-wait">In attesa del costo reale</span>
                   ) : diff > 0 ? (
-                    <span className="inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-700">
-                      ↑ +{formatMoney(diff)} sopra la stima
-                    </span>
+                    <span className="variance variance-over">↑ +{formatMoney(diff)} sopra la stima</span>
                   ) : diff < 0 ? (
-                    <span className="inline-flex w-fit items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                      ↓ −{formatMoney(Math.abs(diff))} sotto la stima
-                    </span>
+                    <span className="variance variance-under">↓ −{formatMoney(Math.abs(diff))} sotto la stima</span>
                   ) : (
-                    <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">
-                      In linea con la stima
-                    </span>
+                    <span className="variance variance-flat">In linea con la stima</span>
                   )}
                 </div>
 
@@ -346,11 +340,11 @@ export default function BudgetPage() {
   );
 }
 
-function Stat({ label, value, accent }: { label: string; value: number; accent: string }) {
+function Stat({ label, value, tone }: { label: string; value: number; tone: string }) {
   return (
-    <div>
-      <div className="text-xs font-medium uppercase tracking-wide text-slate-400">{label}</div>
-      <div className={`mt-1 text-2xl font-semibold ${accent}`}>
+    <div className="kpi">
+      <div className="kpi-label">{label}</div>
+      <div className={`kpi-val ${tone}`}>
         <Money value={value} />
       </div>
     </div>

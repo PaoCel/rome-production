@@ -14,6 +14,7 @@ import BottomSheet from '../components/ui/BottomSheet';
 import EntityForm from '../components/form/EntityForm';
 import EntityDetail from '../components/EntityDetail';
 import CardMenu from '../components/ui/CardMenu';
+import Fab from '../components/ui/Fab';
 import { formatDate } from '../utils/format';
 
 const PRIORITY_DOT: Record<string, string> = {
@@ -23,11 +24,11 @@ const PRIORITY_DOT: Record<string, string> = {
 };
 
 const STATUS_LANE_CLASS: Record<string, string> = {
-  'To do': 'bg-slate-100 text-slate-600',
-  'In progress': 'bg-blue-100 text-blue-700',
-  Waiting: 'bg-amber-100 text-amber-700',
-  Blocked: 'bg-rose-100 text-rose-700',
-  Done: 'bg-emerald-100 text-emerald-700',
+  'To do': 'bg-surface-2 text-muted',
+  'In progress': 'bg-blue-500/15 text-blue-700 dark:text-blue-300',
+  Waiting: 'bg-amber-500/15 text-amber-700 dark:text-amber-300',
+  Blocked: 'bg-rose-500/15 text-rose-700 dark:text-rose-300',
+  Done: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
 };
 
 const TASK_FIELDS: FieldConfig[] = [
@@ -109,6 +110,7 @@ export default function TasksPage() {
 
   return (
     <div>
+      <Fab onClick={() => setCreating(true)} label="New task" />
       <PageHeader
         title="Tasks"
         count={items.length}
@@ -129,13 +131,13 @@ export default function TasksPage() {
             onClear={() => setFilters({})}
           />
         </div>
-        <div className="grid grid-cols-2 rounded-lg border border-slate-200 bg-white p-0.5 sm:inline-flex">
+        <div className="grid grid-cols-2 rounded-lg border border-line bg-surface p-0.5 sm:inline-flex">
           {(['board', 'list'] as const).map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
               className={`rounded-md px-3 py-1.5 text-sm font-medium capitalize transition ${
-                view === v ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+                view === v ? 'bg-brand-600 text-white' : 'text-muted hover:bg-surface-2'
               }`}
             >
               {v}
@@ -145,7 +147,7 @@ export default function TasksPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-slate-400">Loading…</p>
+        <p className="text-sm text-faint">Loading…</p>
       ) : view === 'board' ? (
         <BoardView
           tasks={filtered}
@@ -212,7 +214,7 @@ function BoardView({
           <div key={status}>
             <div
               className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold ${
-                STATUS_LANE_CLASS[status] || 'bg-slate-100 text-slate-600'
+                STATUS_LANE_CLASS[status] || 'bg-surface-2 text-muted'
               }`}
             >
               <span aria-hidden="true" className="text-xs tracking-tighter opacity-60">⣿</span>
@@ -220,12 +222,12 @@ function BoardView({
               <span className="ml-auto text-xs font-medium opacity-70">{col.length}</span>
             </div>
             {col.length > 0 && (
-              <div className="ml-1.5 mt-2 flex flex-col gap-2 border-l-2 border-slate-100 pl-1.5 lg:ml-0 lg:border-l-0 lg:pl-0">
+              <div className="ml-1.5 mt-2 flex flex-col gap-2 border-l-2 border-line pl-1.5 lg:ml-0 lg:border-l-0 lg:pl-0">
                 {col.map((t) => (
                   <div key={t.id} className="card p-3 transition hover:shadow-md">
                     <button onClick={() => onOpen(t)} className="w-full text-left">
-                      <p className="break-words text-sm font-medium text-slate-800">{t.title}</p>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                      <p className="break-words text-sm font-medium text-ink">{t.title}</p>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-muted">
                         <span
                           className={`h-2 w-2 shrink-0 rounded-full ${PRIORITY_DOT[t.priority] || 'bg-slate-300'}`}
                           aria-hidden="true"
@@ -235,7 +237,7 @@ function BoardView({
                       </div>
                     </button>
                     <select
-                      className="mt-2 w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-600"
+                      className="mt-2 w-full rounded-md border border-line bg-surface-2 px-2 py-1 text-xs text-muted"
                       value={status}
                       onChange={(e) => onMove(t, e.target.value)}
                     >
@@ -270,22 +272,22 @@ function ListView({
   if (tasks.length === 0) return <EmptyState title="No tasks" hint="Create your first task." />;
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between px-1 text-xs text-slate-400">
+      <div className="mb-2 flex items-center justify-between px-1 text-xs text-faint">
         <span>{tasks.length} task{tasks.length === 1 ? '' : 's'}</span>
         <span>Ordina: scadenza</span>
       </div>
-      <div className="card divide-y divide-slate-100">
+      <div className="card divide-y divide-line">
         {tasks.map((t) => {
           const done = t.status === 'Done';
           return (
             <div
               key={t.id}
-              className="flex cursor-pointer items-center gap-3 p-3 hover:bg-slate-50"
+              className="flex cursor-pointer items-center gap-3 p-3 hover:bg-surface-2"
               onClick={() => onOpen(t)}
             >
               <span
                 className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border-2 ${
-                  done ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300 bg-white'
+                  done ? 'border-emerald-500 bg-emerald-500' : 'border-line bg-surface'
                 }`}
                 aria-hidden="true"
               >
@@ -305,12 +307,12 @@ function ListView({
               <div className="min-w-0 flex-1">
                 <p
                   className={`break-words text-sm font-medium ${
-                    done ? 'text-slate-400 line-through' : 'text-slate-800'
+                    done ? 'text-faint line-through' : 'text-ink'
                   }`}
                 >
                   {t.title}
                 </p>
-                <div className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-slate-400">
+                <div className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-faint">
                   {t.area && <span>{t.area}</span>}
                   {t.owner && <span>· {t.owner}</span>}
                   {t.dueDate && <span>· Due {formatDate(t.dueDate)}</span>}
@@ -318,7 +320,7 @@ function ListView({
               </div>
 
               <div className="flex shrink-0 items-center gap-2">
-                <span className="hidden text-xs text-slate-400 sm:inline">{t.status || 'To do'}</span>
+                <span className="hidden text-xs text-faint sm:inline">{t.status || 'To do'}</span>
                 <span
                   className={`h-2.5 w-2.5 rounded-full ${PRIORITY_DOT[t.priority] || 'bg-slate-300'}`}
                   aria-hidden="true"

@@ -40,18 +40,18 @@ export default function BottomSheet({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`fixed inset-x-0 bottom-0 flex max-h-[92vh] w-full flex-col rounded-t-3xl bg-slate-50 shadow-panel
+        className={`fixed inset-x-0 bottom-0 flex max-h-[92vh] w-full flex-col rounded-t-3xl bg-surface-2 shadow-panel
           transition-transform duration-300 ease-out motion-reduce:transition-none
           sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none sm:w-[26rem] sm:rounded-none
           ${open ? 'translate-y-0 sm:translate-x-0' : 'translate-y-full sm:translate-x-full'}`}
       >
         <div className="mx-auto mb-1 mt-2 h-1.5 w-10 shrink-0 rounded-full bg-slate-300 sm:hidden" />
 
-        <header className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3 sm:px-5 sm:py-4">
-          <h2 className="min-w-0 truncate font-display text-lg font-semibold text-slate-800">{title}</h2>
+        <header className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3 sm:px-5 sm:py-4">
+          <h2 className="min-w-0 truncate font-display text-lg font-semibold text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-1.5 text-faint hover:bg-surface-2 hover:text-muted"
             aria-label="Close"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -68,7 +68,7 @@ export default function BottomSheet({
         <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">{children}</div>
 
         {footer && (
-          <footer className="flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-5 py-3">
+          <footer className="flex items-center justify-end gap-2 border-t border-line bg-surface px-5 py-3">
             {footer}
           </footer>
         )}

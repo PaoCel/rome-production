@@ -100,11 +100,11 @@ function renderField(
         <label className="flex cursor-pointer items-center gap-2 pt-1">
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-200"
+            className="h-4 w-4 rounded border-line text-brand-600 focus:ring-brand-200"
             checked={!!values[f.name]}
             onChange={(e) => set(f.name, e.target.checked)}
           />
-          <span className="text-sm text-slate-700">{f.label}</span>
+          <span className="text-sm text-ink">{f.label}</span>
         </label>
       );
 

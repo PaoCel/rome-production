@@ -34,7 +34,7 @@ export default function CardMenu({
         aria-label="Open menu"
         aria-haspopup="true"
         aria-expanded={open}
-        className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+        className="rounded-lg p-1.5 text-faint hover:bg-surface-2 hover:text-muted"
         onClick={(e) => {
           e.stopPropagation();
           setOpen((o) => !o);
@@ -43,10 +43,10 @@ export default function CardMenu({
         ⋯
       </button>
       {open && (
-        <div className="absolute right-0 z-10 mt-1 w-32 rounded-xl border border-slate-200 bg-white py-1 shadow-card-hover">
+        <div className="absolute right-0 z-10 mt-1 w-32 rounded-xl border border-line bg-surface py-1 shadow-card-hover">
           <button
             type="button"
-            className="w-full px-3 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+            className="w-full px-3 py-1.5 text-left text-sm text-ink hover:bg-surface-2"
             onClick={(e) => {
               e.stopPropagation();
               setOpen(false);
@@ -57,7 +57,7 @@ export default function CardMenu({
           </button>
           <button
             type="button"
-            className="w-full px-3 py-1.5 text-left text-sm text-red-600 hover:bg-red-50"
+            className="w-full px-3 py-1.5 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/15"
             onClick={(e) => {
               e.stopPropagation();
               setOpen(false);

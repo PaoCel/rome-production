@@ -15,6 +15,7 @@ import EntityDetail from './EntityDetail';
 import MediaGallery from './MediaGallery';
 import SidePanel from './ui/SidePanel';
 import BottomSheet from './ui/BottomSheet';
+import Fab from './ui/Fab';
 
 // One reusable page powering every card-based CRUD section.
 export default function CrudPage({ config }: { config: EntityConfig }) {
@@ -66,6 +67,7 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
 
   return (
     <div>
+      <Fab onClick={() => setCreating(true)} label={`New ${config.singular.toLowerCase()}`} />
       <PageHeader
         title={`${config.singular}s`}
         count={items.length}
@@ -87,7 +89,7 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
       </div>
 
       {loading ? (
-        <p className="text-sm text-slate-400">Loading…</p>
+        <p className="text-sm text-faint">Loading…</p>
       ) : filtered.length === 0 ? (
         <EmptyState
           title={items.length === 0 ? `No ${config.singular.toLowerCase()}s yet` : 'No matches'}
@@ -131,12 +133,12 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
 
         {/* Media upload while editing an existing item. */}
         {config.media && config.relatedType && editing && (
-          <div className="mt-6 border-t border-slate-200 pt-5">
+          <div className="mt-6 border-t border-line pt-5">
             <MediaGallery relatedType={config.relatedType} relatedId={editing.id} />
           </div>
         )}
         {config.media && config.relatedType && creating && !editing && (
-          <p className="mt-6 border-t border-slate-200 pt-5 text-xs text-slate-400">
+          <p className="mt-6 border-t border-line pt-5 text-xs text-faint">
             Save this {config.singular.toLowerCase()} first, then reopen it to upload photos and files.
           </p>
         )}

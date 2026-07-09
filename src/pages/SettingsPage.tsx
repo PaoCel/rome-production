@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { CURRENCIES, useSettings } from '../contexts/SettingsContext';
+import { useTheme, type Theme } from '../contexts/ThemeContext';
 import { OWNERS } from '../data/owners';
 import { PROJECT_ID } from '../config/firebase';
 import {
@@ -11,6 +12,7 @@ import {
 
 export default function SettingsPage() {
   const { settings, update, reset } = useSettings();
+  const { theme, setTheme } = useTheme();
   const [busy, setBusy] = useState<'' | 'import' | 'clear'>('');
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
 
@@ -75,21 +77,40 @@ export default function SettingsPage() {
           />
         </Field>
         <Field label="Currency" hint="Applies to every amount as you move around the app.">
-          <select
-            className="input"
-            value={settings.currency}
-            onChange={(e) => update({ currency: e.target.value })}
-          >
+          <div className="flex flex-wrap gap-2">
             {CURRENCIES.map((c) => (
-              <option key={c} value={c}>
+              <button
+                key={c}
+                type="button"
+                onClick={() => update({ currency: c })}
+                className={`choice ${settings.currency === c ? 'choice-on' : ''}`}
+              >
                 {c}
-              </option>
+              </button>
             ))}
-          </select>
+          </div>
         </Field>
         <button className="btn-secondary mt-1 w-fit" onClick={reset}>
           Reset to defaults
         </button>
+      </Section>
+
+      {/* Appearance */}
+      <Section title="Appearance" desc="Choose the theme. “System” follows your device.">
+        <Field label="Theme">
+          <div className="flex flex-wrap gap-2">
+            {(['light', 'dark', 'system'] as Theme[]).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTheme(t)}
+                className={`choice capitalize ${theme === t ? 'choice-on' : ''}`}
+              >
+                {t === 'light' ? '☀️ Light' : t === 'dark' ? '🌙 Dark' : '🖥️ System'}
+              </button>
+            ))}
+          </div>
+        </Field>
       </Section>
 
       {/* Data management */}
@@ -100,16 +121,18 @@ export default function SettingsPage() {
         {msg && (
           <div
             className={`rounded-xl px-3 py-2 text-sm ${
-              msg.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+              msg.ok
+                ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                : 'bg-rose-500/15 text-rose-700 dark:text-rose-300'
             }`}
           >
             {msg.text}
           </div>
         )}
         <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="flex-1 rounded-xl border border-slate-200 p-4">
-            <div className="font-medium text-slate-800">Import Excel data</div>
-            <p className="mt-1 text-sm text-slate-500">
+          <div className="flex-1 rounded-xl border border-line p-4">
+            <div className="font-medium text-ink">Import Excel data</div>
+            <p className="mt-1 text-sm text-muted">
               Writes {REJOICE_DOC_COUNT} items (locations, cast, crew, props, tasks, budget,
               contacts, risks, decisions) into the app. Safe to re-run — it overwrites by ID.
             </p>
@@ -118,9 +141,9 @@ export default function SettingsPage() {
             </button>
           </div>
 
-          <div className="flex-1 rounded-xl border border-rose-200 bg-rose-50/40 p-4">
-            <div className="font-medium text-rose-800">Remove imported data</div>
-            <p className="mt-1 text-sm text-slate-500">
+          <div className="flex-1 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4">
+            <div className="font-medium text-rose-700 dark:text-rose-300">Remove imported data</div>
+            <p className="mt-1 text-sm text-muted">
               Deletes the items that came from the Excel import so you can build everything
               manually. Items you added yourself are kept.
             </p>
@@ -152,8 +175,8 @@ function Section({
 }) {
   return (
     <section className="card mb-5 p-4 sm:p-5">
-      <h2 className="font-display text-lg font-semibold text-slate-800">{title}</h2>
-      {desc && <p className="mt-0.5 text-sm text-slate-500">{desc}</p>}
+      <h2 className="font-display text-lg font-semibold text-ink">{title}</h2>
+      {desc && <p className="mt-0.5 text-sm text-muted">{desc}</p>}
       <div className="mt-4 flex flex-col gap-4">{children}</div>
     </section>
   );
@@ -172,16 +195,16 @@ function Field({
     <div className="sm:max-w-sm">
       <label className="label">{label}</label>
       {children}
-      {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-faint">{hint}</p>}
     </div>
   );
 }
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 border-b border-slate-100 pb-2 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-sm text-slate-500">{label}</span>
-      <span className="break-words text-sm font-medium text-slate-700 sm:text-right">{value}</span>
+    <div className="flex flex-col gap-1 border-b border-line pb-2 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-sm text-muted">{label}</span>
+      <span className="break-words text-sm font-medium text-ink sm:text-right">{value}</span>
     </div>
   );
 }

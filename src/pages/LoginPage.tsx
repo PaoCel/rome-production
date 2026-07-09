@@ -41,19 +41,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-slate-100 px-4 py-6">
+    <div className="flex min-h-dvh items-center justify-center bg-surface-2 px-4 py-6">
       <div className="w-full max-w-sm">
         <div className="mb-6 text-center">
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-600 text-2xl shadow-sm">
             🎬
           </div>
-          <h1 className="font-display text-2xl font-semibold text-slate-900">
+          <h1 className="font-display text-2xl font-semibold text-ink">
             {settings.productionName}
           </h1>
           <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-accent-600">
             {settings.productionSubtitle}
           </p>
-          <p className="mt-1 text-sm text-slate-500">Sign in to manage the production</p>
+          <p className="mt-1 text-sm text-muted">Sign in to manage the production</p>
         </div>
 
         <div className="card p-6">
@@ -88,17 +88,17 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="my-4 flex items-center gap-3 text-xs text-slate-400">
-            <span className="h-px flex-1 bg-slate-200" />
+          <div className="my-4 flex items-center gap-3 text-xs text-faint">
+            <span className="h-px flex-1 bg-line" />
             or
-            <span className="h-px flex-1 bg-slate-200" />
+            <span className="h-px flex-1 bg-line" />
           </div>
 
           <button className="btn-secondary w-full" onClick={google} disabled={busy}>
             Continue with Google
           </button>
 
-          <p className="mt-4 text-center text-sm text-slate-500">
+          <p className="mt-4 text-center text-sm text-muted">
             {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
             <button
               className="font-medium text-brand-600 hover:underline"

@@ -45,17 +45,17 @@ export default function RelatedTasks({
 
   return (
     <section>
-      <h4 className="mb-2 text-sm font-semibold text-slate-700">
-        Related tasks {related.length > 0 && <span className="text-slate-400">({related.length})</span>}
+      <h4 className="mb-2 text-sm font-semibold text-ink">
+        Related tasks {related.length > 0 && <span className="text-faint">({related.length})</span>}
       </h4>
 
       <div className="space-y-1.5">
         {related.map((t) => (
           <div
             key={t.id}
-            className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-2 rounded-lg border border-line bg-surface px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
           >
-            <span className="break-words text-sm text-slate-700">{t.title}</span>
+            <span className="break-words text-sm text-ink">{t.title}</span>
             <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0">
               <Pill value={t.priority} />
               <Pill value={t.status} />

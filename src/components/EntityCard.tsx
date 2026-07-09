@@ -33,13 +33,15 @@ export default function EntityCard({
     .filter(Boolean) as string[];
 
   const cost = config.costField ? item[config.costField] : undefined;
+  const phone = typeof item.phone === 'string' ? item.phone : '';
+  const email = typeof item.email === 'string' ? item.email : '';
 
   return (
     <div className="card group flex flex-col p-3.5 transition hover:-translate-y-0.5 hover:shadow-card-hover">
       <button onClick={onOpen} className="flex-1 text-left">
-        <h3 className="break-words pr-2 font-semibold text-slate-800 group-hover:text-brand-700">{title}</h3>
+        <h3 className="break-words pr-2 font-semibold text-ink group-hover:text-brand-700">{title}</h3>
         {subtitle && (
-          <p className="mt-0.5 break-words text-sm text-slate-500">{subtitle}</p>
+          <p className="mt-0.5 break-words text-sm text-muted">{subtitle}</p>
         )}
         {pills.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -50,14 +52,37 @@ export default function EntityCard({
         )}
       </button>
 
-      <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
+      {/* Contact quick actions — call / email. */}
+      {(phone || email) && (
+        <div className="contact-actions" onClick={(e) => e.stopPropagation()}>
+          {phone && (
+            <a href={`tel:${phone}`} className="ca" aria-label={`Call ${title}`}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 6c0 8 6 14 14 14l2-3-4-2-2 2c-3-1-6-4-7-7l2-2-2-4-3 2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+              </svg>
+              Call
+            </a>
+          )}
+          {email && (
+            <a href={`mailto:${email}`} className="ca" aria-label={`Email ${title}`}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6" />
+                <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.6" />
+              </svg>
+              Email
+            </a>
+          )}
+        </div>
+      )}
+
+      <div className="mt-3 flex items-center justify-between border-t border-line pt-3">
         <div className="text-sm">
           {cost ? (
-            <span className="font-medium text-slate-700">
+            <span className="font-medium text-ink">
               <Money value={cost} />
             </span>
           ) : (
-            <span className="text-slate-300">—</span>
+            <span className="text-faint">—</span>
           )}
         </div>
         <CardMenu onEdit={onEdit} onDelete={onDelete} />

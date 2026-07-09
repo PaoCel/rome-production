@@ -32,15 +32,15 @@ export default function SidePanel({
         onClick={onClose}
       />
       <div
-        className={`relative flex h-dvh w-full flex-col bg-slate-50 shadow-panel sm:rounded-l-2xl ${
+        className={`relative flex h-dvh w-full flex-col bg-surface-2 shadow-panel sm:rounded-l-2xl ${
           wide ? 'sm:max-w-3xl' : 'sm:max-w-xl'
         }`}
       >
-        <header className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3 sm:rounded-tl-2xl sm:px-5 sm:py-4">
-          <h2 className="min-w-0 truncate font-display text-lg font-semibold text-slate-800">{title}</h2>
+        <header className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3 sm:rounded-tl-2xl sm:px-5 sm:py-4">
+          <h2 className="min-w-0 truncate font-display text-lg font-semibold text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-1.5 text-faint hover:bg-surface-2 hover:text-muted"
             aria-label="Close"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -57,7 +57,7 @@ export default function SidePanel({
         <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">{children}</div>
 
         {footer && (
-          <footer className="flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-5 py-3">
+          <footer className="flex items-center justify-end gap-2 border-t border-line bg-surface px-5 py-3">
             {footer}
           </footer>
         )}

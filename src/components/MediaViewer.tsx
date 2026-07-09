@@ -70,7 +70,7 @@ export default function MediaViewer({
         ) : (
           <div className="rounded-xl bg-white p-8 text-center">
             <div className="mb-2 text-4xl">📄</div>
-            <p className="mb-3 text-sm text-slate-600">This file type can't be previewed in the browser.</p>
+            <p className="mb-3 text-sm text-muted">This file type can't be previewed in the browser.</p>
             <a
               href={item.downloadUrl}
               target="_blank"

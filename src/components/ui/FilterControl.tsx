@@ -27,8 +27,8 @@ function FilterChips({
                   onClick={() => onChange(f.name, selected ? '' : o)}
                   className={`rounded-xl border px-3 py-1.5 text-sm font-medium transition ${
                     selected
-                      ? 'border-brand-500 bg-brand-50 text-brand-700'
-                      : 'border-slate-200 bg-white text-slate-600'
+                      ? 'border-brand-500 bg-brand-50 dark:bg-brand-500/15 text-brand-700'
+                      : 'border-line bg-surface text-muted'
                   }`}
                 >
                   {o}
@@ -90,9 +90,9 @@ export default function FilterControl({
 
       <div className="hidden lg:block">
         {open && (
-          <div className="absolute right-0 z-30 mt-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-card-hover">
+          <div className="absolute right-0 z-30 mt-2 w-72 rounded-2xl border border-line bg-surface p-4 shadow-card-hover">
             <div className="mb-3 flex items-center justify-between">
-              <span className="font-semibold text-slate-800">Filtri</span>
+              <span className="font-semibold text-ink">Filtri</span>
               <button
                 type="button"
                 onClick={onClear}

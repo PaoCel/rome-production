@@ -23,7 +23,7 @@ export function FilterButton({
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50"
+      className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3.5 py-2 text-sm font-medium text-ink shadow-sm hover:border-line hover:bg-surface-2"
     >
       <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
         <path
@@ -94,8 +94,8 @@ export default function FilterSheet({
                     onClick={() => onChange(f.name, selected ? '' : o)}
                     className={`rounded-xl border px-3 py-1.5 text-sm font-medium transition ${
                       selected
-                        ? 'border-brand-500 bg-brand-50 text-brand-700'
-                        : 'border-slate-200 bg-white text-slate-600'
+                        ? 'border-brand-500 bg-brand-50 dark:bg-brand-500/15 text-brand-700'
+                        : 'border-line bg-surface text-muted'
                     }`}
                   >
                     {o}

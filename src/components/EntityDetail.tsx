@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { EntityConfig } from '../data/entities';
 import type { EntityDoc, FieldConfig } from '../types';
-import Pill from './ui/Pill';
 import Money from './ui/Money';
 import MediaGallery from './MediaGallery';
 import Comments from './Comments';
@@ -63,18 +62,26 @@ export default function EntityDetail({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <h3 className="break-words text-xl font-semibold text-slate-800">{title}</h3>
-          <button className="btn-secondary w-full sm:w-auto sm:shrink-0" onClick={onEdit}>
+      {/* Header — gradient hero */}
+      <div className="hero">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="break-words font-display text-xl font-semibold">{title}</h3>
+          <button
+            className="shrink-0 rounded-lg bg-white/15 px-3 py-1.5 text-sm font-medium text-white hover:bg-white/25"
+            onClick={onEdit}
+          >
             Edit
           </button>
         </div>
         {pills.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
             {pills.map((p, i) => (
-              <Pill key={i} value={p} />
+              <span
+                key={i}
+                className="rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-medium text-white"
+              >
+                {p}
+              </span>
             ))}
           </div>
         )}
@@ -92,7 +99,7 @@ export default function EntityDetail({
             Add to budget
           </button>
           {budgetMsg && <span className="text-sm text-emerald-600">{budgetMsg}</span>}
-          {!isSelected && <span className="text-xs text-slate-400">Selected items only</span>}
+          {!isSelected && <span className="text-xs text-faint">Selected items only</span>}
         </div>
       )}
 
@@ -103,8 +110,8 @@ export default function EntityDetail({
           if (val == null) return null;
           return (
             <div key={f.name}>
-              <div className="text-xs font-medium text-slate-400">{f.label}</div>
-              <div className="break-words text-sm text-slate-700">{val}</div>
+              <div className="text-xs font-medium text-faint">{f.label}</div>
+              <div className="break-words text-sm text-ink">{val}</div>
             </div>
           );
         })}
@@ -116,8 +123,8 @@ export default function EntityDetail({
           {textFields.map((f) =>
             item[f.name] ? (
               <div key={f.name} className="card p-4">
-                <div className="mb-1 text-xs font-medium text-slate-400">{f.label}</div>
-                <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700">
+                <div className="mb-1 text-xs font-medium text-faint">{f.label}</div>
+                <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-ink">
                   {item[f.name]}
                 </p>
               </div>

@@ -68,9 +68,9 @@ export default function LinkedOptions({
   return (
     <section>
       <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h4 className="text-sm font-semibold text-slate-700">
+        <h4 className="text-sm font-semibold text-ink">
           Options{' '}
-          {options.length > 0 && <span className="text-slate-400">({options.length})</span>}
+          {options.length > 0 && <span className="text-faint">({options.length})</span>}
         </h4>
         {!showForm && (
           <button
@@ -98,18 +98,18 @@ export default function LinkedOptions({
           return (
             <div
               key={o.id}
-              className={`rounded-lg border bg-white p-3 transition ${
-                isSelected ? 'border-brand-400 ring-1 ring-brand-200' : 'border-slate-200'
+              className={`rounded-lg border bg-surface p-3 transition ${
+                isSelected ? 'border-brand-400 ring-1 ring-brand-200' : 'border-line'
               }`}
             >
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="break-words font-medium text-slate-800">
+                    <span className="break-words font-medium text-ink">
                       {o[optionConfig.titleField] || 'Untitled option'}
                     </span>
                     {isSelected && (
-                      <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-600">
+                      <span className="rounded-full bg-brand-50 dark:bg-brand-500/15 px-2 py-0.5 text-xs font-medium text-brand-600">
                         Selected
                       </span>
                     )}
@@ -123,13 +123,13 @@ export default function LinkedOptions({
                   )}
                 </div>
                 {cost ? (
-                  <span className="text-sm font-medium text-slate-700 sm:shrink-0">
+                  <span className="text-sm font-medium text-ink sm:shrink-0">
                     <Money value={cost} />
                   </span>
                 ) : null}
               </div>
 
-              <div className="mt-3 grid grid-cols-2 gap-1.5 border-t border-slate-100 pt-2.5 sm:flex sm:flex-wrap sm:items-center">
+              <div className="mt-3 grid grid-cols-2 gap-1.5 border-t border-line pt-2.5 sm:flex sm:flex-wrap sm:items-center">
                 <button
                   className={
                     isSelected
@@ -171,7 +171,7 @@ export default function LinkedOptions({
         })}
 
         {options.length === 0 && !showForm && (
-          <p className="rounded-lg border border-dashed border-slate-200 py-5 text-center text-xs text-slate-400">
+          <p className="rounded-lg border border-dashed border-line py-5 text-center text-xs text-faint">
             No options yet. Add a few candidates to compare.
           </p>
         )}
@@ -179,8 +179,8 @@ export default function LinkedOptions({
 
       {/* Inline add / edit form */}
       {showForm && (
-        <div className="mt-3 rounded-lg border border-slate-200 bg-white p-4">
-          <div className="mb-3 text-sm font-semibold text-slate-700">
+        <div className="mt-3 rounded-lg border border-line bg-surface p-4">
+          <div className="mb-3 text-sm font-semibold text-ink">
             {editing ? 'Edit option' : 'New option'}
           </div>
           <EntityForm
@@ -195,12 +195,12 @@ export default function LinkedOptions({
             }}
           />
           {optionConfig.media && optionConfig.relatedType && editing && (
-            <div className="mt-5 border-t border-slate-200 pt-4">
+            <div className="mt-5 border-t border-line pt-4">
               <MediaGallery relatedType={optionConfig.relatedType} relatedId={editing.id} />
             </div>
           )}
           {optionConfig.media && creating && (
-            <p className="mt-4 border-t border-slate-200 pt-4 text-xs text-slate-400">
+            <p className="mt-4 border-t border-line pt-4 text-xs text-faint">
               Save this option first, then reopen it to add photos and files.
             </p>
           )}

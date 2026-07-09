@@ -10,7 +10,7 @@ export default function SearchInput({
   return (
     <div className="relative w-full sm:max-w-xs">
       <svg
-        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
         width="16"
         height="16"
         viewBox="0 0 20 20"

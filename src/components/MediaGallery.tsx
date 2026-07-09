@@ -42,7 +42,7 @@ export default function MediaGallery({
   return (
     <section>
       <div className="mb-2 flex items-center justify-between gap-3">
-        <h4 className="text-sm font-semibold text-slate-700">Media</h4>
+        <h4 className="text-sm font-semibold text-ink">Media</h4>
         <button
           className="btn-secondary py-1.5 text-xs"
           onClick={() => inputRef.current?.click()}
@@ -61,7 +61,7 @@ export default function MediaGallery({
       </div>
 
       {media.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-slate-300 px-3 py-6 text-center text-xs text-slate-400">
+        <p className="rounded-lg border border-dashed border-line px-3 py-6 text-center text-xs text-faint">
           No media uploaded yet.
         </p>
       ) : (
@@ -72,7 +72,7 @@ export default function MediaGallery({
             return (
               <div
                 key={m.id}
-                className="group relative overflow-hidden rounded-lg border border-slate-200 bg-white"
+                className="group relative overflow-hidden rounded-lg border border-line bg-surface"
               >
                 {m.type === 'image' ? (
                   <button onClick={() => setViewing(m)} className="block w-full">
@@ -88,7 +88,7 @@ export default function MediaGallery({
                 ) : pdf ? (
                   <button
                     onClick={() => setViewing(m)}
-                    className="flex h-28 w-full flex-col items-center justify-center gap-1 bg-red-50 text-red-500"
+                    className="flex h-28 w-full flex-col items-center justify-center gap-1 bg-red-50 dark:bg-red-500/15 text-red-500"
                   >
                     <span className="text-2xl">📕</span>
                     <span className="px-2 text-center text-[11px] font-medium leading-tight">
@@ -100,7 +100,7 @@ export default function MediaGallery({
                     href={m.downloadUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex h-28 w-full flex-col items-center justify-center gap-1 bg-slate-50 text-slate-500"
+                    className="flex h-28 w-full flex-col items-center justify-center gap-1 bg-surface-2 text-muted"
                   >
                     <span className="text-2xl">📄</span>
                     <span className="px-2 text-center text-[11px] leading-tight">Open document</span>
@@ -109,14 +109,14 @@ export default function MediaGallery({
 
                 <div className="flex items-center justify-between gap-1 px-2 py-1">
                   <button
-                    className="min-w-0 flex-1 truncate text-left text-[11px] text-slate-500 hover:text-slate-700"
+                    className="min-w-0 flex-1 truncate text-left text-[11px] text-muted hover:text-ink"
                     title={m.fileName}
                     onClick={() => (preview ? setViewing(m) : window.open(m.downloadUrl, '_blank'))}
                   >
                     {m.fileName}
                   </button>
                   <button
-                    className="shrink-0 text-slate-300 hover:text-red-500"
+                    className="shrink-0 text-faint hover:text-red-500"
                     onClick={() => deleteMedia(m.id, m.storagePath)}
                     aria-label="Delete media"
                   >
