@@ -33,11 +33,11 @@ export default function OptionDetail({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
+      <div className="card p-4 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h3 className="break-words text-xl font-semibold text-slate-800">{title}</h3>
+            <p className="section-label">{optionConfig.singular}</p>
+            <h3 className="mt-1 break-words font-display text-2xl font-semibold text-slate-900">{title}</h3>
             {requirementName && (
               <p className="mt-0.5 text-sm text-slate-400">for: {requirementName}</p>
             )}
@@ -59,7 +59,14 @@ export default function OptionDetail({
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+      <div className="card flex flex-col gap-3 border-brand-100 bg-brand-50/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="text-sm font-semibold text-slate-800">Selection & budget</div>
+          <div className="text-xs text-slate-500">
+            {isSelected ? 'Selected for this requirement.' : 'Select this option before committing budget.'}
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <button
           className={isSelected ? 'btn-secondary w-full sm:w-auto' : 'btn-primary w-full sm:w-auto'}
           onClick={onSelect}
@@ -77,6 +84,7 @@ export default function OptionDetail({
           </button>
         )}
         {budgetMsg && <span className="text-sm text-emerald-600">{budgetMsg}</span>}
+        </div>
       </div>
 
       {/* Photos + files (large cover) */}

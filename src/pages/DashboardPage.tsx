@@ -60,22 +60,33 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Hero */}
-      <div>
-        <p className="section-label">Production overview</p>
-        <h1 className="mt-1 break-words font-display text-2xl font-semibold text-slate-900 sm:text-3xl">
-          Ciao, {displayName}
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          {settings.productionSubtitle} — everything you're tracking, at a glance.
-        </p>
+      <div className="card overflow-hidden p-0">
+        <div className="relative overflow-hidden bg-brand-700 p-5 text-white sm:p-6 lg:p-7">
+          <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-white/20 blur-3xl" />
+          <div className="absolute -bottom-28 left-10 h-64 w-64 rounded-full bg-accent-400/25 blur-3xl" />
+          <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/65">Production overview</p>
+              <h1 className="mt-2 break-words font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                Ciao, {displayName}
+              </h1>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-white/75">
+                {settings.productionSubtitle} — everything you're tracking, at a glance.
+              </p>
+            </div>
+            <Link to="/tasks" className="btn-secondary border-white/20 bg-white/10 text-white hover:bg-white/15">
+              Open tasks
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi to="/tasks" icon="✅" label="Open tasks" value={openTasks} sub={`${highTasks} high priority`} tone="indigo" />
-        <Kpi to="/budget" icon="💶" label="Committed budget" money={committed} sub={`of ${formatMoney(estimated)} estimated`} tone="amber" />
-        <Kpi to="/budget" icon="🧾" label="Actual spend" money={actual} sub="paid & incurred" tone="emerald" />
-        <Kpi to="/risks" icon="⚠️" label="Open risks" value={openRisks} sub={`${pendingDecisions} decisions pending`} tone="rose" />
+        <Kpi to="/tasks" label="Open tasks" value={openTasks} sub={`${highTasks} high priority`} tone="indigo" />
+        <Kpi to="/budget" label="Committed budget" money={committed} sub={`of ${formatMoney(estimated)} estimated`} tone="amber" />
+        <Kpi to="/budget" label="Actual spend" money={actual} sub="paid & incurred" tone="emerald" />
+        <Kpi to="/risks" label="Open risks" value={openRisks} sub={`${pendingDecisions} decisions pending`} tone="rose" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -144,7 +155,7 @@ export default function DashboardPage() {
           {selections.map((s) => {
             const pct = s.total ? Math.round((s.chosen / s.total) * 100) : 0;
             return (
-              <Link key={s.label} to={s.to} className="card p-4 transition hover:shadow-card-hover">
+              <Link key={s.label} to={s.to} className="card p-4 transition hover:-translate-y-0.5 hover:shadow-card-hover">
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm font-medium text-slate-700">{s.label}</span>
                   <span className="text-xs text-slate-400">{s.chosen}/{s.total}</span>
@@ -171,9 +182,15 @@ const KPI_TONES: Record<string, string> = {
   rose: 'text-rose-600',
 };
 
+const KPI_DOTS: Record<string, string> = {
+  indigo: 'bg-brand-500',
+  amber: 'bg-amber-500',
+  emerald: 'bg-emerald-500',
+  rose: 'bg-rose-500',
+};
+
 function Kpi({
   to,
-  icon,
   label,
   value,
   money,
@@ -181,7 +198,6 @@ function Kpi({
   tone,
 }: {
   to: string;
-  icon: string;
   label: string;
   value?: number;
   money?: number;
@@ -189,10 +205,10 @@ function Kpi({
   tone: string;
 }) {
   return (
-    <Link to={to} className="card p-4 transition hover:shadow-card-hover">
+    <Link to={to} className="card p-4 transition hover:-translate-y-0.5 hover:shadow-card-hover">
       <div className="flex items-center justify-between gap-2">
         <span className="section-label">{label}</span>
-        <span className="text-base">{icon}</span>
+        <span className={`h-2.5 w-2.5 rounded-full ${KPI_DOTS[tone]}`} aria-hidden="true" />
       </div>
       <div className={`mt-2 break-words text-2xl font-semibold ${KPI_TONES[tone]}`}>
         {money !== undefined ? <Money value={money} /> : value}

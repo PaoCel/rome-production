@@ -68,7 +68,11 @@ export default function OptionCard({
           </>
         ) : (
           <div className="flex h-full w-full items-center justify-center text-4xl text-slate-300">
-            🏷️
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+              <rect x="8" y="10" width="28" height="24" rx="6" fill="currentColor" opacity="0.25" />
+              <path d="M15 26l5-5 4 4 3-3 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="18" cy="17" r="2" fill="currentColor" />
+            </svg>
           </div>
         )}
         {isSelected && (
@@ -78,7 +82,7 @@ export default function OptionCard({
         )}
         {shotCount > 1 && (
           <span className="absolute bottom-2 right-2 rounded-full bg-slate-900/60 px-2 py-0.5 text-[11px] font-medium text-white">
-            📎 {shotCount}
+            {shotCount} media
           </span>
         )}
       </button>
