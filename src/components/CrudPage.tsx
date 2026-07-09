@@ -6,13 +6,15 @@ import { createItem, deleteItem, updateItem } from '../services/firestore';
 import { OWNERS } from '../data/owners';
 import PageHeader from './PageHeader';
 import SearchInput from './ui/SearchInput';
-import FilterBar, { type FilterDef } from './ui/FilterBar';
+import { type FilterDef } from './ui/FilterBar';
+import FilterSheet, { FilterButton, activeFilterCount } from './ui/FilterSheet';
 import EmptyState from './ui/EmptyState';
 import EntityCard from './EntityCard';
 import EntityForm from './form/EntityForm';
 import EntityDetail from './EntityDetail';
 import MediaGallery from './MediaGallery';
 import SidePanel from './ui/SidePanel';
+import BottomSheet from './ui/BottomSheet';
 
 // One reusable page powering every card-based CRUD section.
 export default function CrudPage({ config }: { config: EntityConfig }) {
@@ -24,6 +26,7 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
   const [detail, setDetail] = useState<EntityDoc | null>(null);
   const [editing, setEditing] = useState<EntityDoc | null>(null);
   const [creating, setCreating] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const filterDefs: FilterDef[] = useMemo(
     () => config.filters.map((name) => buildFilter(name, config, items)),
@@ -74,14 +77,19 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
         }
       />
 
-      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="mb-4 flex items-center gap-2">
         <SearchInput value={search} onChange={setSearch} />
-        <FilterBar
-          filters={filterDefs}
-          values={filters}
-          onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
-        />
+        <FilterButton activeCount={activeFilterCount(filters)} onClick={() => setFilterOpen(true)} />
       </div>
+
+      <FilterSheet
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        filters={filterDefs}
+        values={filters}
+        onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
+        onClear={() => setFilters({})}
+      />
 
       {loading ? (
         <p className="text-sm text-slate-400">Loading…</p>
@@ -106,7 +114,7 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
       )}
 
       {/* Create / Edit */}
-      <SidePanel
+      <BottomSheet
         open={creating || !!editing}
         title={editing ? `Edit ${config.singular.toLowerCase()}` : `New ${config.singular.toLowerCase()}`}
         onClose={() => {
@@ -137,7 +145,7 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
             Save this {config.singular.toLowerCase()} first, then reopen it to upload photos and files.
           </p>
         )}
-      </SidePanel>
+      </BottomSheet>
 
       {/* Detail */}
       <SidePanel
