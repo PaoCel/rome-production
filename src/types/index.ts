@@ -88,4 +88,8 @@ export interface FieldConfig {
   placeholder?: string;
   full?: boolean; // span full width in the form grid
   hideInDetail?: boolean;
+  // Explicit override for whether the add/edit sheet shows this field right
+  // away vs under "More details". Omit to use the default heuristic
+  // (title/select/owner/number/date visible, free text/textarea hidden).
+  essential?: boolean;
 }

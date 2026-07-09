@@ -160,9 +160,10 @@ export default function BudgetPage() {
 
       {/* Per-category summary */}
       {byCategory.length > 0 && (
-        <div className="card mb-6">
+        <div className="mb-6">
+          <div className="section-label mb-2">Spend by category</div>
           {/* Desktop: table */}
-          <div className="hidden p-0 md:block">
+          <div className="card hidden p-0 md:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-faint">
@@ -187,27 +188,28 @@ export default function BudgetPage() {
             </table>
           </div>
 
-          {/* Mobile: stacked list */}
-          <div className="divide-y divide-line p-4 md:hidden">
+          {/* Mobile: one elevated card per category */}
+          <div className="flex flex-col gap-2.5 md:hidden">
             {byCategory.map(([cat, v]) => (
-              <div key={cat} className="py-3 first:pt-0 last:pb-0">
-                <div className="font-medium text-ink">{cat}</div>
-                <div className="mt-1.5 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <div key={cat} className="card p-3.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-ink">{cat}</span>
+                  <span className="rounded-lg bg-surface-2 px-2 py-0.5 text-xs font-medium text-muted">
+                    {v.count} {v.count === 1 ? 'item' : 'items'}
+                  </span>
+                </div>
+                <div className="mt-2.5 grid grid-cols-3 gap-2 text-sm">
                   <div>
-                    <div className="text-xs text-faint">Estimate</div>
-                    <Money value={v.estimated} />
+                    <div className="text-[10px] font-bold uppercase tracking-wide text-faint">Estimate</div>
+                    <Money value={v.estimated} className="font-bold" />
                   </div>
                   <div>
-                    <div className="text-xs text-faint">Committed</div>
-                    <Money value={v.committed} className="text-amber-600" />
+                    <div className="text-[10px] font-bold uppercase tracking-wide text-amber-600 dark:text-amber-400">Committed</div>
+                    <Money value={v.committed} className="font-bold text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <div className="text-xs text-faint">Actual</div>
-                    <Money value={v.actual} className="text-indigo-600" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-faint">Items</div>
-                    <span className="text-muted">{v.count}</span>
+                    <div className="text-[10px] font-bold uppercase tracking-wide text-good">Actual</div>
+                    <Money value={v.actual} className="font-bold text-good" />
                   </div>
                 </div>
               </div>
@@ -216,7 +218,7 @@ export default function BudgetPage() {
         </div>
       )}
 
-      {/* Editable list */}
+      {/* Line items */}
       <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-semibold text-ink">Line items</h2>
         <SearchInput value={search} onChange={setSearch} />
@@ -227,87 +229,80 @@ export default function BudgetPage() {
       ) : filtered.length === 0 ? (
         <EmptyState title="No budget items" hint="Add one, or commit a selected option from any area." />
       ) : (
-        <div className="card divide-y divide-line">
+        <div className="flex flex-col gap-2.5">
           {filtered.map((it) => {
             const estimated = Number(it.estimatedCost) || 0;
             const actual = Number(it.actualCost) || 0;
             const diff = actual - estimated;
-            const awaitingActual = !it.actualCost && estimated > 0;
             return (
-              <div key={it.id} className="flex flex-col gap-3 p-3 md:flex-row md:items-center">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="break-words font-medium text-ink">
-                      {it.lineItem || 'Untitled'}
-                    </span>
-                    {it.category && (
-                      <span className="rounded bg-surface-2 px-1.5 py-0.5 text-xs text-muted">
-                        {it.category}
-                      </span>
-                    )}
-                    {it.sourceType && SOURCE_LABEL[it.sourceType] && (
-                      <span className="rounded bg-brand-50 dark:bg-brand-500/15 px-1.5 py-0.5 text-xs text-brand-600">
-                        {SOURCE_LABEL[it.sourceType]}
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                    {it.budgetStage ? (
-                      <Pill value={it.budgetStage} />
-                    ) : (
-                      it.committed && <Pill value="Committed" />
-                    )}
-                    <Pill value={it.paymentStatus} />
-                    {it.supplierContact && (
-                      <span className="text-xs text-faint">{it.supplierContact}</span>
-                    )}
-                  </div>
+              <div key={it.id} className="card flex flex-col gap-3 p-3.5">
+                <div className="flex items-start justify-between gap-2">
+                  <span className="min-w-0 flex-1 break-words font-semibold text-ink">
+                    {it.lineItem || 'Untitled'}
+                  </span>
+                  <CardMenu onEdit={() => setEditing(it)} onDelete={() => handleDelete(it)} />
                 </div>
 
-                <div className="flex w-full flex-col gap-2 md:w-auto md:min-w-[19rem]">
-                  <div className="grid grid-cols-2 gap-x-3 text-left text-sm">
-                    <div className="min-w-0">
-                      <div className="text-xs text-faint">Stima</div>
-                      <input
-                        key={`est-${it.id}`}
-                        type="number"
-                        className="w-full rounded-md border border-line bg-surface px-2 py-1 text-sm font-medium text-ink outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
-                        defaultValue={it.estimatedCost ?? ''}
-                        onBlur={(e) => handleInlineChange(it, 'estimatedCost', e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-                        }}
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs text-faint">Reale</div>
-                      <input
-                        key={`actual-${it.id}`}
-                        type="number"
-                        className="w-full rounded-md border border-line bg-surface px-2 py-1 text-sm font-medium text-ink outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
-                        defaultValue={it.actualCost ?? ''}
-                        onBlur={(e) => handleInlineChange(it, 'actualCost', e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {!(Number(it.actualCost) || 0) && (Number(it.estimatedCost) || 0) > 0 ? (
-                    <span className="variance variance-wait">In attesa del costo reale</span>
-                  ) : diff > 0 ? (
-                    <span className="variance variance-over">↑ +{formatMoney(diff)} sopra la stima</span>
-                  ) : diff < 0 ? (
-                    <span className="variance variance-under">↓ -{formatMoney(Math.abs(diff))} sotto la stima</span>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {it.category && (
+                    <span className="rounded-lg bg-surface-2 px-2 py-0.5 text-xs font-medium text-muted">
+                      {it.category}
+                    </span>
+                  )}
+                  {it.sourceType && SOURCE_LABEL[it.sourceType] && (
+                    <span className="rounded-lg bg-brand-50 dark:bg-brand-500/15 px-2 py-0.5 text-xs font-medium text-brand-600">
+                      {SOURCE_LABEL[it.sourceType]}
+                    </span>
+                  )}
+                  {it.budgetStage ? (
+                    <Pill value={it.budgetStage} />
                   ) : (
-                    <span className="variance variance-flat">In linea con la stima</span>
+                    it.committed && <Pill value="Committed" />
+                  )}
+                  <Pill value={it.paymentStatus} />
+                  {it.supplierContact && (
+                    <span className="text-xs text-faint">{it.supplierContact}</span>
                   )}
                 </div>
 
-                <div className="flex items-center justify-end md:shrink-0">
-                  <CardMenu onEdit={() => setEditing(it)} onDelete={() => handleDelete(it)} />
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="min-w-0 rounded-xl bg-surface-2 p-2.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wide text-faint">Stima</div>
+                    <input
+                      key={`est-${it.id}`}
+                      type="number"
+                      className="mt-0.5 w-full min-w-0 bg-transparent text-base font-bold text-ink outline-none"
+                      defaultValue={it.estimatedCost ?? ''}
+                      onBlur={(e) => handleInlineChange(it, 'estimatedCost', e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                      }}
+                    />
+                  </div>
+                  <div className="min-w-0 rounded-xl bg-surface-2 p-2.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wide text-faint">Reale</div>
+                    <input
+                      key={`actual-${it.id}`}
+                      type="number"
+                      className="mt-0.5 w-full min-w-0 bg-transparent text-base font-bold text-ink outline-none"
+                      defaultValue={it.actualCost ?? ''}
+                      onBlur={(e) => handleInlineChange(it, 'actualCost', e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                      }}
+                    />
+                  </div>
                 </div>
+
+                {!(Number(it.actualCost) || 0) && (Number(it.estimatedCost) || 0) > 0 ? (
+                  <span className="variance variance-wait">In attesa del costo reale</span>
+                ) : diff > 0 ? (
+                  <span className="variance variance-over">↑ +{formatMoney(diff)} sopra la stima</span>
+                ) : diff < 0 ? (
+                  <span className="variance variance-under">↓ -{formatMoney(Math.abs(diff))} sotto la stima</span>
+                ) : (
+                  <span className="variance variance-flat">In linea con la stima</span>
+                )}
               </div>
             );
           })}

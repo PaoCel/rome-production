@@ -102,13 +102,13 @@ export default function EntityDetail({
       {/* Fields */}
       <EntityFields config={config} item={item} />
 
-      {/* Linked options (two-tier requirement → options) */}
-      {config.optionConfig && <LinkedOptions config={config} requirement={item} />}
-
       {/* Media */}
       {config.media && config.relatedType && (
         <MediaGallery relatedType={config.relatedType} relatedId={item.id} />
       )}
+
+      {/* Linked options (two-tier requirement → options) */}
+      {config.optionConfig && <LinkedOptions config={config} requirement={item} />}
 
       {/* Related tasks */}
       {config.relatedTasks && config.relatedType && (

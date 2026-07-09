@@ -10,7 +10,7 @@ export default function TwoTierPage({ config }: { config: EntityConfig }) {
 
   return (
     <div>
-      <div className="mb-4 inline-flex rounded-lg border border-line bg-surface p-0.5">
+      <div className="mb-4 inline-flex rounded-xl border border-line bg-surface p-1">
         <Tab active={view === 'options'} onClick={() => setView('options')}>
           Options
         </Tab>
@@ -40,7 +40,7 @@ function Tab({
   return (
     <button
       onClick={onClick}
-      className={`rounded-md px-4 py-1.5 text-sm font-medium transition ${
+      className={`rounded-lg px-4 py-1.5 text-sm font-medium transition ${
         active ? 'bg-brand-600 text-white' : 'text-muted hover:bg-surface-2'
       }`}
     >

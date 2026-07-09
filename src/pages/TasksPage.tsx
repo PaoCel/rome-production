@@ -131,12 +131,12 @@ export default function TasksPage() {
             onClear={() => setFilters({})}
           />
         </div>
-        <div className="grid grid-cols-2 rounded-lg border border-line bg-surface p-0.5 sm:inline-flex">
+        <div className="grid grid-cols-2 rounded-xl border border-line bg-surface p-1 sm:inline-flex">
           {(['board', 'list'] as const).map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium capitalize transition ${
+              className={`rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition ${
                 view === v ? 'bg-brand-600 text-white' : 'text-muted hover:bg-surface-2'
               }`}
             >

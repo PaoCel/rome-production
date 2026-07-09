@@ -37,14 +37,18 @@ export default function EntityCard({
   const email = typeof item.email === 'string' ? item.email : '';
 
   return (
-    <div className="card group flex flex-col p-3.5 transition hover:-translate-y-0.5 hover:shadow-card-hover">
-      <button onClick={onOpen} className="flex-1 text-left">
-        <h3 className="break-words pr-2 font-semibold text-ink group-hover:text-brand-700">{title}</h3>
-        {subtitle && (
-          <p className="mt-0.5 break-words text-sm text-muted">{subtitle}</p>
-        )}
+    <div className="card group flex flex-col gap-2.5 p-3.5 transition hover:-translate-y-0.5 hover:shadow-card-hover">
+      <div className="flex items-start gap-2">
+        <button onClick={onOpen} className="min-w-0 flex-1 text-left">
+          <h3 className="break-words font-semibold text-ink group-hover:text-brand-700">{title}</h3>
+        </button>
+        <CardMenu onEdit={onEdit} onDelete={onDelete} />
+      </div>
+
+      <button onClick={onOpen} className="-mt-1 text-left">
+        {subtitle && <p className="break-words text-sm text-muted">{subtitle}</p>}
         {pills.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className={`flex flex-wrap gap-1.5 ${subtitle ? 'mt-2' : ''}`}>
             {pills.map((p, i) => (
               <Pill key={i} value={p} />
             ))}
@@ -52,8 +56,35 @@ export default function EntityCard({
         )}
       </button>
 
-      <div className="mt-3 flex items-center justify-between border-t border-line pt-3">
-        <div className="text-sm">
+      {(phone || email) && (
+        <div className="contact-actions" onClick={(e) => e.stopPropagation()}>
+          {phone && (
+            <a href={`tel:${phone}`} className="ca" aria-label={`Call ${title}`}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M4 6c0 8 6 14 14 14l2-3-4-2-2 2c-3-1-6-4-7-7l2-2-2-4-3 2Z"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Call
+            </a>
+          )}
+          {email && (
+            <a href={`mailto:${email}`} className="ca" aria-label={`Email ${title}`}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6" />
+                <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.6" />
+              </svg>
+              Email
+            </a>
+          )}
+        </div>
+      )}
+
+      {config.costField && (
+        <div className="flex items-center justify-between border-t border-line pt-2.5 text-sm">
           {cost ? (
             <span className="font-medium text-ink">
               <Money value={cost} />
@@ -62,8 +93,7 @@ export default function EntityCard({
             <span className="text-faint">—</span>
           )}
         </div>
-        <CardMenu onEdit={onEdit} onDelete={onDelete} />
-      </div>
+      )}
     </div>
   );
 }

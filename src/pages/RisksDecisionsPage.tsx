@@ -7,7 +7,7 @@ export default function RisksDecisionsPage() {
 
   return (
     <div>
-      <div className="mb-5 grid grid-cols-2 rounded-lg border border-line bg-surface p-1 sm:inline-flex">
+      <div className="mb-5 grid grid-cols-2 rounded-xl border border-line bg-surface p-1 sm:inline-flex">
         <TabButton active={tab === 'risks'} onClick={() => setTab('risks')}>
           ⚠️ Risks
         </TabButton>
@@ -37,7 +37,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`rounded-md px-3 py-1.5 text-sm font-medium transition sm:px-4 ${
+      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition sm:px-4 ${
         active ? 'bg-brand-600 text-white' : 'text-muted hover:bg-surface-2'
       }`}
     >

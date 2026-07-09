@@ -1,6 +1,5 @@
 import type { EntityConfig } from '../data/entities';
 import type { EntityDoc } from '../types';
-import Pill from './ui/Pill';
 import MediaGallery from './MediaGallery';
 import Comments from './Comments';
 import EntityFields from './EntityFields';
@@ -32,50 +31,48 @@ export default function OptionDetail({
   const pills = optionConfig.pillFields.map((n) => option[n]).filter(Boolean) as string[];
 
   return (
-    <div className="space-y-6">
-      <div className="card p-4 sm:p-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div className="space-y-5">
+      <div className="hero">
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="section-label">{optionConfig.singular}</p>
-            <h3 className="mt-1 break-words font-display text-2xl font-semibold text-ink">{title}</h3>
-            {requirementName && (
-              <p className="mt-0.5 text-sm text-faint">for: {requirementName}</p>
-            )}
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">
+              {optionConfig.singular}
+              {requirementName ? ` · for ${requirementName}` : ''}
+            </p>
+            <h3 className="mt-1 break-words font-display text-2xl font-semibold">{title}</h3>
           </div>
-          <button className="btn-secondary w-full sm:w-auto sm:shrink-0" onClick={onEdit}>
+          <button
+            className="shrink-0 rounded-lg bg-white/15 px-3 py-1.5 text-sm font-medium text-white hover:bg-white/25"
+            onClick={onEdit}
+          >
             Edit
           </button>
         </div>
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
           {isSelected && (
-            <span className="rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white">
+            <span className="rounded-full bg-white/25 px-2.5 py-0.5 text-xs font-semibold text-white">
               ✓ Selected
             </span>
           )}
           {pills.map((p, i) => (
-            <Pill key={i} value={p} />
+            <span key={i} className="rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-medium text-white">
+              {p}
+            </span>
           ))}
         </div>
       </div>
 
       {/* Actions */}
-      <div className="card flex flex-col gap-3 border-brand-100 bg-brand-50/60 dark:border-brand-500/30 dark:bg-brand-500/10 p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="text-sm font-semibold text-ink">Selection & budget</div>
-          <div className="text-xs text-muted">
-            {isSelected ? 'Selected for this requirement.' : 'Select this option before committing budget.'}
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      <div className="flex flex-wrap items-center gap-2">
         <button
-          className={isSelected ? 'btn-secondary w-full sm:w-auto' : 'btn-primary w-full sm:w-auto'}
+          className={isSelected ? 'btn-secondary px-3 py-1.5 text-sm' : 'btn-primary px-3 py-1.5 text-sm'}
           onClick={onSelect}
         >
-          {isSelected ? 'Deselect' : 'Select this option'}
+          {isSelected ? '✓ Selected' : 'Select this option'}
         </button>
         {optionConfig.budgetSource && (
           <button
-            className="btn-secondary w-full sm:w-auto"
+            className="btn-secondary px-3 py-1.5 text-sm"
             onClick={onCommit}
             disabled={!isSelected || committing}
             title={isSelected ? '' : 'Select this option first'}
@@ -83,11 +80,10 @@ export default function OptionDetail({
             {committing ? 'Committing…' : 'Commit to budget'}
           </button>
         )}
-        {budgetMsg && <span className="text-sm text-emerald-600">{budgetMsg}</span>}
-        </div>
+        {budgetMsg && <span className="text-sm text-good">{budgetMsg}</span>}
       </div>
 
-      {/* Photos + files (large cover) */}
+      {/* Photos + files */}
       {optionConfig.relatedType && (
         <MediaGallery relatedType={optionConfig.relatedType} relatedId={option.id} hero />
       )}

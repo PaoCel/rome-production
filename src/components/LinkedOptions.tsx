@@ -109,7 +109,7 @@ export default function LinkedOptions({
           return (
             <div
               key={o.id}
-              className={`rounded-lg border bg-surface p-3 transition ${
+              className={`rounded-2xl border bg-surface p-3.5 transition ${
                 isSelected ? 'border-brand-400 ring-1 ring-brand-200' : 'border-line'
               }`}
             >
@@ -182,7 +182,7 @@ export default function LinkedOptions({
         })}
 
         {options.length === 0 && !showForm && (
-          <p className="rounded-lg border border-dashed border-line py-5 text-center text-xs text-faint">
+          <p className="rounded-2xl border border-dashed border-line py-5 text-center text-xs text-faint">
             No options yet. Add a few candidates to compare.
           </p>
         )}
@@ -190,7 +190,7 @@ export default function LinkedOptions({
 
       {/* Inline add / edit form */}
       {showForm && (
-        <div className="mt-3 rounded-lg border border-line bg-surface p-4">
+        <div className="mt-3 rounded-2xl border border-line bg-surface p-4">
           <div className="mb-3 text-sm font-semibold text-ink">
             {editing ? 'Edit option' : 'New option'}
           </div>
