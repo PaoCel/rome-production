@@ -13,6 +13,7 @@ import EmptyState from '../components/ui/EmptyState';
 import SidePanel from '../components/ui/SidePanel';
 import EntityForm from '../components/form/EntityForm';
 import EntityDetail from '../components/EntityDetail';
+import CardMenu from '../components/ui/CardMenu';
 import { formatDate } from '../utils/format';
 
 const TASK_FIELDS: FieldConfig[] = [
@@ -189,11 +190,11 @@ function BoardView({
   onMove: (t: EntityDoc, status: string) => void;
 }) {
   return (
-    <div className="-mx-3 flex gap-3 overflow-x-auto px-3 pb-2 sm:mx-0 sm:gap-4 sm:px-0">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       {TASK_STATUSES.map((status) => {
         const col = tasks.filter((t) => (t.status || 'To do') === status);
         return (
-          <div key={status} className="w-[82vw] max-w-80 shrink-0 sm:w-72">
+          <div key={status} className="min-w-0">
             <div className="mb-2 flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
                 <Pill value={status} />
@@ -263,15 +264,10 @@ function ListView({
               {t.dueDate && <span>· Due {formatDate(t.dueDate)}</span>}
             </div>
           </button>
-          <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0">
+          <div className="flex items-center gap-1.5 sm:shrink-0">
             <Pill value={t.priority} />
             <Pill value={t.status} />
-            <button className="btn-secondary flex-1 px-2.5 py-1.5 text-xs sm:flex-none" onClick={() => onEdit(t)}>
-              Edit
-            </button>
-            <button className="btn-danger flex-1 px-2.5 py-1.5 text-xs sm:flex-none" onClick={() => onDelete(t)}>
-              Delete
-            </button>
+            <CardMenu onEdit={() => onEdit(t)} onDelete={() => onDelete(t)} />
           </div>
         </div>
       ))}

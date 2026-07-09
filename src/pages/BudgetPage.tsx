@@ -14,6 +14,7 @@ import Money from '../components/ui/Money';
 import EmptyState from '../components/ui/EmptyState';
 import SidePanel from '../components/ui/SidePanel';
 import EntityForm from '../components/form/EntityForm';
+import CardMenu from '../components/ui/CardMenu';
 
 const BUDGET_FIELDS: FieldConfig[] = [
   { name: 'lineItem', label: 'Line item', type: 'text', full: true },
@@ -107,6 +108,12 @@ export default function BudgetPage() {
     await deleteItem('budgetItems', it.id);
   }
 
+  async function handleInlineChange(it: EntityDoc, field: 'estimatedCost' | 'actualCost', raw: string) {
+    const value = raw === '' ? 0 : Number(raw);
+    if (Number.isNaN(value)) return;
+    await updateItem('budgetItems', it.id, { [field]: value });
+  }
+
   return (
     <div>
       <PageHeader
@@ -129,29 +136,59 @@ export default function BudgetPage() {
 
       {/* Per-category summary */}
       {byCategory.length > 0 && (
-        <div className="card mb-6 overflow-x-auto p-0">
-          <table className="w-full min-w-[38rem] text-sm">
-            <thead>
-              <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-400">
-                <th className="px-4 py-3 font-medium">Category</th>
-                <th className="px-4 py-3 text-right font-medium">Estimate</th>
-                <th className="px-4 py-3 text-right font-medium">Committed</th>
-                <th className="px-4 py-3 text-right font-medium">Actual</th>
-                <th className="px-4 py-3 text-right font-medium">Items</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {byCategory.map(([cat, v]) => (
-                <tr key={cat} className="text-slate-700">
-                  <td className="px-4 py-2.5 font-medium text-slate-800">{cat}</td>
-                  <td className="px-4 py-2.5 text-right"><Money value={v.estimated} /></td>
-                  <td className="px-4 py-2.5 text-right text-amber-600"><Money value={v.committed} /></td>
-                  <td className="px-4 py-2.5 text-right text-indigo-600"><Money value={v.actual} /></td>
-                  <td className="px-4 py-2.5 text-right text-slate-400">{v.count}</td>
+        <div className="card mb-6">
+          {/* Desktop: table */}
+          <div className="hidden p-0 md:block">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-400">
+                  <th className="px-4 py-3 font-medium">Category</th>
+                  <th className="px-4 py-3 text-right font-medium">Estimate</th>
+                  <th className="px-4 py-3 text-right font-medium">Committed</th>
+                  <th className="px-4 py-3 text-right font-medium">Actual</th>
+                  <th className="px-4 py-3 text-right font-medium">Items</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {byCategory.map(([cat, v]) => (
+                  <tr key={cat} className="text-slate-700">
+                    <td className="px-4 py-2.5 font-medium text-slate-800">{cat}</td>
+                    <td className="px-4 py-2.5 text-right"><Money value={v.estimated} /></td>
+                    <td className="px-4 py-2.5 text-right text-amber-600"><Money value={v.committed} /></td>
+                    <td className="px-4 py-2.5 text-right text-indigo-600"><Money value={v.actual} /></td>
+                    <td className="px-4 py-2.5 text-right text-slate-400">{v.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile: stacked list */}
+          <div className="divide-y divide-slate-100 p-4 md:hidden">
+            {byCategory.map(([cat, v]) => (
+              <div key={cat} className="py-3 first:pt-0 last:pb-0">
+                <div className="font-medium text-slate-800">{cat}</div>
+                <div className="mt-1.5 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                  <div>
+                    <div className="text-xs text-slate-400">Estimate</div>
+                    <Money value={v.estimated} />
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-400">Committed</div>
+                    <Money value={v.committed} className="text-amber-600" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-400">Actual</div>
+                    <Money value={v.actual} className="text-indigo-600" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-400">Items</div>
+                    <span className="text-slate-500">{v.count}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -200,14 +237,32 @@ export default function BudgetPage() {
                   </div>
                 </div>
 
-                <div className="grid w-full grid-cols-3 gap-x-3 text-left text-sm sm:text-right md:w-auto md:gap-x-5">
-                  <div>
+                <div className="grid w-full grid-cols-3 gap-x-3 text-left text-sm md:w-auto md:gap-x-5">
+                  <div className="min-w-0">
                     <div className="text-xs text-slate-400">Est.</div>
-                    <Money value={it.estimatedCost} className="font-medium text-slate-700" />
+                    <input
+                      key={`est-${it.id}`}
+                      type="number"
+                      className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
+                      defaultValue={it.estimatedCost ?? ''}
+                      onBlur={(e) => handleInlineChange(it, 'estimatedCost', e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                      }}
+                    />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-xs text-slate-400">Actual</div>
-                    <Money value={it.actualCost} className="font-medium text-slate-700" />
+                    <input
+                      key={`actual-${it.id}`}
+                      type="number"
+                      className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
+                      defaultValue={it.actualCost ?? ''}
+                      onBlur={(e) => handleInlineChange(it, 'actualCost', e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                      }}
+                    />
                   </div>
                   <div>
                     <div className="text-xs text-slate-400">Diff.</div>
@@ -220,13 +275,8 @@ export default function BudgetPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-1.5 md:flex md:shrink-0 md:items-center">
-                  <button className="btn-secondary px-2.5 py-1.5 text-xs" onClick={() => setEditing(it)}>
-                    Edit
-                  </button>
-                  <button className="btn-danger px-2.5 py-1.5 text-xs" onClick={() => handleDelete(it)}>
-                    Delete
-                  </button>
+                <div className="flex items-center justify-end md:shrink-0">
+                  <CardMenu onEdit={() => setEditing(it)} onDelete={() => handleDelete(it)} />
                 </div>
               </div>
             );
