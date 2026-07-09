@@ -7,14 +7,28 @@ import type { EntityConfig } from '../data/entities';
 import type { EntityDoc, FieldConfig } from '../types';
 import PageHeader from '../components/PageHeader';
 import SearchInput from '../components/ui/SearchInput';
-import FilterBar from '../components/ui/FilterBar';
-import Pill from '../components/ui/Pill';
+import FilterControl from '../components/ui/FilterControl';
 import EmptyState from '../components/ui/EmptyState';
 import SidePanel from '../components/ui/SidePanel';
+import BottomSheet from '../components/ui/BottomSheet';
 import EntityForm from '../components/form/EntityForm';
 import EntityDetail from '../components/EntityDetail';
 import CardMenu from '../components/ui/CardMenu';
 import { formatDate } from '../utils/format';
+
+const PRIORITY_DOT: Record<string, string> = {
+  High: 'bg-rose-500',
+  Medium: 'bg-amber-500',
+  Low: 'bg-blue-500',
+};
+
+const STATUS_LANE_CLASS: Record<string, string> = {
+  'To do': 'bg-slate-100 text-slate-600',
+  'In progress': 'bg-blue-100 text-blue-700',
+  Waiting: 'bg-amber-100 text-amber-700',
+  Blocked: 'bg-rose-100 text-rose-700',
+  Done: 'bg-emerald-100 text-emerald-700',
+};
 
 const TASK_FIELDS: FieldConfig[] = [
   { name: 'title', label: 'Title', type: 'text', full: true },
@@ -106,27 +120,28 @@ export default function TasksPage() {
       />
 
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex items-center gap-2">
           <SearchInput value={search} onChange={setSearch} />
-          <div className="grid grid-cols-2 rounded-lg border border-slate-200 bg-white p-0.5 sm:inline-flex">
-            {(['board', 'list'] as const).map((v) => (
-              <button
-                key={v}
-                onClick={() => setView(v)}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium capitalize transition ${
-                  view === v ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                {v}
-              </button>
-            ))}
-          </div>
+          <FilterControl
+            filters={filterDefs}
+            values={filters}
+            onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
+            onClear={() => setFilters({})}
+          />
         </div>
-        <FilterBar
-          filters={filterDefs}
-          values={filters}
-          onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
-        />
+        <div className="grid grid-cols-2 rounded-lg border border-slate-200 bg-white p-0.5 sm:inline-flex">
+          {(['board', 'list'] as const).map((v) => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium capitalize transition ${
+                view === v ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (
@@ -142,7 +157,7 @@ export default function TasksPage() {
       )}
 
       {/* Create / edit */}
-      <SidePanel
+      <BottomSheet
         open={creating || !!editing}
         title={editing ? 'Edit task' : 'New task'}
         onClose={() => {
@@ -161,7 +176,7 @@ export default function TasksPage() {
             setEditing(null);
           }}
         />
-      </SidePanel>
+      </BottomSheet>
 
       {/* Detail */}
       <SidePanel open={!!liveDetail} title="Task details" onClose={() => setDetail(null)} wide>
@@ -190,29 +205,33 @@ function BoardView({
   onMove: (t: EntityDoc, status: string) => void;
 }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-5 lg:items-start lg:gap-3">
       {TASK_STATUSES.map((status) => {
         const col = tasks.filter((t) => (t.status || 'To do') === status);
         return (
           <div key={status} className="min-w-0">
-            <div className="mb-2 flex items-center justify-between px-1">
-              <div className="flex items-center gap-2">
-                <Pill value={status} />
-              </div>
-              <span className="text-xs text-slate-400">{col.length}</span>
+            <div
+              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold ${
+                STATUS_LANE_CLASS[status] || 'bg-slate-100 text-slate-600'
+              }`}
+            >
+              <span aria-hidden="true" className="text-xs tracking-tighter opacity-60">|||</span>
+              <span>{status}</span>
+              <span className="ml-auto text-xs font-medium opacity-70">{col.length}</span>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="ml-1.5 mt-2 flex flex-col gap-2 border-l-2 border-slate-100 pl-1.5 lg:ml-0 lg:border-l-0 lg:pl-0">
               {col.map((t) => (
                 <div key={t.id} className="card p-3 transition hover:shadow-md">
                   <button onClick={() => onOpen(t)} className="w-full text-left">
                     <p className="break-words text-sm font-medium text-slate-800">{t.title}</p>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                      <Pill value={t.priority} />
-                      {t.owner && <span className="text-xs text-slate-500">{t.owner}</span>}
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                      <span
+                        className={`h-2 w-2 shrink-0 rounded-full ${PRIORITY_DOT[t.priority] || 'bg-slate-300'}`}
+                        aria-hidden="true"
+                      />
+                      {t.owner && <span>{t.owner}</span>}
+                      {t.dueDate && <span>Due {formatDate(t.dueDate)}</span>}
                     </div>
-                    {t.dueDate && (
-                      <p className="mt-1 text-xs text-slate-400">Due {formatDate(t.dueDate)}</p>
-                    )}
                   </button>
                   <select
                     className="mt-2 w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-600"
@@ -253,24 +272,54 @@ function ListView({
 }) {
   if (tasks.length === 0) return <EmptyState title="No tasks" hint="Create your first task." />;
   return (
-    <div className="flex flex-col gap-2">
+    <div>
+      <div className="mb-2 flex items-center justify-between px-1 text-xs text-slate-400">
+        <span>{tasks.length} task{tasks.length === 1 ? '' : 's'}</span>
+        <span>Ordina: scadenza</span>
+      </div>
+      <div className="card divide-y divide-slate-100">
       {tasks.map((t) => (
-        <div key={t.id} className="card flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
-          <button onClick={() => onOpen(t)} className="min-w-0 flex-1 text-left">
-            <p className="break-words font-medium text-slate-800">{t.title}</p>
-            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+        <div
+          key={t.id}
+          className="flex cursor-pointer items-center gap-3 p-3 hover:bg-slate-50"
+          onClick={() => onOpen(t)}
+        >
+          <span
+            className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border-2 ${
+              t.status === 'Done' ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300 bg-white'
+            }`}
+            aria-hidden="true"
+          >
+            {t.status === 'Done' && (
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className={`break-words text-sm font-medium ${t.status === 'Done' ? 'text-slate-400 line-through' : 'text-slate-800'}`}>
+              {t.title}
+            </p>
+            <div className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-slate-400">
               {t.area && <span>{t.area}</span>}
-              {t.owner && <span>· {t.owner}</span>}
-              {t.dueDate && <span>· Due {formatDate(t.dueDate)}</span>}
+              {t.owner && <span>- {t.owner}</span>}
+              {t.dueDate && <span>- Due {formatDate(t.dueDate)}</span>}
             </div>
-          </button>
-          <div className="flex items-center gap-1.5 sm:shrink-0">
-            <Pill value={t.priority} />
-            <Pill value={t.status} />
-            <CardMenu onEdit={() => onEdit(t)} onDelete={() => onDelete(t)} />
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <span className="hidden text-xs text-slate-400 sm:inline">{t.status || 'To do'}</span>
+            <span
+              className={`h-2.5 w-2.5 rounded-full ${PRIORITY_DOT[t.priority] || 'bg-slate-300'}`}
+              aria-hidden="true"
+              title={t.priority}
+            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <CardMenu onEdit={() => onEdit(t)} onDelete={() => onDelete(t)} />
+            </div>
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }
