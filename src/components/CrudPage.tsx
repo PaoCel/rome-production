@@ -2,12 +2,12 @@ import { useMemo, useState } from 'react';
 import type { EntityConfig } from '../data/entities';
 import type { EntityDoc } from '../types';
 import { useCollection } from '../hooks/useCollection';
-import { createItem, deleteItem, updateItem } from '../services/firestore';
+import { createItem, updateItem } from '../services/firestore';
+import { deleteEntityCascade } from '../services/cascade';
 import { OWNERS } from '../data/owners';
 import PageHeader from './PageHeader';
 import SearchInput from './ui/SearchInput';
-import { type FilterDef } from './ui/FilterBar';
-import FilterControl from './ui/FilterControl';
+import FilterControl, { type FilterDef } from './ui/FilterControl';
 import EmptyState from './ui/EmptyState';
 import EntityCard from './EntityCard';
 import EntityForm from './form/EntityForm';
@@ -61,7 +61,8 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
 
   async function handleDelete(item: EntityDoc) {
     if (!confirm(`Delete "${item[config.titleField] || 'this item'}"?`)) return;
-    await deleteItem(config.collection, item.id);
+    // Cascade: also removes linked options, media, comments and budget items.
+    await deleteEntityCascade(config, item);
     if (detail?.id === item.id) setDetail(null);
   }
 
@@ -78,14 +79,18 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
         }
       />
 
-      <div className="mb-4 flex items-center gap-2">
-        <SearchInput value={search} onChange={setSearch} />
-        <FilterControl
-          filters={filterDefs}
-          values={filters}
-          onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
-          onClear={() => setFilters({})}
-        />
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-2">
+          <SearchInput value={search} onChange={setSearch} />
+          {filterDefs.length > 0 && (
+            <FilterControl
+              filters={filterDefs}
+              values={filters}
+              onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
+              onClear={() => setFilters({})}
+            />
+          )}
+        </div>
       </div>
 
       {loading ? (

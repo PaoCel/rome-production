@@ -18,6 +18,7 @@ export type CollectionName =
   | 'contacts'
   | 'risks'
   | 'decisions'
+  | 'invoices'
   | 'media'
   | 'comments'
   // Two-tier (requirement → option) collections
@@ -38,6 +39,7 @@ export type RelatedType =
   | 'contact'
   | 'risk'
   | 'decision'
+  | 'invoice'
   // Two-tier related types
   | 'locationRequirement'
   | 'locationOption'

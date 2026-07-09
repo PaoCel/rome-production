@@ -37,13 +37,13 @@ export default function SettingsPage() {
   }
 
   async function doClear() {
-    if (
-      !confirm(
-        `Remove the ${REJOICE_DOC_COUNT} items that came from the Excel import?\n\n` +
-          `Items you added manually are kept. This cannot be undone.`,
-      )
-    )
-      return;
+    // Strong confirmation: destructive and shared with the whole team.
+    const typed = prompt(
+      `This removes the ${REJOICE_DOC_COUNT} imported items for EVERYONE on the team — ` +
+        `the data is shared, not just on your device. Items you added manually are kept. ` +
+        `This cannot be undone.\n\nType REMOVE to confirm.`,
+    );
+    if (typed?.trim().toUpperCase() !== 'REMOVE') return;
     setBusy('clear');
     setMsg(null);
     try {

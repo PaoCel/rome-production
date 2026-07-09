@@ -23,8 +23,22 @@ export const CASTING_STATUSES = [
 export const BUDGET_STATUSES = ['Estimate only', 'Committed', 'Paid'];
 export const PAYMENT_STATUSES = ['Not paid', 'Partially paid', 'Paid', 'Not needed'];
 
+// Invoice payment states.
+export const INVOICE_STATUSES = ['Unpaid', 'Partially paid', 'Paid', 'Overdue'];
+
 // Budget stage — the lifecycle of a real budget commitment (richer than BUDGET_STATUSES).
 export const BUDGET_STAGES = ['Estimate only', 'Committed', 'Approved', 'Paid', 'Cancelled'];
+
+// Which budget stages count as a real commitment. Single source of truth for the
+// budget/dashboard rollups (previously duplicated in three places).
+export const COMMITTED_STAGES = ['Committed', 'Approved', 'Paid'];
+export function isCommittedItem(it: {
+  committed?: boolean;
+  budgetStage?: string;
+  [key: string]: any;
+}): boolean {
+  return !!it.committed || COMMITTED_STAGES.includes(it.budgetStage || '');
+}
 
 // Master list of budget categories (from Excel 19_BUDGET_CATEGORIES).
 export const BUDGET_CATEGORIES = [
@@ -145,6 +159,8 @@ export const PILL_COLORS: Record<string, string> = {
   'Not paid': 'bg-slate-100 text-slate-700 ring-slate-600/20',
   'Partially paid': 'bg-amber-100 text-amber-700 ring-amber-600/20',
   'Not needed': 'bg-slate-100 text-slate-500 ring-slate-500/20',
+  Unpaid: 'bg-slate-100 text-slate-700 ring-slate-600/20',
+  Overdue: 'bg-red-100 text-red-700 ring-red-600/20',
 
   // Two-tier statuses (requirement + option) & availability / permits
   'To source': 'bg-slate-100 text-slate-700 ring-slate-600/20',

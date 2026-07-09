@@ -1,8 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 
-// Slides up from the bottom on mobile, becomes a right-side drawer on sm+.
-// Used for create / edit forms so the destination is obviously different
-// from the (wider) detail SidePanel.
+// Mobile-first create/edit surface: bottom sheet on phones, side drawer on larger screens.
 export default function BottomSheet({
   open,
   title,
@@ -20,11 +18,11 @@ export default function BottomSheet({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', onKey);
-    const prevOverflow = document.body.style.overflow;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prevOverflow;
+      document.body.style.overflow = previousOverflow;
     };
   }, [open, onClose]);
 
@@ -32,18 +30,12 @@ export default function BottomSheet({
 
   return (
     <div className="fixed inset-0 z-40">
-      <div
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`fixed inset-x-0 bottom-0 flex max-h-[92vh] w-full flex-col rounded-t-3xl bg-surface-2 shadow-panel
-          transition-transform duration-300 ease-out motion-reduce:transition-none
-          sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none sm:w-[26rem] sm:rounded-none
-          ${open ? 'translate-y-0 sm:translate-x-0' : 'translate-y-full sm:translate-x-full'}`}
+        className="fixed inset-x-0 bottom-0 flex max-h-[92dvh] w-full flex-col rounded-t-3xl bg-surface-2 shadow-panel sm:inset-y-0 sm:left-auto sm:right-0 sm:h-dvh sm:max-h-none sm:w-[26rem] sm:rounded-none"
       >
         <div className="mx-auto mb-1 mt-2 h-1.5 w-10 shrink-0 rounded-full bg-slate-300 sm:hidden" />
 
@@ -51,16 +43,11 @@ export default function BottomSheet({
           <h2 className="min-w-0 truncate font-display text-lg font-semibold text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-faint hover:bg-surface-2 hover:text-muted"
+            className="rounded-lg p-2 text-faint hover:bg-surface-2 hover:text-muted"
             aria-label="Close"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path
-                d="M6 6l8 8M14 6l-8 8"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
+              <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
             </svg>
           </button>
         </header>

@@ -1,4 +1,5 @@
 import { createItem, findWhere, updateItem, where } from './firestore';
+import { COMMITTED_STAGES } from '../data/constants';
 import type { EntityDoc } from '../types';
 
 export type BudgetSourceType =
@@ -63,6 +64,16 @@ const SOURCE_CONFIG: Record<BudgetSourceType, SourceConfig> = {
   },
 };
 
+// Two-tier option sources: their budget line is keyed to the REQUIREMENT, not
+// the option, so committing a different option for the same requirement replaces
+// the previous line instead of adding a second one.
+const OPTION_SOURCES = new Set<BudgetSourceType>([
+  'locationOption',
+  'castingOption',
+  'crewOption',
+  'propOption',
+]);
+
 // Derive the committed flag / payment status from the option's budget stage
 // (falls back to the older budgetStatus field for flat entities).
 function paymentFromStage(stage?: string) {
@@ -80,24 +91,30 @@ export async function addToBudget(
   const cfg = SOURCE_CONFIG[sourceType];
   const stage = (source.budgetStage || source.budgetStatus) as string | undefined;
 
+  // For options, de-dup on the parent requirement so one requirement = one line.
+  const dedupId = OPTION_SOURCES.has(sourceType)
+    ? source.requirementId || source.id
+    : source.id;
+
   const payload = {
     category: cfg.category,
     lineItem: source[cfg.nameField] || source.role || 'Untitled',
     estimatedCost: Number(source[cfg.estimateField]) || 0,
     actualCost: Number(source[cfg.actualField]) || 0,
     budgetStage: stage || 'Committed',
-    committed: stage === 'Committed' || stage === 'Approved' || stage === 'Paid',
+    committed: COMMITTED_STAGES.includes(stage || ''),
     paymentStatus: paymentFromStage(stage),
     supplierContact: source.contactName || '',
     sourceType,
-    sourceId: source.id,
+    sourceId: dedupId,
+    sourceOptionId: source.id, // which specific option is currently committed
     notes: source.notes || '',
   };
 
   const existing = await findWhere(
     'budgetItems',
     where('sourceType', '==', sourceType),
-    where('sourceId', '==', source.id),
+    where('sourceId', '==', dedupId),
   );
 
   if (existing.length > 0) {

@@ -41,22 +41,65 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-surface-2 px-4 py-6">
-      <div className="w-full max-w-sm">
-        <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-600 text-2xl shadow-sm">
-            🎬
+    <div className="flex min-h-dvh items-center justify-center overflow-hidden px-4 py-6">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card-hover lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="relative hidden min-h-[34rem] overflow-hidden bg-brand-700 p-8 text-white lg:block">
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-white/30 blur-3xl" />
+            <div className="absolute bottom-8 right-4 h-80 w-80 rounded-full bg-accent-400/40 blur-3xl" />
           </div>
-          <h1 className="font-display text-2xl font-semibold text-ink">
-            {settings.productionName}
-          </h1>
-          <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-accent-600">
-            {settings.productionSubtitle}
-          </p>
-          <p className="mt-1 text-sm text-muted">Sign in to manage the production</p>
+          <div className="relative flex h-full flex-col justify-between">
+            <div>
+              <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-2xl shadow-sm backdrop-blur">
+                🎬
+              </div>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
+                {settings.productionSubtitle}
+              </p>
+              <h1 className="mt-3 max-w-md font-display text-4xl font-semibold tracking-tight">
+                {settings.productionName}
+              </h1>
+              <p className="mt-4 max-w-md text-sm leading-6 text-white/75">
+                Produzione, budget, opzioni e task in un unico workspace condiviso.
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-3 text-sm">
+              <div className="rounded-2xl bg-white/10 p-3 backdrop-blur">
+                <div className="text-2xl font-semibold">1</div>
+                <div className="text-white/65">project hub</div>
+              </div>
+              <div className="rounded-2xl bg-white/10 p-3 backdrop-blur">
+                <div className="text-2xl font-semibold">live</div>
+                <div className="text-white/65">sync Firebase</div>
+              </div>
+              <div className="rounded-2xl bg-white/10 p-3 backdrop-blur">
+                <div className="text-2xl font-semibold">2</div>
+                <div className="text-white/65">owners</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="card p-6">
+        <div className="w-full p-5 sm:p-8">
+          <div className="mb-6 lg:hidden">
+            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-600 text-2xl shadow-sm">
+              🎬
+            </div>
+            <h1 className="font-display text-2xl font-semibold text-ink">{settings.productionName}</h1>
+            <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-accent-600">
+              {settings.productionSubtitle}
+            </p>
+          </div>
+
+          <div className="mb-5">
+            <p className="section-label">Accesso workspace</p>
+            <h2 className="mt-1 font-display text-2xl font-semibold text-ink">
+              {mode === 'login' ? 'Bentornato' : 'Crea il tuo accesso'}
+            </h2>
+            <p className="mt-1 text-sm text-muted">Sign in to manage the production.</p>
+          </div>
+
+          <div className="card p-5 sm:p-6">
           <form onSubmit={submit} className="space-y-4">
             <div>
               <label className="label">Email</label>
@@ -110,6 +153,7 @@ export default function LoginPage() {
               {mode === 'login' ? 'Register' : 'Sign in'}
             </button>
           </p>
+          </div>
         </div>
       </div>
     </div>

@@ -65,10 +65,10 @@ export default function MediaViewer({
           <iframe
             src={item.downloadUrl}
             title={item.fileName}
-            className="h-full w-full max-w-4xl rounded-lg bg-white shadow-2xl"
+            className="h-full w-full max-w-4xl rounded-lg bg-surface shadow-2xl"
           />
         ) : (
-          <div className="rounded-xl bg-white p-8 text-center">
+          <div className="rounded-xl bg-surface p-8 text-center">
             <div className="mb-2 text-4xl">📄</div>
             <p className="mb-3 text-sm text-muted">This file type can't be previewed in the browser.</p>
             <a

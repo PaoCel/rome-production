@@ -1,6 +1,6 @@
-import CrudPage from '../components/CrudPage';
+import TwoTierPage from '../components/TwoTierPage';
 import { CREW_REQ_CONFIG } from '../data/entities';
 
 export default function CrewPage() {
-  return <CrudPage config={CREW_REQ_CONFIG} />;
+  return <TwoTierPage config={CREW_REQ_CONFIG} />;
 }

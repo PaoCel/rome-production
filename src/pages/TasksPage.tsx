@@ -25,10 +25,10 @@ const PRIORITY_DOT: Record<string, string> = {
 
 const STATUS_LANE_CLASS: Record<string, string> = {
   'To do': 'bg-surface-2 text-muted',
-  'In progress': 'bg-blue-500/15 text-blue-700 dark:text-blue-300',
-  Waiting: 'bg-amber-500/15 text-amber-700 dark:text-amber-300',
-  Blocked: 'bg-rose-500/15 text-rose-700 dark:text-rose-300',
-  Done: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
+  'In progress': 'bg-blue-100 text-blue-700',
+  Waiting: 'bg-amber-100 text-amber-700',
+  Blocked: 'bg-rose-100 text-rose-700',
+  Done: 'bg-emerald-100 text-emerald-700',
 };
 
 const TASK_FIELDS: FieldConfig[] = [
@@ -207,50 +207,53 @@ function BoardView({
   onMove: (t: EntityDoc, status: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-5 lg:gap-3 lg:items-start">
+    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-5 lg:items-start lg:gap-3">
       {TASK_STATUSES.map((status) => {
         const col = tasks.filter((t) => (t.status || 'To do') === status);
         return (
-          <div key={status}>
+          <div key={status} className="min-w-0">
             <div
               className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold ${
                 STATUS_LANE_CLASS[status] || 'bg-surface-2 text-muted'
               }`}
             >
-              <span aria-hidden="true" className="text-xs tracking-tighter opacity-60">⣿</span>
+              <span aria-hidden="true" className="text-xs tracking-tighter opacity-60">|||</span>
               <span>{status}</span>
               <span className="ml-auto text-xs font-medium opacity-70">{col.length}</span>
             </div>
-            {col.length > 0 && (
-              <div className="ml-1.5 mt-2 flex flex-col gap-2 border-l-2 border-line pl-1.5 lg:ml-0 lg:border-l-0 lg:pl-0">
-                {col.map((t) => (
-                  <div key={t.id} className="card p-3 transition hover:shadow-md">
-                    <button onClick={() => onOpen(t)} className="w-full text-left">
-                      <p className="break-words text-sm font-medium text-ink">{t.title}</p>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-muted">
-                        <span
-                          className={`h-2 w-2 shrink-0 rounded-full ${PRIORITY_DOT[t.priority] || 'bg-slate-300'}`}
-                          aria-hidden="true"
-                        />
-                        {t.owner && <span>{t.owner}</span>}
-                        {t.dueDate && <span>· Due {formatDate(t.dueDate)}</span>}
-                      </div>
-                    </button>
-                    <select
-                      className="mt-2 w-full rounded-md border border-line bg-surface-2 px-2 py-1 text-xs text-muted"
-                      value={status}
-                      onChange={(e) => onMove(t, e.target.value)}
-                    >
-                      {TASK_STATUSES.map((s) => (
-                        <option key={s} value={s}>
-                          Move to: {s}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="ml-1.5 mt-2 flex flex-col gap-2 border-l-2 border-line pl-1.5 lg:ml-0 lg:border-l-0 lg:pl-0">
+              {col.map((t) => (
+                <div key={t.id} className="card p-3 transition hover:shadow-md">
+                  <button onClick={() => onOpen(t)} className="w-full text-left">
+                    <p className="break-words text-sm font-medium text-ink">{t.title}</p>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-muted">
+                      <span
+                        className={`h-2 w-2 shrink-0 rounded-full ${PRIORITY_DOT[t.priority] || 'bg-slate-300'}`}
+                        aria-hidden="true"
+                      />
+                      {t.owner && <span>{t.owner}</span>}
+                      {t.dueDate && <span>Due {formatDate(t.dueDate)}</span>}
+                    </div>
+                  </button>
+                  <select
+                    className="mt-2 w-full rounded-md border border-line bg-surface-2 px-2 py-1 text-xs text-muted"
+                    value={status}
+                    onChange={(e) => onMove(t, e.target.value)}
+                  >
+                    {TASK_STATUSES.map((s) => (
+                      <option key={s} value={s}>
+                        Move to: {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+              {col.length === 0 && (
+                <div className="rounded-lg border border-dashed border-line py-6 text-center text-xs text-faint">
+                  Empty
+                </div>
+              )}
+            </div>
           </div>
         );
       })}
@@ -277,62 +280,47 @@ function ListView({
         <span>Ordina: scadenza</span>
       </div>
       <div className="card divide-y divide-line">
-        {tasks.map((t) => {
-          const done = t.status === 'Done';
-          return (
-            <div
-              key={t.id}
-              className="flex cursor-pointer items-center gap-3 p-3 hover:bg-surface-2"
-              onClick={() => onOpen(t)}
-            >
-              <span
-                className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border-2 ${
-                  done ? 'border-emerald-500 bg-emerald-500' : 'border-line bg-surface'
-                }`}
-                aria-hidden="true"
-              >
-                {done && (
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
-                    <path
-                      d="M4 10l4 4 8-8"
-                      stroke="white"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-              </span>
-
-              <div className="min-w-0 flex-1">
-                <p
-                  className={`break-words text-sm font-medium ${
-                    done ? 'text-faint line-through' : 'text-ink'
-                  }`}
-                >
-                  {t.title}
-                </p>
-                <div className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-faint">
-                  {t.area && <span>{t.area}</span>}
-                  {t.owner && <span>· {t.owner}</span>}
-                  {t.dueDate && <span>· Due {formatDate(t.dueDate)}</span>}
-                </div>
-              </div>
-
-              <div className="flex shrink-0 items-center gap-2">
-                <span className="hidden text-xs text-faint sm:inline">{t.status || 'To do'}</span>
-                <span
-                  className={`h-2.5 w-2.5 rounded-full ${PRIORITY_DOT[t.priority] || 'bg-slate-300'}`}
-                  aria-hidden="true"
-                  title={t.priority}
-                />
-                <div onClick={(e) => e.stopPropagation()}>
-                  <CardMenu onEdit={() => onEdit(t)} onDelete={() => onDelete(t)} />
-                </div>
-              </div>
+      {tasks.map((t) => (
+        <div
+          key={t.id}
+          className="flex cursor-pointer items-center gap-3 p-3 hover:bg-surface-2"
+          onClick={() => onOpen(t)}
+        >
+          <span
+            className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border-2 ${
+              t.status === 'Done' ? 'border-emerald-500 bg-emerald-500' : 'border-line bg-surface'
+            }`}
+            aria-hidden="true"
+          >
+            {t.status === 'Done' && (
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className={`break-words text-sm font-medium ${t.status === 'Done' ? 'text-faint line-through' : 'text-ink'}`}>
+              {t.title}
+            </p>
+            <div className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-faint">
+              {t.area && <span>{t.area}</span>}
+              {t.owner && <span>- {t.owner}</span>}
+              {t.dueDate && <span>- Due {formatDate(t.dueDate)}</span>}
             </div>
-          );
-        })}
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <span className="hidden text-xs text-faint sm:inline">{t.status || 'To do'}</span>
+            <span
+              className={`h-2.5 w-2.5 rounded-full ${PRIORITY_DOT[t.priority] || 'bg-slate-300'}`}
+              aria-hidden="true"
+              title={t.priority}
+            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <CardMenu onEdit={() => onEdit(t)} onDelete={() => onDelete(t)} />
+            </div>
+          </div>
+        </div>
+      ))}
       </div>
     </div>
   );

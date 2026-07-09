@@ -5,6 +5,7 @@ import {
   BUDGET_CATEGORIES,
   BUDGET_STAGES,
   PAYMENT_STATUSES,
+  isCommittedItem,
 } from '../data/constants';
 import type { EntityDoc, FieldConfig } from '../types';
 import PageHeader from '../components/PageHeader';
@@ -42,10 +43,6 @@ const SOURCE_LABEL: Record<string, string> = {
   propOption: 'From props',
 };
 
-const COMMITTED_STAGES = ['Committed', 'Approved', 'Paid'];
-const isCommitted = (it: EntityDoc) =>
-  !!it.committed || COMMITTED_STAGES.includes(it.budgetStage);
-
 export default function BudgetPage() {
   const { items, loading } = useCollection('budgetItems');
   const [search, setSearch] = useState('');
@@ -62,7 +59,7 @@ export default function BudgetPage() {
       const act = Number(it.actualCost) || 0;
       estimated += est;
       actual += act;
-      if (isCommitted(it)) committed += est;
+      if (isCommittedItem(it)) committed += est;
       if (it.paymentStatus === 'Paid' || it.budgetStage === 'Paid') paid += act;
     }
     return { estimated, committed, actual, paid };
@@ -77,7 +74,7 @@ export default function BudgetPage() {
       const est = Number(it.estimatedCost) || 0;
       entry.estimated += est;
       entry.actual += Number(it.actualCost) || 0;
-      if (isCommitted(it)) entry.committed += est;
+      if (isCommittedItem(it)) entry.committed += est;
       entry.count += 1;
       map.set(cat, entry);
     }
@@ -160,6 +157,7 @@ export default function BudgetPage() {
         </dl>
       </div>
 
+
       {/* Per-category summary */}
       {byCategory.length > 0 && (
         <div className="card mb-6">
@@ -180,8 +178,8 @@ export default function BudgetPage() {
                   <tr key={cat} className="text-ink">
                     <td className="px-4 py-2.5 font-medium text-ink">{cat}</td>
                     <td className="px-4 py-2.5 text-right"><Money value={v.estimated} /></td>
-                    <td className="px-4 py-2.5 text-right text-amber-600 dark:text-amber-400"><Money value={v.committed} /></td>
-                    <td className="px-4 py-2.5 text-right text-indigo-600 dark:text-indigo-400"><Money value={v.actual} /></td>
+                    <td className="px-4 py-2.5 text-right text-amber-600"><Money value={v.committed} /></td>
+                    <td className="px-4 py-2.5 text-right text-indigo-600"><Money value={v.actual} /></td>
                     <td className="px-4 py-2.5 text-right text-faint">{v.count}</td>
                   </tr>
                 ))}
@@ -201,11 +199,11 @@ export default function BudgetPage() {
                   </div>
                   <div>
                     <div className="text-xs text-faint">Committed</div>
-                    <Money value={v.committed} className="text-amber-600 dark:text-amber-400" />
+                    <Money value={v.committed} className="text-amber-600" />
                   </div>
                   <div>
                     <div className="text-xs text-faint">Actual</div>
-                    <Money value={v.actual} className="text-indigo-600 dark:text-indigo-400" />
+                    <Money value={v.actual} className="text-indigo-600" />
                   </div>
                   <div>
                     <div className="text-xs text-faint">Items</div>
@@ -296,12 +294,12 @@ export default function BudgetPage() {
                     </div>
                   </div>
 
-                  {awaitingActual ? (
+                  {!(Number(it.actualCost) || 0) && (Number(it.estimatedCost) || 0) > 0 ? (
                     <span className="variance variance-wait">In attesa del costo reale</span>
                   ) : diff > 0 ? (
                     <span className="variance variance-over">↑ +{formatMoney(diff)} sopra la stima</span>
                   ) : diff < 0 ? (
-                    <span className="variance variance-under">↓ −{formatMoney(Math.abs(diff))} sotto la stima</span>
+                    <span className="variance variance-under">↓ -{formatMoney(Math.abs(diff))} sotto la stima</span>
                   ) : (
                     <span className="variance variance-flat">In linea con la stima</span>
                   )}

@@ -1,48 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import FilterSheet, { FilterButton, activeFilterCount, type FilterDef } from './FilterSheet';
+import FilterSheet, { FilterButton, FilterChips, activeFilterCount, type FilterDef } from './FilterSheet';
 
-// Shared chip row used by the desktop popover (FilterSheet renders its own
-// copy internally for the mobile bottom sheet).
-function FilterChips({
-  filters,
-  values,
-  onChange,
-}: {
-  filters: FilterDef[];
-  values: Record<string, string>;
-  onChange: (name: string, value: string) => void;
-}) {
-  return (
-    <div className="flex flex-col gap-4">
-      {filters.map((f) => (
-        <div key={f.name}>
-          <div className="label mb-2">{f.label}</div>
-          <div className="flex flex-wrap gap-2">
-            {f.options.map((o) => {
-              const selected = values[f.name] === o;
-              return (
-                <button
-                  key={o}
-                  type="button"
-                  onClick={() => onChange(f.name, selected ? '' : o)}
-                  className={`rounded-xl border px-3 py-1.5 text-sm font-medium transition ${
-                    selected
-                      ? 'border-brand-500 bg-brand-50 dark:bg-brand-500/15 text-brand-700'
-                      : 'border-line bg-surface text-muted'
-                  }`}
-                >
-                  {o}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+export type { FilterDef };
 
-// "Filtri" control: a bottom sheet on mobile, an anchored popover on desktop.
 export default function FilterControl({
   filters,
   values,
@@ -93,11 +53,7 @@ export default function FilterControl({
           <div className="absolute right-0 z-30 mt-2 w-72 rounded-2xl border border-line bg-surface p-4 shadow-card-hover">
             <div className="mb-3 flex items-center justify-between">
               <span className="font-semibold text-ink">Filtri</span>
-              <button
-                type="button"
-                onClick={onClear}
-                className="text-sm font-medium text-brand-600 hover:text-brand-700"
-              >
+              <button type="button" onClick={onClear} className="text-sm font-medium text-brand-600 hover:text-brand-700">
                 Azzera
               </button>
             </div>
