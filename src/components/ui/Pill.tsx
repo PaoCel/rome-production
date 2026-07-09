@@ -1,8 +1,8 @@
-import { NEUTRAL_PILL, PILL_COLORS } from '../../data/constants';
+import { PILL_TONE } from '../../data/constants';
 
-// Status / priority pill with colour derived from the value.
-export default function Pill({ value }: { value?: string }) {
+// Status / priority pill — colour (theme-aware) derived from the value.
+export default function Pill({ value, noDot }: { value?: string; noDot?: boolean }) {
   if (!value) return null;
-  const color = PILL_COLORS[value] || NEUTRAL_PILL;
-  return <span className={`pill ${color}`}>{value}</span>;
+  const tone = PILL_TONE[value] || 'neutral';
+  return <span className={`pill pill-${tone}${noDot ? ' no-dot' : ''}`}>{value}</span>;
 }

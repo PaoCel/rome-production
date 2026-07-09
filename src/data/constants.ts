@@ -170,3 +170,57 @@ export const PILL_COLORS: Record<string, string> = {
 };
 
 export const NEUTRAL_PILL = 'bg-slate-100 text-slate-600 ring-slate-500/20';
+
+// Theme-aware pill tone per status value → maps to .pill-<tone> in index.css.
+// Values not listed fall back to 'neutral'.
+export type PillTone = 'crit' | 'warn' | 'good' | 'info' | 'violet' | 'neutral';
+export const PILL_TONE: Record<string, PillTone> = {
+  // Priority
+  High: 'crit',
+  Medium: 'warn',
+  Low: 'info',
+  // Task status
+  'To do': 'neutral',
+  'In progress': 'info',
+  Waiting: 'warn',
+  Blocked: 'crit',
+  Done: 'good',
+  // Selection / requirement / option
+  Researching: 'neutral',
+  Longlist: 'info',
+  Shortlisted: 'violet',
+  Selected: 'good',
+  Confirmed: 'good',
+  Rejected: 'neutral',
+  'To source': 'neutral',
+  'On hold': 'warn',
+  'Not selected': 'neutral',
+  Unavailable: 'crit',
+  Available: 'good',
+  'To check': 'neutral',
+  TBC: 'neutral',
+  'Not checked': 'neutral',
+  Requested: 'info',
+  // Budget / payment / stage
+  'Estimate only': 'neutral',
+  Committed: 'warn',
+  Approved: 'good',
+  Paid: 'good',
+  Cancelled: 'neutral',
+  'Not paid': 'neutral',
+  'Partially paid': 'warn',
+  'Not needed': 'neutral',
+  // Risk
+  Critical: 'crit',
+  Open: 'crit',
+  Monitoring: 'warn',
+  Resolved: 'good',
+  // Decision
+  Needed: 'crit',
+  Pending: 'warn',
+  Decided: 'good',
+  // Contact status
+  Active: 'info',
+  Preferred: 'good',
+  Inactive: 'neutral',
+};

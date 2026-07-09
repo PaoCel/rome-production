@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
+  // User theme choice stamps data-theme="dark" on <html>; "system" falls back
+  // to the prefers-color-scheme media query handled in index.css.
+  darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
     extend: {
       fontFamily: {
@@ -8,6 +11,21 @@ export default {
         display: ['Fraunces', 'Georgia', 'ui-serif', 'serif'],
       },
       colors: {
+        // Semantic tokens resolved from CSS variables so they follow the active
+        // theme. Prefer these (bg-surface, text-ink, border-line…) over raw
+        // slate/white classes, which are light-only.
+        page: 'var(--page)',
+        surface: 'var(--surface)',
+        'surface-2': 'var(--surface-2)',
+        line: 'var(--line)',
+        ink: 'var(--ink)',
+        muted: 'var(--muted)',
+        faint: 'var(--faint)',
+        good: 'var(--good)',
+        warn: 'var(--warn)',
+        crit: 'var(--crit)',
+        info: 'var(--info)',
+        violet: 'var(--violet)',
         // Primary brand (indigo) — full scale for depth.
         brand: {
           50: '#eef2ff',
