@@ -51,10 +51,12 @@ export default function EntityDetail({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
+      <div className="card p-4 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <h3 className="break-words text-xl font-semibold text-slate-800">{title}</h3>
+          <div className="min-w-0">
+            <p className="section-label">{config.singular}</p>
+            <h3 className="mt-1 break-words font-display text-2xl font-semibold text-slate-900">{title}</h3>
+          </div>
           <button className="btn-secondary w-full sm:w-auto sm:shrink-0" onClick={onEdit}>
             Edit
           </button>
@@ -70,7 +72,13 @@ export default function EntityDetail({
 
       {/* Add to budget */}
       {config.budgetSource && (
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+        <div className="card flex flex-col gap-3 border-brand-100 bg-brand-50/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-sm font-semibold text-slate-800">Budget action</div>
+            <div className="text-xs text-slate-500">
+              {isSelected ? 'This selected item can be pushed to budget.' : 'Mark as selected before adding it to budget.'}
+            </div>
+          </div>
           <button
             className="btn-primary w-full sm:w-auto"
             onClick={handleAddToBudget}
@@ -80,7 +88,6 @@ export default function EntityDetail({
             {committing ? 'Adding…' : 'Add to budget'}
           </button>
           {budgetMsg && <span className="text-sm text-emerald-600">{budgetMsg}</span>}
-          {!isSelected && <span className="text-xs text-slate-400">Selected items only</span>}
         </div>
       )}
 

@@ -33,12 +33,12 @@ export default function EntityFields({
 
   return (
     <>
-      <div className="card grid grid-cols-1 gap-x-6 gap-y-3 p-4 sm:grid-cols-2">
+      <div className="card grid grid-cols-1 gap-3 p-4 sm:grid-cols-2">
         {infoFields.map((f) => {
           const val = displayValue(f, item);
           if (val == null) return null;
           return (
-            <div key={f.name}>
+            <div key={f.name} className="rounded-xl bg-slate-50 px-3 py-2.5">
               <div className="text-xs font-medium text-slate-400">{f.label}</div>
               <div className="break-words text-sm text-slate-700">{val}</div>
             </div>
