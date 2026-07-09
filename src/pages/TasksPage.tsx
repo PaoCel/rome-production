@@ -7,7 +7,7 @@ import type { EntityConfig } from '../data/entities';
 import type { EntityDoc, FieldConfig } from '../types';
 import PageHeader from '../components/PageHeader';
 import SearchInput from '../components/ui/SearchInput';
-import FilterSheet, { FilterButton, activeFilterCount } from '../components/ui/FilterSheet';
+import FilterControl from '../components/ui/FilterControl';
 import EmptyState from '../components/ui/EmptyState';
 import SidePanel from '../components/ui/SidePanel';
 import BottomSheet from '../components/ui/BottomSheet';
@@ -60,7 +60,6 @@ export default function TasksPage() {
   const [detail, setDetail] = useState<EntityDoc | null>(null);
   const [editing, setEditing] = useState<EntityDoc | null>(null);
   const [creating, setCreating] = useState(false);
-  const [filterOpen, setFilterOpen] = useState(false);
 
   const filterDefs = [
     { name: 'owner', label: 'Owner', options: [...OWNERS] },
@@ -123,7 +122,12 @@ export default function TasksPage() {
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-2">
           <SearchInput value={search} onChange={setSearch} />
-          <FilterButton activeCount={activeFilterCount(filters)} onClick={() => setFilterOpen(true)} />
+          <FilterControl
+            filters={filterDefs}
+            values={filters}
+            onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
+            onClear={() => setFilters({})}
+          />
         </div>
         <div className="grid grid-cols-2 rounded-lg border border-slate-200 bg-white p-0.5 sm:inline-flex">
           {(['board', 'list'] as const).map((v) => (
@@ -139,15 +143,6 @@ export default function TasksPage() {
           ))}
         </div>
       </div>
-
-      <FilterSheet
-        open={filterOpen}
-        onClose={() => setFilterOpen(false)}
-        filters={filterDefs}
-        values={filters}
-        onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
-        onClear={() => setFilters({})}
-      />
 
       {loading ? (
         <p className="text-sm text-slate-400">Loading…</p>
@@ -210,7 +205,7 @@ function BoardView({
   onMove: (t: EntityDoc, status: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-5 lg:gap-3 lg:items-start">
       {TASK_STATUSES.map((status) => {
         const col = tasks.filter((t) => (t.status || 'To do') === status);
         return (
@@ -225,7 +220,7 @@ function BoardView({
               <span className="ml-auto text-xs font-medium opacity-70">{col.length}</span>
             </div>
             {col.length > 0 && (
-              <div className="ml-1.5 mt-2 flex flex-col gap-2 border-l-2 border-slate-100 pl-1.5">
+              <div className="ml-1.5 mt-2 flex flex-col gap-2 border-l-2 border-slate-100 pl-1.5 lg:ml-0 lg:border-l-0 lg:pl-0">
                 {col.map((t) => (
                   <div key={t.id} className="card p-3 transition hover:shadow-md">
                     <button onClick={() => onOpen(t)} className="w-full text-left">

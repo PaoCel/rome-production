@@ -7,7 +7,7 @@ import { OWNERS } from '../data/owners';
 import PageHeader from './PageHeader';
 import SearchInput from './ui/SearchInput';
 import { type FilterDef } from './ui/FilterBar';
-import FilterSheet, { FilterButton, activeFilterCount } from './ui/FilterSheet';
+import FilterControl from './ui/FilterControl';
 import EmptyState from './ui/EmptyState';
 import EntityCard from './EntityCard';
 import EntityForm from './form/EntityForm';
@@ -26,7 +26,6 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
   const [detail, setDetail] = useState<EntityDoc | null>(null);
   const [editing, setEditing] = useState<EntityDoc | null>(null);
   const [creating, setCreating] = useState(false);
-  const [filterOpen, setFilterOpen] = useState(false);
 
   const filterDefs: FilterDef[] = useMemo(
     () => config.filters.map((name) => buildFilter(name, config, items)),
@@ -79,17 +78,13 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
 
       <div className="mb-4 flex items-center gap-2">
         <SearchInput value={search} onChange={setSearch} />
-        <FilterButton activeCount={activeFilterCount(filters)} onClick={() => setFilterOpen(true)} />
+        <FilterControl
+          filters={filterDefs}
+          values={filters}
+          onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
+          onClear={() => setFilters({})}
+        />
       </div>
-
-      <FilterSheet
-        open={filterOpen}
-        onClose={() => setFilterOpen(false)}
-        filters={filterDefs}
-        values={filters}
-        onChange={(name, value) => setFilters((f) => ({ ...f, [name]: value }))}
-        onClear={() => setFilters({})}
-      />
 
       {loading ? (
         <p className="text-sm text-slate-400">Loading…</p>
