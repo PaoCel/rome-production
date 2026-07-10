@@ -4,6 +4,10 @@ import { useRelated } from '../hooks/useCollection';
 import Pill from './ui/Pill';
 import Money from './ui/Money';
 import CardMenu from './ui/CardMenu';
+import AppIcon from './icons/AppIcon';
+import { mapHref, mapLabel } from '../utils/maps';
+
+const videoPreviewSrc = (url: string) => `${url}#t=0.1`;
 
 // Rich, photo-first card for a single option being evaluated (CRM style).
 export default function OptionCard({
@@ -17,6 +21,7 @@ export default function OptionCard({
   onCommit,
   onEdit,
   onDelete,
+  readOnly = false,
 }: {
   option: EntityDoc;
   optionConfig: EntityConfig;
@@ -28,6 +33,7 @@ export default function OptionCard({
   onCommit: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  readOnly?: boolean;
 }) {
   const media = useRelated('media', optionConfig.relatedType!, option.id);
   // Prefer a photo for the cover; fall back to a video so video-only options
@@ -38,6 +44,10 @@ export default function OptionCard({
   const title = option[optionConfig.titleField] || 'Untitled option';
   const pills = optionConfig.pillFields.map((n) => option[n]).filter(Boolean) as string[];
   const cost = optionConfig.costField ? option[optionConfig.costField] : undefined;
+  const address =
+    optionConfig.subtitleFields?.includes('address') && typeof option.address === 'string'
+      ? option.address
+      : '';
 
   return (
     <div
@@ -56,14 +66,15 @@ export default function OptionCard({
         ) : cover?.type === 'video' ? (
           <>
             <video
-              src={cover.downloadUrl}
+              src={videoPreviewSrc(cover.downloadUrl)}
+              poster={cover.posterUrl}
               muted
               playsInline
               preload="metadata"
               className="h-full w-full bg-black object-cover"
             />
-            <span className="absolute inset-0 flex items-center justify-center text-4xl text-white/90">
-              ▶
+            <span className="absolute inset-0 flex items-center justify-center text-white/90">
+              <AppIcon name="play" className="h-11 w-11 drop-shadow" />
             </span>
           </>
         ) : (
@@ -76,8 +87,9 @@ export default function OptionCard({
           </div>
         )}
         {isSelected && (
-          <span className="absolute left-2 top-2 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white shadow">
-            ✓ Selected
+          <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white shadow">
+            <AppIcon name="check" className="h-3 w-3" />
+            Selected
           </span>
         )}
         {shotCount > 1 && (
@@ -100,6 +112,20 @@ export default function OptionCard({
           </p>
         )}
 
+        {address && (
+          <a
+            href={mapHref(address)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="mt-1 inline-flex max-w-full items-center gap-1 text-xs text-slate-500 hover:text-brand-600"
+            title={address}
+          >
+            <AppIcon name="pin" className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{mapLabel(address)}</span>
+          </a>
+        )}
+
         {pills.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {pills.map((p, i) => (
@@ -119,7 +145,7 @@ export default function OptionCard({
         </div>
 
         {/* Actions */}
-        <div className="mt-3 flex items-center gap-1.5 border-t border-slate-100 pt-3">
+        {!readOnly && <div className="mt-3 flex items-center gap-1.5 border-t border-slate-100 pt-3">
           <button
             className={
               isSelected
@@ -128,7 +154,14 @@ export default function OptionCard({
             }
             onClick={onSelect}
           >
-            {isSelected ? '✓ Selected' : 'Select'}
+            {isSelected ? (
+              <>
+                <AppIcon name="check" className="h-3.5 w-3.5" />
+                Selected
+              </>
+            ) : (
+              'Select'
+            )}
           </button>
           {optionConfig.budgetSource && (
             <button
@@ -141,7 +174,7 @@ export default function OptionCard({
             </button>
           )}
           <CardMenu onEdit={onEdit} onDelete={onDelete} />
-        </div>
+        </div>}
       </div>
     </div>
   );

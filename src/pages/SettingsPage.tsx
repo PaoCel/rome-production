@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PageHeader from '../components/PageHeader';
+import InvitesPanel from '../components/InvitesPanel';
 import { CURRENCIES, useSettings } from '../contexts/SettingsContext';
 import { OWNERS } from '../data/owners';
 import { PROJECT_ID } from '../config/firebase';
@@ -8,10 +9,15 @@ import {
   importRejoiceData,
   clearRejoiceData,
 } from '../services/seed';
+import {
+  ROMAN_STREET_DOC_COUNT,
+  importRomanStreetLocations,
+  clearRomanStreetLocations,
+} from '../services/romanStreet';
 
 export default function SettingsPage() {
   const { settings, update, reset } = useSettings();
-  const [busy, setBusy] = useState<'' | 'import' | 'clear'>('');
+  const [busy, setBusy] = useState<'' | 'import' | 'clear' | 'rs-import' | 'rs-clear'>('');
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
 
   async function doImport() {
@@ -29,6 +35,41 @@ export default function SettingsPage() {
       setMsg({ text: `Imported ${n} items from the Excel tracker.`, ok: true });
     } catch (e: any) {
       setMsg({ text: `Import failed: ${e?.message || e}`, ok: false });
+    } finally {
+      setBusy('');
+    }
+  }
+
+  async function doImportRomanStreet() {
+    if (
+      !confirm(
+        `Add the "Roman Street" location and its ${ROMAN_STREET_DOC_COUNT - 1} address options?\n\n` +
+          `Safe to re-run — it overwrites by ID.`,
+      )
+    )
+      return;
+    setBusy('rs-import');
+    setMsg(null);
+    try {
+      await importRomanStreetLocations();
+      setMsg({ text: `Added "Roman Street" with ${ROMAN_STREET_DOC_COUNT - 1} location options.`, ok: true });
+    } catch (e: any) {
+      setMsg({ text: `Import failed: ${e?.message || e}`, ok: false });
+    } finally {
+      setBusy('');
+    }
+  }
+
+  async function doClearRomanStreet() {
+    if (!confirm(`Remove the "Roman Street" location and its ${ROMAN_STREET_DOC_COUNT - 1} options for everyone on the team?`))
+      return;
+    setBusy('rs-clear');
+    setMsg(null);
+    try {
+      await clearRomanStreetLocations();
+      setMsg({ text: 'Removed the Roman Street locations.', ok: true });
+    } catch (e: any) {
+      setMsg({ text: `Remove failed: ${e?.message || e}`, ok: false });
     } finally {
       setBusy('');
     }
@@ -92,20 +133,29 @@ export default function SettingsPage() {
         </button>
       </Section>
 
+      <Section
+        title="Invites"
+        desc="Create scoped access links for external production partners. They sign in with the invited email and only see selected categories."
+      >
+        <InvitesPanel />
+      </Section>
+
+      {/* Shared status banner for all data operations below. */}
+      {msg && (
+        <div
+          className={`mb-5 rounded-xl px-3 py-2 text-sm ${
+            msg.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+          }`}
+        >
+          {msg.text}
+        </div>
+      )}
+
       {/* Data management */}
       <Section
         title="Data — Excel import"
         desc="Load the real Rejoice / Story 4 data extracted from the Excel tracker, or clear it to start manually from scratch."
       >
-        {msg && (
-          <div
-            className={`rounded-xl px-3 py-2 text-sm ${
-              msg.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
-            }`}
-          >
-            {msg.text}
-          </div>
-        )}
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="flex-1 rounded-xl border border-slate-200 p-4">
             <div className="font-medium text-slate-800">Import Excel data</div>
@@ -126,6 +176,43 @@ export default function SettingsPage() {
             </p>
             <button className="btn-danger mt-3 w-full sm:w-auto" onClick={doClear} disabled={!!busy}>
               {busy === 'clear' ? 'Removing…' : 'Remove Excel data'}
+            </button>
+          </div>
+        </div>
+      </Section>
+
+      {/* Roman Street locations */}
+      <Section
+        title="Roman Street — locations"
+        desc="Add the Roman Street scouting locations (addresses pinned in Apple Maps). Each address opens on a map from its scheda."
+      >
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex-1 rounded-xl border border-slate-200 p-4">
+            <div className="font-medium text-slate-800">Add Roman Street locations</div>
+            <p className="mt-1 text-sm text-slate-500">
+              Creates the “Roman Street” location with {ROMAN_STREET_DOC_COUNT - 1} address
+              options (Monterotondo, Capena, Sacrofano). Safe to re-run — overwrites by ID.
+            </p>
+            <button
+              className="btn-primary mt-3 w-full sm:w-auto"
+              onClick={doImportRomanStreet}
+              disabled={!!busy}
+            >
+              {busy === 'rs-import' ? 'Adding…' : 'Add Roman Street locations'}
+            </button>
+          </div>
+
+          <div className="flex-1 rounded-xl border border-rose-200 bg-rose-50/40 p-4">
+            <div className="font-medium text-rose-800">Remove Roman Street locations</div>
+            <p className="mt-1 text-sm text-slate-500">
+              Deletes the Roman Street location and its address options for the whole team.
+            </p>
+            <button
+              className="btn-danger mt-3 w-full sm:w-auto"
+              onClick={doClearRomanStreet}
+              disabled={!!busy}
+            >
+              {busy === 'rs-clear' ? 'Removing…' : 'Remove Roman Street locations'}
             </button>
           </div>
         </div>
