@@ -1,7 +1,9 @@
 import type { EntityConfig } from '../data/entities';
 import type { EntityDoc, FieldConfig } from '../types';
 import Money from './ui/Money';
+import AppIcon from './icons/AppIcon';
 import { formatDate } from '../utils/format';
+import { mapHref, mapLabel } from '../utils/maps';
 
 const MONEY_FIELDS = new Set([
   'costEstimate',
@@ -73,6 +75,21 @@ export function displayValue(f: FieldConfig, item: EntityDoc): React.ReactNode {
 
   if (MONEY_FIELDS.has(f.name)) return <Money value={raw} />;
   if (f.type === 'date') return formatDate(raw);
+
+  // Addresses become a "view on map" link so a location is easy to find.
+  if (f.name === 'address' && typeof raw === 'string') {
+    return (
+      <a
+        href={mapHref(raw)}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-start gap-1 break-words text-brand-600 hover:underline"
+      >
+        <AppIcon name="pin" className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+        <span className="break-words">{mapLabel(raw)}</span>
+      </a>
+    );
+  }
 
   if (typeof raw === 'string' && (LINKY.test(f.name) || /^https?:\/\//.test(raw))) {
     return (
