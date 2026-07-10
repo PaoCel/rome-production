@@ -9,6 +9,7 @@ import EntityForm from './form/EntityForm';
 import MediaGallery from './MediaGallery';
 import Pill from './ui/Pill';
 import Money from './ui/Money';
+import AppIcon from './icons/AppIcon';
 
 // Renders the options that fulfil a requirement (the second tier of the
 // requirement → option model). Lets you add/edit options, pick the winning
@@ -16,16 +17,18 @@ import Money from './ui/Money';
 export default function LinkedOptions({
   config,
   requirement,
+  readOnly = false,
 }: {
   config: EntityConfig; // the requirement config (must have optionConfig)
   requirement: EntityDoc;
+  readOnly?: boolean;
 }) {
   const optionConfig = config.optionConfig!;
   const linkField = optionConfig.requirementLinkField || 'requirementId';
   const selectedField = config.selectedOptionField || 'selectedOptionId';
 
   const { items: allOptions } = useCollection(optionConfig.collection);
-  const { items: contacts } = useCollection('contacts');
+  const { items: contacts } = useCollection('contacts', !readOnly);
 
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<EntityDoc | null>(null);
@@ -64,7 +67,7 @@ export default function LinkedOptions({
     setCommittingId(o.id);
     try {
       const res = await addToBudget(optionConfig.budgetSource, o);
-      setBudgetMsg(res === 'created' ? 'Committed to budget ✓' : 'Budget updated ✓');
+      setBudgetMsg(res === 'created' ? 'Committed to budget' : 'Budget updated');
     } catch (err) {
       console.error(err);
       setBudgetMsg('Could not commit to budget. Try again.');
@@ -83,7 +86,7 @@ export default function LinkedOptions({
           Options{' '}
           {options.length > 0 && <span className="text-slate-400">({options.length})</span>}
         </h4>
-        {!showForm && (
+        {!showForm && !readOnly && (
           <button
             className="btn-secondary w-full px-2.5 py-1.5 text-xs sm:w-auto"
             onClick={() => {
@@ -141,7 +144,7 @@ export default function LinkedOptions({
               </div>
 
               <div className="mt-3 grid grid-cols-2 gap-1.5 border-t border-slate-100 pt-2.5 sm:flex sm:flex-wrap sm:items-center">
-                <button
+                {!readOnly && <button
                   className={
                     isSelected
                       ? 'btn-primary px-2.5 py-1.5 text-xs'
@@ -149,9 +152,16 @@ export default function LinkedOptions({
                   }
                   onClick={() => select(o)}
                 >
-                  {isSelected ? '✓ Selected' : 'Select'}
-                </button>
-                {optionConfig.budgetSource && (
+                  {isSelected ? (
+                    <>
+                      <AppIcon name="check" className="h-3.5 w-3.5" />
+                      Selected
+                    </>
+                  ) : (
+                    'Select'
+                  )}
+                </button>}
+                {optionConfig.budgetSource && !readOnly && (
                   <button
                     className="btn-secondary px-2.5 py-1.5 text-xs"
                     onClick={() => commit(o)}
@@ -161,7 +171,7 @@ export default function LinkedOptions({
                     {committingId === o.id ? 'Committing…' : 'Commit to budget'}
                   </button>
                 )}
-                <button
+                {!readOnly && <button
                   className="btn-secondary px-2.5 py-1.5 text-xs"
                   onClick={() => {
                     setCreating(false);
@@ -169,13 +179,13 @@ export default function LinkedOptions({
                   }}
                 >
                   Edit
-                </button>
-                <button
+                </button>}
+                {!readOnly && <button
                   className="btn-danger px-2.5 py-1.5 text-xs"
                   onClick={() => handleDelete(o)}
                 >
                   Delete
-                </button>
+                </button>}
               </div>
             </div>
           );
@@ -207,7 +217,7 @@ export default function LinkedOptions({
           />
           {optionConfig.media && optionConfig.relatedType && editing && (
             <div className="mt-5 border-t border-slate-200 pt-4">
-              <MediaGallery relatedType={optionConfig.relatedType} relatedId={editing.id} />
+              <MediaGallery relatedType={optionConfig.relatedType} relatedId={editing.id} readOnly={readOnly} />
             </div>
           )}
           {optionConfig.media && creating && (

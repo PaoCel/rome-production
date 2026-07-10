@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import AppIcon from '../icons/AppIcon';
 
 // Small accessible kebab (3-dots) menu with Edit / Delete actions.
 export default function CardMenu({
@@ -40,7 +41,7 @@ export default function CardMenu({
           setOpen((o) => !o);
         }}
       >
-        ⋯
+        <AppIcon name="more" className="h-5 w-5" />
       </button>
       {open && (
         <div className="absolute right-0 z-10 mt-1 w-32 rounded-xl border border-slate-200 bg-white py-1 shadow-card-hover">

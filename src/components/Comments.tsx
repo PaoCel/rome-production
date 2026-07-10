@@ -10,9 +10,11 @@ import type { RelatedType } from '../types';
 export default function Comments({
   relatedType,
   relatedId,
+  readOnly = false,
 }: {
   relatedType: RelatedType;
   relatedId: string;
+  readOnly?: boolean;
 }) {
   const comments = useRelated('comments', relatedType, relatedId);
   const { displayName } = useAuth();
@@ -51,15 +53,17 @@ export default function Comments({
               <span className="text-xs font-medium text-slate-700">{c.authorName}</span>
               <div className="flex items-center gap-2">
                 <span className="text-[11px] text-slate-400">{formatDate(c.createdAt)}</span>
-                <button
-                  className="text-slate-400 transition hover:text-red-500 sm:text-slate-300 sm:opacity-0 sm:group-hover:opacity-100"
-                  onClick={() => deleteItem('comments', c.id)}
-                  aria-label="Delete comment"
-                >
-                  <svg width="13" height="13" viewBox="0 0 20 20" fill="none">
-                    <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                  </svg>
-                </button>
+                {!readOnly && (
+                  <button
+                    className="text-slate-400 transition hover:text-red-500 sm:text-slate-300 sm:opacity-0 sm:group-hover:opacity-100"
+                    onClick={() => deleteItem('comments', c.id)}
+                    aria-label="Delete comment"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none">
+                      <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
             <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700">
@@ -69,17 +73,19 @@ export default function Comments({
         ))}
       </div>
 
-      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end">
-        <textarea
-          className="input min-h-[42px] resize-y"
-          placeholder="Write a comment…"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <button className="btn-primary w-full sm:w-auto" onClick={post} disabled={posting || !text.trim()}>
-          Post
-        </button>
-      </div>
+      {!readOnly && (
+        <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end">
+          <textarea
+            className="input min-h-[42px] resize-y"
+            placeholder="Write a comment…"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <button className="btn-primary w-full sm:w-auto" onClick={post} disabled={posting || !text.trim()}>
+            Post
+          </button>
+        </div>
+      )}
     </section>
   );
 }

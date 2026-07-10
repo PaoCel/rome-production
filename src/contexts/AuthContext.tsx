@@ -7,6 +7,10 @@ import {
   type ReactNode,
 } from 'react';
 import {
+  doc,
+  getDoc,
+} from 'firebase/firestore';
+import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -15,8 +19,14 @@ import {
   signOut,
   type User,
 } from 'firebase/auth';
-import { auth } from '../config/firebase';
-import { isApproved } from '../data/approvedEmails';
+import { auth, db, PROJECT_ID } from '../config/firebase';
+import {
+  isOwnerEmail,
+  NO_ACCESS_PROFILE,
+  OWNER_PROFILE,
+  sectionsFromInvite,
+  type AccessProfile,
+} from '../data/access';
 
 // Thrown when an authenticated user is not on the approved list.
 export const NOT_APPROVED = 'not-approved';
@@ -24,6 +34,8 @@ export const NOT_APPROVED = 'not-approved';
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
+  access: AccessProfile;
+  canManage: boolean;
   displayName: string;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
@@ -33,28 +45,54 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-// Reject an authenticated session if the email is not approved.
+async function resolveAccess(user: User | null): Promise<AccessProfile> {
+  const email = user?.email?.trim().toLowerCase();
+  if (!email) return NO_ACCESS_PROFILE;
+  if (isOwnerEmail(email)) return OWNER_PROFILE;
+
+  const snap = await getDoc(doc(db, 'projects', PROJECT_ID, 'invites', email));
+  const invite = snap.exists() ? snap.data() : null;
+  if (!invite || invite.status !== 'active') return NO_ACCESS_PROFILE;
+  return { role: 'invitee', sections: sectionsFromInvite(invite.sections) };
+}
+
+// Reject an authenticated session if the email is neither owner nor invited.
 async function enforceApproved(user: User | null) {
-  if (user && !isApproved(user.email)) {
+  const access = await resolveAccess(user);
+  if (user && access.role === 'none') {
     await signOut(auth);
     throw new Error(NOT_APPROVED);
   }
+  return access;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [access, setAccess] = useState<AccessProfile>(NO_ACCESS_PROFILE);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      // Defensive: drop any persisted session that is not approved.
-      if (u && !isApproved(u.email)) {
-        signOut(auth);
-        setUser(null);
-      } else {
-        setUser(u);
+    const unsub = onAuthStateChanged(auth, async (u) => {
+      try {
+        const nextAccess = await resolveAccess(u);
+        if (u && nextAccess.role === 'none') {
+          await signOut(auth);
+          setUser(null);
+          setAccess(NO_ACCESS_PROFILE);
+        } else {
+          setUser(u);
+          setAccess(nextAccess);
+        }
+      } catch (err) {
+        console.error('resolveAccess', err);
+        if (u) {
+          await signOut(auth);
+          setUser(null);
+          setAccess(NO_ACCESS_PROFILE);
+        }
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
     return unsub;
   }, []);
@@ -63,24 +101,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       loading,
+      access,
+      canManage: access.role === 'owner',
       displayName: user?.displayName || user?.email?.split('@')[0] || 'User',
       login: async (email, password) => {
         const cred = await signInWithEmailAndPassword(auth, email, password);
-        await enforceApproved(cred.user);
+        setAccess(await enforceApproved(cred.user));
       },
       register: async (email, password) => {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
-        await enforceApproved(cred.user);
+        setAccess(await enforceApproved(cred.user));
       },
       loginWithGoogle: async () => {
         const cred = await signInWithPopup(auth, new GoogleAuthProvider());
-        await enforceApproved(cred.user);
+        setAccess(await enforceApproved(cred.user));
       },
       logout: async () => {
+        setAccess(NO_ACCESS_PROFILE);
         await signOut(auth);
       },
     }),
-    [user, loading],
+    [user, loading, access],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

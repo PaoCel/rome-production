@@ -3,18 +3,55 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
 
-    // Only approved emails may access project media.
-    // Keep this list in sync with src/data/approvedEmails.ts.
-    function isApproved() {
-      return request.auth != null
-        && request.auth.token.email in [
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email != null;
+    }
+
+    function email() {
+      return request.auth.token.email.lower();
+    }
+
+    function isOwner() {
+      return isSignedIn()
+        && email() in [
           'paolocelestini23@gmail.com',
           'spaminutili24@gmail.com'
         ];
     }
 
-    match /projects/{projectId}/{allPaths=**} {
-      allow read, write: if isApproved();
+    function invitedTo(projectId, section) {
+      return isSignedIn()
+        && firestore.exists(/databases/(default)/documents/projects/$(projectId)/invites/$(email()))
+        && firestore.get(/databases/(default)/documents/projects/$(projectId)/invites/$(email())).data.status == 'active'
+        && section in firestore.get(/databases/(default)/documents/projects/$(projectId)/invites/$(email())).data.sections;
+    }
+
+    function sectionForRelatedType(relatedType) {
+      return relatedType == 'task'
+        ? 'tasks'
+        : relatedType == 'invoice'
+        ? 'invoices'
+        : relatedType in ['locationRequirement', 'locationOption']
+        ? 'locations'
+        : relatedType in ['castRole', 'castingOption']
+        ? 'casting'
+        : relatedType in ['crewRequirement', 'crewOption']
+        ? 'crew'
+        : relatedType in ['propItem', 'propOption']
+        ? 'props'
+        : relatedType == 'productionOption'
+        ? 'production'
+        : relatedType == 'contact'
+        ? 'contacts'
+        : relatedType in ['risk', 'decision']
+        ? 'risks'
+        : '';
+    }
+
+    match /projects/{projectId}/{relatedType}/{relatedId}/{fileName} {
+      allow read: if isOwner()
+        || (sectionForRelatedType(relatedType) != '' && invitedTo(projectId, sectionForRelatedType(relatedType)));
+      allow write: if isOwner();
     }
 
     match /{allPaths=**} {

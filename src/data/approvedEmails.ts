@@ -1,9 +1,8 @@
-// Only these emails may access the app. Add more as people are approved.
-// Keep this list in sync with `isApproved()` in firestore.rules / storage.rules.
-export const APPROVED_EMAILS = [
-  'paolocelestini23@gmail.com',
-  'spaminutili24@gmail.com',
-];
+import { OWNER_EMAILS } from './access';
+
+// Legacy helper: owners are always approved. Invitees are checked dynamically
+// against Firestore in AuthContext.
+export const APPROVED_EMAILS = OWNER_EMAILS;
 
 export function isApproved(email: string | null | undefined): boolean {
   if (!email) return false;

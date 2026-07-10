@@ -14,10 +14,12 @@ export default function EntityDetail({
   config,
   item,
   onEdit,
+  readOnly = false,
 }: {
   config: EntityConfig;
   item: EntityDoc;
   onEdit: () => void;
+  readOnly?: boolean;
 }) {
   const [budgetMsg, setBudgetMsg] = useState('');
   const [committing, setCommitting] = useState(false);
@@ -39,7 +41,7 @@ export default function EntityDetail({
     setCommitting(true);
     try {
       const res = await addToBudget(config.budgetSource, item);
-      setBudgetMsg(res === 'created' ? 'Added to budget ✓' : 'Budget item updated ✓');
+      setBudgetMsg(res === 'created' ? 'Added to budget' : 'Budget item updated');
     } catch (err) {
       console.error(err);
       setBudgetMsg('Could not add to budget. Try again.');
@@ -57,9 +59,11 @@ export default function EntityDetail({
             <p className="section-label">{config.singular}</p>
             <h3 className="mt-1 break-words font-display text-2xl font-semibold text-slate-900">{title}</h3>
           </div>
-          <button className="btn-secondary w-full sm:w-auto sm:shrink-0" onClick={onEdit}>
-            Edit
-          </button>
+          {!readOnly && (
+            <button className="btn-secondary w-full sm:w-auto sm:shrink-0" onClick={onEdit}>
+              Edit
+            </button>
+          )}
         </div>
         {pills.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -71,7 +75,7 @@ export default function EntityDetail({
       </div>
 
       {/* Add to budget */}
-      {config.budgetSource && (
+      {config.budgetSource && !readOnly && (
         <div className="card flex flex-col gap-3 border-brand-100 bg-brand-50/60 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="text-sm font-semibold text-slate-800">Budget action</div>
@@ -95,21 +99,21 @@ export default function EntityDetail({
       <EntityFields config={config} item={item} />
 
       {/* Linked options (two-tier requirement → options) */}
-      {config.optionConfig && <LinkedOptions config={config} requirement={item} />}
+      {config.optionConfig && <LinkedOptions config={config} requirement={item} readOnly={readOnly} />}
 
       {/* Media */}
       {config.media && config.relatedType && (
-        <MediaGallery relatedType={config.relatedType} relatedId={item.id} />
+        <MediaGallery relatedType={config.relatedType} relatedId={item.id} readOnly={readOnly} />
       )}
 
       {/* Related tasks */}
-      {config.relatedTasks && config.relatedType && (
+      {config.relatedTasks && config.relatedType && !readOnly && (
         <RelatedTasks relatedType={config.relatedType} relatedId={item.id} contextTitle={title} />
       )}
 
       {/* Comments */}
       {config.comments && config.relatedType && (
-        <Comments relatedType={config.relatedType} relatedId={item.id} />
+        <Comments relatedType={config.relatedType} relatedId={item.id} readOnly={readOnly} />
       )}
     </div>
   );

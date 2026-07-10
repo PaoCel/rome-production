@@ -4,6 +4,7 @@ import ProtectedRoute from './ProtectedRoute';
 import SectionGuard from './SectionGuard';
 import AppLayout from '../layouts/AppLayout';
 import LoginPage from '../pages/LoginPage';
+import InvitePage from '../pages/InvitePage';
 import DashboardPage from '../pages/DashboardPage';
 import TasksPage from '../pages/TasksPage';
 import BudgetPage from '../pages/BudgetPage';
@@ -23,6 +24,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/invite/:token" element={<InvitePage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>

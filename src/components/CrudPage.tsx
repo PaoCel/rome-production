@@ -4,6 +4,7 @@ import type { EntityDoc } from '../types';
 import { useCollection } from '../hooks/useCollection';
 import { createItem, updateItem } from '../services/firestore';
 import { deleteEntityCascade } from '../services/cascade';
+import { useAuth } from '../contexts/AuthContext';
 import { OWNERS } from '../data/owners';
 import PageHeader from './PageHeader';
 import SearchInput from './ui/SearchInput';
@@ -18,8 +19,9 @@ import BottomSheet from './ui/BottomSheet';
 
 // One reusable page powering every card-based CRUD section.
 export default function CrudPage({ config }: { config: EntityConfig }) {
+  const { canManage } = useAuth();
   const { items, loading } = useCollection(config.collection);
-  const { items: contacts } = useCollection('contacts');
+  const { items: contacts } = useCollection('contacts', canManage);
 
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({});
@@ -70,11 +72,11 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
       <PageHeader
         title={`${config.singular}s`}
         count={items.length}
-        action={
+        action={canManage ? (
           <button className="btn-primary" onClick={() => setCreating(true)}>
             + New {config.singular.toLowerCase()}
           </button>
-        }
+        ) : undefined}
       />
 
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -106,8 +108,9 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
               config={config}
               item={item}
               onOpen={() => setDetail(item)}
-              onEdit={() => setEditing(item)}
-              onDelete={() => handleDelete(item)}
+              onEdit={() => canManage && setEditing(item)}
+              onDelete={() => canManage && handleDelete(item)}
+              readOnly={!canManage}
             />
           ))}
         </div>
@@ -162,6 +165,7 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
               setEditing(liveDetail);
               setDetail(null);
             }}
+            readOnly={!canManage}
           />
         )}
       </SidePanel>

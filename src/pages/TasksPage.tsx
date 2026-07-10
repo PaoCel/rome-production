@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useCollection } from '../hooks/useCollection';
 import { createItem, deleteItem, updateItem } from '../services/firestore';
+import { useAuth } from '../contexts/AuthContext';
 import { TASK_PRIORITIES, TASK_STATUSES } from '../data/constants';
 import { OWNERS } from '../data/owners';
 import type { EntityConfig } from '../data/entities';
@@ -53,6 +54,7 @@ const TASK_CONFIG: EntityConfig = {
 };
 
 export default function TasksPage() {
+  const { canManage } = useAuth();
   const { items, loading } = useCollection('tasks');
   const [view, setView] = useState<'board' | 'list'>('board');
   const [search, setSearch] = useState('');
@@ -112,11 +114,11 @@ export default function TasksPage() {
       <PageHeader
         title="Tasks"
         count={items.length}
-        action={
+        action={canManage ? (
           <button className="btn-primary" onClick={() => setCreating(true)}>
             + New task
           </button>
-        }
+        ) : undefined}
       />
 
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -150,10 +152,17 @@ export default function TasksPage() {
         <BoardView
           tasks={filtered}
           onOpen={setDetail}
-          onMove={(t, status) => updateItem('tasks', t.id, { status })}
+          onMove={(t, status) => canManage && updateItem('tasks', t.id, { status })}
+          readOnly={!canManage}
         />
       ) : (
-        <ListView tasks={filtered} onOpen={setDetail} onEdit={setEditing} onDelete={handleDelete} />
+        <ListView
+          tasks={filtered}
+          onOpen={setDetail}
+          onEdit={(task) => canManage && setEditing(task)}
+          onDelete={(task) => canManage && handleDelete(task)}
+          readOnly={!canManage}
+        />
       )}
 
       {/* Create / edit */}
@@ -188,6 +197,7 @@ export default function TasksPage() {
               setEditing(liveDetail);
               setDetail(null);
             }}
+            readOnly={!canManage}
           />
         )}
       </SidePanel>
@@ -199,10 +209,12 @@ function BoardView({
   tasks,
   onOpen,
   onMove,
+  readOnly = false,
 }: {
   tasks: EntityDoc[];
   onOpen: (t: EntityDoc) => void;
   onMove: (t: EntityDoc, status: string) => void;
+  readOnly?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-4 lg:grid lg:grid-cols-5 lg:items-start lg:gap-3">
@@ -233,17 +245,19 @@ function BoardView({
                       {t.dueDate && <span>Due {formatDate(t.dueDate)}</span>}
                     </div>
                   </button>
-                  <select
-                    className="mt-2 w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-600"
-                    value={status}
-                    onChange={(e) => onMove(t, e.target.value)}
-                  >
-                    {TASK_STATUSES.map((s) => (
-                      <option key={s} value={s}>
-                        Move to: {s}
-                      </option>
-                    ))}
-                  </select>
+                  {!readOnly && (
+                    <select
+                      className="mt-2 w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-600"
+                      value={status}
+                      onChange={(e) => onMove(t, e.target.value)}
+                    >
+                      {TASK_STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          Move to: {s}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
               ))}
               {col.length === 0 && (
@@ -264,11 +278,13 @@ function ListView({
   onOpen,
   onEdit,
   onDelete,
+  readOnly = false,
 }: {
   tasks: EntityDoc[];
   onOpen: (t: EntityDoc) => void;
   onEdit: (t: EntityDoc) => void;
   onDelete: (t: EntityDoc) => void;
+  readOnly?: boolean;
 }) {
   if (tasks.length === 0) return <EmptyState title="No tasks" hint="Create your first task." />;
   return (
@@ -313,9 +329,11 @@ function ListView({
               aria-hidden="true"
               title={t.priority}
             />
-            <div onClick={(e) => e.stopPropagation()}>
-              <CardMenu onEdit={() => onEdit(t)} onDelete={() => onDelete(t)} />
-            </div>
+            {!readOnly && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <CardMenu onEdit={() => onEdit(t)} onDelete={() => onDelete(t)} />
+              </div>
+            )}
           </div>
         </div>
       ))}

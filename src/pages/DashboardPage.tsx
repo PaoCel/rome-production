@@ -3,22 +3,34 @@ import { useCollection } from '../hooks/useCollection';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { BUDGET_CATEGORIES, isCommittedItem } from '../data/constants';
+import { canAccess } from '../data/access';
 import { formatMoney } from '../utils/format';
 import Money from '../components/ui/Money';
+import type { EntityDoc } from '../types';
+
+type SelectionSource = { label: string; to: string; items: EntityDoc[] };
 
 export default function DashboardPage() {
-  const { displayName } = useAuth();
+  const { access, displayName } = useAuth();
   const { settings } = useSettings();
-  const tasks = useCollection('tasks').items;
-  const budget = useCollection('budgetItems').items;
-  const risks = useCollection('risks').items;
-  const decisions = useCollection('decisions').items;
+  const showTasks = canAccess(access, 'tasks');
+  const showBudget = canAccess(access, 'budget');
+  const showRisks = canAccess(access, 'risks');
+  const showLocations = canAccess(access, 'locations');
+  const showCasting = canAccess(access, 'casting');
+  const showCrew = canAccess(access, 'crew');
+  const showProps = canAccess(access, 'props');
+
+  const tasks = useCollection('tasks', showTasks).items;
+  const budget = useCollection('budgetItems', showBudget).items;
+  const risks = useCollection('risks', showRisks).items;
+  const decisions = useCollection('decisions', showRisks).items;
 
   // Two-tier requirement collections (for selection progress).
-  const locationReqs = useCollection('locationRequirements').items;
-  const castRoles = useCollection('castRoles').items;
-  const crewReqs = useCollection('crewRequirements').items;
-  const propItems = useCollection('propItems').items;
+  const locationReqs = useCollection('locationRequirements', showLocations).items;
+  const castRoles = useCollection('castRoles', showCasting).items;
+  const crewReqs = useCollection('crewRequirements', showCrew).items;
+  const propItems = useCollection('propItems', showProps).items;
 
   const openTasks = tasks.filter((t) => t.status && t.status !== 'Done').length;
   const highTasks = tasks.filter((t) => t.priority === 'High' && t.status !== 'Done').length;
@@ -36,11 +48,11 @@ export default function DashboardPage() {
   ).length;
 
   const selections = [
-    { label: 'Locations', to: '/locations', items: locationReqs },
-    { label: 'Cast', to: '/casting', items: castRoles },
-    { label: 'Crew', to: '/crew', items: crewReqs },
-    { label: 'Props', to: '/props', items: propItems },
-  ].map((s) => ({
+    showLocations && { label: 'Locations', to: '/locations', items: locationReqs },
+    showCasting && { label: 'Cast', to: '/casting', items: castRoles },
+    showCrew && { label: 'Crew', to: '/crew', items: crewReqs },
+    showProps && { label: 'Props', to: '/props', items: propItems },
+  ].filter((s): s is SelectionSource => Boolean(s)).map((s) => ({
     ...s,
     total: s.items.length,
     chosen: s.items.filter((i) => i.selectedOptionId).length,
@@ -74,7 +86,7 @@ export default function DashboardPage() {
                 {settings.productionSubtitle} — everything you're tracking, at a glance.
               </p>
             </div>
-            <Link to="/tasks" className="btn-secondary border-white/20 bg-white/10 text-white hover:bg-white/15">
+            <Link to={showTasks ? '/tasks' : landingPathForVisible(access.sections)} className="btn-secondary border-white/20 bg-white/10 text-white hover:bg-white/15">
               Open tasks
             </Link>
           </div>
@@ -83,15 +95,15 @@ export default function DashboardPage() {
 
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi to="/tasks" label="Open tasks" value={openTasks} sub={`${highTasks} high priority`} tone="indigo" />
-        <Kpi to="/budget" label="Committed budget" money={committed} sub={`of ${formatMoney(estimated)} estimated`} tone="amber" />
-        <Kpi to="/budget" label="Actual spend" money={actual} sub="paid & incurred" tone="emerald" />
-        <Kpi to="/risks" label="Open risks" value={openRisks} sub={`${pendingDecisions} decisions pending`} tone="rose" />
+        {showTasks && <Kpi to="/tasks" label="Open tasks" value={openTasks} sub={`${highTasks} high priority`} tone="indigo" />}
+        {showBudget && <Kpi to="/budget" label="Committed budget" money={committed} sub={`of ${formatMoney(estimated)} estimated`} tone="amber" />}
+        {showBudget && <Kpi to="/budget" label="Actual spend" money={actual} sub="paid & incurred" tone="emerald" />}
+        {showRisks && <Kpi to="/risks" label="Open risks" value={openRisks} sub={`${pendingDecisions} decisions pending`} tone="rose" />}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      {(showBudget || showTasks || showRisks) && <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Budget by category */}
-        <section className="card p-5 lg:col-span-2">
+        {showBudget && <section className="card p-5 lg:col-span-2">
           <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="font-semibold text-slate-800">Budget by category</h2>
             <Link to="/budget" className="text-xs font-medium text-brand-600 hover:underline">
@@ -134,22 +146,22 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
-        </section>
+        </section>}
 
         {/* Needs attention */}
-        <section className="card p-5">
+        {(showTasks || showRisks) && <section className="card p-5">
           <h2 className="mb-4 font-semibold text-slate-800">Needs attention</h2>
           <div className="space-y-2.5">
-            <Attn to="/tasks" label="Blocked tasks" value={blockedTasks} tone="rose" />
-            <Attn to="/tasks" label="High-priority open" value={highTasks} tone="amber" />
-            <Attn to="/risks" label="Open risks" value={openRisks} tone="rose" />
-            <Attn to="/risks" label="Pending decisions" value={pendingDecisions} tone="amber" />
+            {showTasks && <Attn to="/tasks" label="Blocked tasks" value={blockedTasks} tone="rose" />}
+            {showTasks && <Attn to="/tasks" label="High-priority open" value={highTasks} tone="amber" />}
+            {showRisks && <Attn to="/risks" label="Open risks" value={openRisks} tone="rose" />}
+            {showRisks && <Attn to="/risks" label="Pending decisions" value={pendingDecisions} tone="amber" />}
           </div>
-        </section>
-      </div>
+        </section>}
+      </div>}
 
       {/* Selection progress */}
-      <section>
+      {selections.length > 0 && <section>
         <h2 className="mb-3 font-semibold text-slate-800">Selection progress</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {selections.map((s) => {
@@ -170,9 +182,14 @@ export default function DashboardPage() {
             );
           })}
         </div>
-      </section>
+      </section>}
     </div>
   );
+}
+
+function landingPathForVisible(sections: string[]) {
+  const first = sections.find((s) => s !== 'dashboard');
+  return first ? `/${first}` : '/';
 }
 
 const KPI_TONES: Record<string, string> = {

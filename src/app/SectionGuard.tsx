@@ -11,9 +11,9 @@ export default function SectionGuard({
   section: Section;
   children: React.ReactNode;
 }) {
-  const { user } = useAuth();
-  if (!canAccess(user?.email, section)) {
-    return <Navigate to={landingPath(user?.email)} replace />;
+  const { access } = useAuth();
+  if (!canAccess(access, section)) {
+    return <Navigate to={landingPath(access)} replace />;
   }
   return <>{children}</>;
 }

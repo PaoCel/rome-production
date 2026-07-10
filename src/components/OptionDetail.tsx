@@ -4,6 +4,7 @@ import Pill from './ui/Pill';
 import MediaGallery from './MediaGallery';
 import Comments from './Comments';
 import EntityFields from './EntityFields';
+import AppIcon from './icons/AppIcon';
 
 // Full "scheda" for an option, shown inside a side panel. Presentational —
 // the parent OptionsGallery owns select/commit state and passes handlers in.
@@ -17,6 +18,7 @@ export default function OptionDetail({
   onSelect,
   onCommit,
   onEdit,
+  readOnly = false,
 }: {
   option: EntityDoc;
   optionConfig: EntityConfig;
@@ -27,9 +29,11 @@ export default function OptionDetail({
   onSelect: () => void;
   onCommit: () => void;
   onEdit: () => void;
+  readOnly?: boolean;
 }) {
   const title = option[optionConfig.titleField] || 'Untitled option';
   const pills = optionConfig.pillFields.map((n) => option[n]).filter(Boolean) as string[];
+  const useLocationGrid = optionConfig.relatedType === 'locationOption';
 
   return (
     <div className="space-y-6">
@@ -42,14 +46,17 @@ export default function OptionDetail({
               <p className="mt-0.5 text-sm text-slate-400">for: {requirementName}</p>
             )}
           </div>
-          <button className="btn-secondary w-full sm:w-auto sm:shrink-0" onClick={onEdit}>
-            Edit
-          </button>
+          {!readOnly && (
+            <button className="btn-secondary w-full sm:w-auto sm:shrink-0" onClick={onEdit}>
+              Edit
+            </button>
+          )}
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           {isSelected && (
-            <span className="rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white">
-              ✓ Selected
+            <span className="inline-flex items-center gap-1 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white">
+              <AppIcon name="check" className="h-3 w-3" />
+              Selected
             </span>
           )}
           {pills.map((p, i) => (
@@ -59,7 +66,7 @@ export default function OptionDetail({
       </div>
 
       {/* Actions */}
-      <div className="card flex flex-col gap-3 border-brand-100 bg-brand-50/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+      {!readOnly && <div className="card flex flex-col gap-3 border-brand-100 bg-brand-50/60 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="text-sm font-semibold text-slate-800">Selection & budget</div>
           <div className="text-xs text-slate-500">
@@ -85,11 +92,17 @@ export default function OptionDetail({
         )}
         {budgetMsg && <span className="text-sm text-emerald-600">{budgetMsg}</span>}
         </div>
-      </div>
+      </div>}
 
-      {/* Photos + files (large cover) */}
+      {/* Location options use the same social-style media grid as casting profiles. */}
       {optionConfig.relatedType && (
-        <MediaGallery relatedType={optionConfig.relatedType} relatedId={option.id} hero />
+        <MediaGallery
+          relatedType={optionConfig.relatedType}
+          relatedId={option.id}
+          hero={!useLocationGrid}
+          profileGrid={useLocationGrid}
+          readOnly={readOnly}
+        />
       )}
 
       {/* Fields */}
@@ -97,7 +110,7 @@ export default function OptionDetail({
 
       {/* Comments */}
       {optionConfig.relatedType && (
-        <Comments relatedType={optionConfig.relatedType} relatedId={option.id} />
+        <Comments relatedType={optionConfig.relatedType} relatedId={option.id} readOnly={readOnly} />
       )}
     </div>
   );
