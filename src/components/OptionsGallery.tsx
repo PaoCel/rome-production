@@ -5,6 +5,7 @@ import { useCollection } from '../hooks/useCollection';
 import { createItem, updateItem } from '../services/firestore';
 import { deleteOptionCascade } from '../services/cascade';
 import { addToBudget } from '../services/budget';
+import { useAuth } from '../contexts/AuthContext';
 import SearchInput from './ui/SearchInput';
 import EmptyState from './ui/EmptyState';
 import SidePanel from './ui/SidePanel';
@@ -17,13 +18,14 @@ import OptionDetail from './OptionDetail';
 // The "CRM" view: every option being evaluated in a category, as photo cards,
 // grouped/filtered by requirement. Complements the Requirements list view.
 export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig }) {
+  const { canManage } = useAuth();
   const optionConfig = reqConfig.optionConfig!;
   const linkField = optionConfig.requirementLinkField || 'requirementId';
   const selField = reqConfig.selectedOptionField || 'selectedOptionId';
 
   const { items: options, loading } = useCollection(optionConfig.collection);
   const { items: requirements } = useCollection(reqConfig.collection);
-  const { items: contacts } = useCollection('contacts');
+  const { items: contacts } = useCollection('contacts', canManage);
 
   const [search, setSearch] = useState('');
   const [reqFilter, setReqFilter] = useState('');
@@ -94,7 +96,7 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
     setCommittingId(o.id);
     try {
       const res = await addToBudget(optionConfig.budgetSource, o);
-      setBudgetMsg(res === 'created' ? 'Committed to budget ✓' : 'Budget updated ✓');
+      setBudgetMsg(res === 'created' ? 'Committed to budget' : 'Budget updated');
     } catch (err) {
       console.error(err);
       setBudgetMsg('Could not commit to budget. Try again.');
@@ -138,7 +140,7 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
           <button
             className="btn-primary shrink-0"
             onClick={openCreate}
-            disabled={noRequirements}
+            disabled={noRequirements || !canManage}
             title={noRequirements ? 'Create a requirement first' : ''}
           >
             + New option
@@ -171,13 +173,15 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
               isSelected={isSelected(o)}
               committing={committingId === o.id}
               onOpen={() => setDetail(o)}
-              onSelect={() => select(o)}
-              onCommit={() => commit(o)}
+              onSelect={() => canManage && select(o)}
+              onCommit={() => canManage && commit(o)}
               onEdit={() => {
+                if (!canManage) return;
                 setCreating(false);
                 setEditing(o);
               }}
-              onDelete={() => handleDelete(o)}
+              onDelete={() => canManage && handleDelete(o)}
+              readOnly={!canManage}
             />
           ))}
         </div>
@@ -248,12 +252,14 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
             isSelected={isSelected(liveDetail)}
             committing={committingId === liveDetail.id}
             budgetMsg={budgetMsg}
-            onSelect={() => select(liveDetail)}
-            onCommit={() => commit(liveDetail)}
-            onEdit={() => {
-              setEditing(liveDetail);
-              setDetail(null);
-            }}
+          onSelect={() => canManage && select(liveDetail)}
+          onCommit={() => canManage && commit(liveDetail)}
+          onEdit={() => {
+            if (!canManage) return;
+            setEditing(liveDetail);
+            setDetail(null);
+          }}
+          readOnly={!canManage}
           />
         )}
       </SidePanel>

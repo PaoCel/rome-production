@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useCollection } from '../hooks/useCollection';
 import { createItem, deleteItem, updateItem } from '../services/firestore';
+import { useAuth } from '../contexts/AuthContext';
 import {
   BUDGET_CATEGORIES,
   BUDGET_STAGES,
@@ -43,6 +44,7 @@ const SOURCE_LABEL: Record<string, string> = {
 };
 
 export default function BudgetPage() {
+  const { canManage } = useAuth();
   const { items, loading } = useCollection('budgetItems');
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<EntityDoc | null>(null);
@@ -117,11 +119,11 @@ export default function BudgetPage() {
       <PageHeader
         title="Budget"
         subtitle="Estimates become real spend only once committed or approved."
-        action={
+        action={canManage ? (
           <button className="btn-primary" onClick={() => setCreating(true)}>
             + New budget item
           </button>
-        }
+        ) : undefined}
       />
 
       {/* Total budget card */}
@@ -261,29 +263,37 @@ export default function BudgetPage() {
                   <div className="grid grid-cols-2 gap-x-3 text-left text-sm">
                     <div className="min-w-0">
                       <div className="text-xs text-slate-400">Stima</div>
-                      <input
-                        key={`est-${it.id}`}
-                        type="number"
-                        className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
-                        defaultValue={it.estimatedCost ?? ''}
-                        onBlur={(e) => handleInlineChange(it, 'estimatedCost', e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-                        }}
-                      />
+                      {canManage ? (
+                        <input
+                          key={`est-${it.id}`}
+                          type="number"
+                          className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
+                          defaultValue={it.estimatedCost ?? ''}
+                          onBlur={(e) => handleInlineChange(it, 'estimatedCost', e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                          }}
+                        />
+                      ) : (
+                        <div className="font-medium text-slate-700"><Money value={it.estimatedCost} /></div>
+                      )}
                     </div>
                     <div className="min-w-0">
                       <div className="text-xs text-slate-400">Reale</div>
-                      <input
-                        key={`actual-${it.id}`}
-                        type="number"
-                        className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
-                        defaultValue={it.actualCost ?? ''}
-                        onBlur={(e) => handleInlineChange(it, 'actualCost', e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-                        }}
-                      />
+                      {canManage ? (
+                        <input
+                          key={`actual-${it.id}`}
+                          type="number"
+                          className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm font-medium text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-100"
+                          defaultValue={it.actualCost ?? ''}
+                          onBlur={(e) => handleInlineChange(it, 'actualCost', e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                          }}
+                        />
+                      ) : (
+                        <div className="font-medium text-slate-700"><Money value={it.actualCost} /></div>
+                      )}
                     </div>
                   </div>
 
@@ -306,9 +316,11 @@ export default function BudgetPage() {
                   )}
                 </div>
 
-                <div className="flex items-center justify-end md:shrink-0">
-                  <CardMenu onEdit={() => setEditing(it)} onDelete={() => handleDelete(it)} />
-                </div>
+                {canManage && (
+                  <div className="flex items-center justify-end md:shrink-0">
+                    <CardMenu onEdit={() => setEditing(it)} onDelete={() => handleDelete(it)} />
+                  </div>
+                )}
               </div>
             );
           })}

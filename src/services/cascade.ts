@@ -14,7 +14,7 @@ async function deleteMediaAndComments(relatedType: string, relatedId: string) {
     where('relatedType', '==', relatedType),
     where('relatedId', '==', relatedId),
   );
-  await Promise.all(media.map((m) => deleteMedia(m.id, m.storagePath)));
+  await Promise.all(media.map((m) => deleteMedia(m.id, m.storagePath, m.posterStoragePath)));
 
   const comments = await findWhere(
     'comments',
@@ -41,6 +41,10 @@ async function deleteBudgetItemsByOption(optionId: string) {
 export async function deleteOptionCascade(optionConfig: EntityConfig, option: EntityDoc) {
   if (optionConfig.relatedType) {
     await deleteMediaAndComments(optionConfig.relatedType, option.id);
+  }
+  if (optionConfig.collection === 'castingOptions') {
+    const votes = await findWhere('castingVotes', where('optionId', '==', option.id));
+    await Promise.all(votes.map((vote) => deleteItem('castingVotes', vote.id)));
   }
   await deleteBudgetItemsByOption(option.id);
   await deleteItem(optionConfig.collection, option.id);

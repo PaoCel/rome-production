@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import type { EntityDoc } from '../types';
+import AppIcon from './icons/AppIcon';
 
 export function isPdf(fileName = ''): boolean {
   return /\.pdf$/i.test(fileName);
@@ -42,9 +43,10 @@ export default function MediaViewer({
           </a>
           <button
             onClick={onClose}
-            className="rounded-lg bg-white/15 px-3 py-1.5 text-xs font-medium hover:bg-white/25"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-xs font-medium hover:bg-white/25"
           >
-            Close ✕
+            Close
+            <AppIcon name="close" className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
@@ -60,7 +62,13 @@ export default function MediaViewer({
             className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
           />
         ) : item.type === 'video' ? (
-          <video src={item.downloadUrl} controls autoPlay className="max-h-full max-w-full rounded-lg" />
+          <video
+            src={item.downloadUrl}
+            poster={item.posterUrl}
+            controls
+            autoPlay
+            className="max-h-full max-w-full rounded-lg"
+          />
         ) : pdf ? (
           <iframe
             src={item.downloadUrl}
@@ -69,7 +77,7 @@ export default function MediaViewer({
           />
         ) : (
           <div className="rounded-xl bg-white p-8 text-center">
-            <div className="mb-2 text-4xl">📄</div>
+            <AppIcon name="document" className="mx-auto mb-2 h-16 w-16" />
             <p className="mb-3 text-sm text-slate-600">This file type can't be previewed in the browser.</p>
             <a
               href={item.downloadUrl}

@@ -11,12 +11,14 @@ export default function EntityCard({
   onOpen,
   onEdit,
   onDelete,
+  readOnly = false,
 }: {
   config: EntityConfig;
   item: EntityDoc;
   onOpen: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  readOnly?: boolean;
 }) {
   const title = item[config.titleField] || 'Untitled';
   const subtitle = (config.subtitleFields || [])
@@ -60,7 +62,7 @@ export default function EntityCard({
             <span className="text-slate-300">—</span>
           )}
         </div>
-        <CardMenu onEdit={onEdit} onDelete={onDelete} />
+        {!readOnly && <CardMenu onEdit={onEdit} onDelete={onDelete} />}
       </div>
     </div>
   );

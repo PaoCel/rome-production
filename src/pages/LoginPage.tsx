@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
+import AppIcon from '../components/icons/AppIcon';
 
 export default function LoginPage() {
   const { user, loading, login, register, loginWithGoogle } = useAuth();
@@ -51,7 +52,7 @@ export default function LoginPage() {
           <div className="relative flex h-full flex-col justify-between">
             <div>
               <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-2xl shadow-sm backdrop-blur">
-                🎬
+                <AppIcon name="casting" className="h-12 w-12" />
               </div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
                 {settings.productionSubtitle}
@@ -83,7 +84,7 @@ export default function LoginPage() {
         <div className="w-full p-5 sm:p-8">
           <div className="mb-6 lg:hidden">
             <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-600 text-2xl shadow-sm">
-              🎬
+              <AppIcon name="casting" className="h-12 w-12" />
             </div>
             <h1 className="font-display text-2xl font-semibold text-slate-900">{settings.productionName}</h1>
             <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-accent-600">
@@ -162,7 +163,7 @@ export default function LoginPage() {
 
 function friendlyError(code = ''): string {
   if (code.includes('not-approved'))
-    return 'This account is not approved yet. Ask an admin to grant access.';
+    return 'This email is not approved for this workspace. If you received an invite, sign in with the invited email address.';
   if (code.includes('invalid-credential') || code.includes('wrong-password'))
     return 'Incorrect email or password.';
   if (code.includes('user-not-found')) return 'No account found for this email.';

@@ -4,16 +4,17 @@ import { NAV_GROUPS } from './navItems';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { canAccess } from '../data/access';
+import AppIcon from '../components/icons/AppIcon';
 
 export default function AppLayout() {
-  const { user, displayName, logout } = useAuth();
+  const { access, displayName, logout } = useAuth();
   const { settings } = useSettings();
   const [open, setOpen] = useState(false);
 
   // Only show the sections this user is allowed to see (drops empty groups).
   const visibleGroups = NAV_GROUPS.map((g) => ({
     ...g,
-    items: g.items.filter((item) => canAccess(user?.email, item.section)),
+    items: g.items.filter((item) => canAccess(access, item.section)),
   })).filter((g) => g.items.length > 0);
 
   const nav = (
@@ -36,7 +37,7 @@ export default function AppLayout() {
                   }`
                 }
               >
-                <span className="text-base">{item.icon}</span>
+                <AppIcon name={item.icon} className="h-7 w-7 shrink-0" />
                 <span>{item.label}</span>
               </NavLink>
             ))}
@@ -100,7 +101,7 @@ function Brand() {
   return (
     <div className="flex items-center gap-2.5 rounded-2xl border border-slate-200/80 bg-white p-2 shadow-sm">
       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-lg shadow-sm">
-        🎬
+        <AppIcon name="casting" className="h-9 w-9" />
       </div>
       <div className="leading-tight">
         <div className="font-display text-[15px] font-semibold text-slate-800">

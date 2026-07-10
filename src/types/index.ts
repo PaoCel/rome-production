@@ -14,11 +14,13 @@ export type CollectionName =
   | 'budgetItems'
   | 'locations'
   | 'castingCandidates'
+  | 'castingVotes'
   | 'productionOptions'
   | 'contacts'
   | 'risks'
   | 'decisions'
   | 'invoices'
+  | 'invites'
   | 'media'
   | 'comments'
   // Two-tier (requirement → option) collections
@@ -57,6 +59,8 @@ export interface Media extends EntityDoc {
   storagePath: string;
   downloadUrl: string;
   type: MediaType;
+  posterStoragePath?: string;
+  posterUrl?: string;
   relatedType: RelatedType;
   relatedId: string;
   uploadedBy?: string;
@@ -67,6 +71,16 @@ export interface Comment extends EntityDoc {
   relatedId: string;
   text: string;
   authorName: string;
+}
+
+export interface Invite extends EntityDoc {
+  email: string;
+  emailLower: string;
+  company?: string;
+  token: string;
+  sections: string[];
+  status: 'active' | 'disabled';
+  createdBy?: string;
 }
 
 // Field schema used by the generic EntityForm and detail panels.

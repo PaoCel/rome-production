@@ -121,6 +121,7 @@ export const CASTING_OPTION_CONFIG: EntityConfig = {
     { name: 'candidateName', label: 'Candidate name', type: 'text', full: true },
     { name: 'contact', label: 'Contact', type: 'contact' },
     { name: 'age', label: 'Age', type: 'text' },
+    { name: 'description', label: 'Bio / description', type: 'textarea', full: true },
     { name: 'availability', label: 'Availability', type: 'select', options: AVAILABILITY_OPTIONS },
     { name: 'feeEstimate', label: 'Fee estimate', type: 'number' },
     { name: 'travelNeeded', label: 'Travel needed', type: 'text' },
