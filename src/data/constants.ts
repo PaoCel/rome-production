@@ -66,17 +66,21 @@ export const REQUIREMENT_STATUSES = [
   'Done',
   'Cancelled',
 ];
-export const OPTION_STATUSES = [
-  'To source',
-  'Longlist',
-  'Shortlisted',
-  'Selected',
-  'Confirmed',
-  'Unavailable',
-  'Not selected',
-];
-
 export const AVAILABILITY_OPTIONS = ['To check', 'Available', 'Unavailable', 'TBC'];
+
+export const LANGUAGE_LEVELS = ['Base', 'Intermedio', 'Fluente', 'Madrelingua'];
+export const COMMON_LANGUAGES = [
+  'Italiano',
+  'Inglese',
+  'Francese',
+  'Spagnolo',
+  'Tedesco',
+  'Portoghese',
+  'Rumeno',
+  'Russo',
+  'Arabo',
+  'Cinese',
+];
 export const PERMIT_STATUSES = [
   'Not checked',
   'Needed',

@@ -4,18 +4,21 @@ import {
   ref,
   uploadBytes,
 } from 'firebase/storage';
-import { PROJECT_ID, storage } from '../config/firebase';
-import { createItem, deleteItem } from './firestore';
-import type { MediaType, RelatedType } from '../types';
+import { doc, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { db, PROJECT_ID, storage } from '../config/firebase';
+import { createItem, deleteItem, projectCol } from './firestore';
+import type { EntityDoc, MediaType, RelatedType } from '../types';
+
+const VIDEO_EXTENSIONS = /\.(mov|qt|mp4|m4v|webm|ogv|avi)$/i;
 
 function detectType(file: File): MediaType {
   if (file.type.startsWith('image/')) return 'image';
-  if (file.type.startsWith('video/')) return 'video';
+  if (file.type.startsWith('video/') || VIDEO_EXTENSIONS.test(file.name)) return 'video';
   return 'document';
 }
 
 async function createVideoPoster(file: File): Promise<Blob | null> {
-  if (!file.type.startsWith('video/')) return null;
+  if (detectType(file) !== 'video') return null;
 
   return new Promise((resolve) => {
     const objectUrl = URL.createObjectURL(file);
@@ -82,10 +85,14 @@ export async function uploadMedia(
   const safeName = file.name.replace(/[^\w.\-]+/g, '_');
   const storagePath = `projects/${PROJECT_ID}/${relatedType}/${relatedId}/${Date.now()}_${safeName}`;
   const storageRef = ref(storage, storagePath);
-
-  await uploadBytes(storageRef, file);
-  const downloadUrl = await getDownloadURL(storageRef);
   const type = detectType(file);
+  const isQuickTime = type === 'video' && /\.(mov|qt)$/i.test(file.name);
+  const contentType = isQuickTime && (!file.type || file.type === 'application/octet-stream')
+    ? 'video/quicktime'
+    : file.type || undefined;
+
+  await uploadBytes(storageRef, file, contentType ? { contentType } : undefined);
+  const downloadUrl = await getDownloadURL(storageRef);
 
   const posterBlob = type === 'video' ? await createVideoPoster(file) : null;
   const nextPosterStoragePath = posterBlob ? `${storagePath}.poster.jpg` : undefined;
@@ -114,6 +121,24 @@ export async function uploadMedia(
     relatedId,
     uploadedBy,
   });
+}
+
+// Keep exactly one explicitly selected image per gallery. Older galleries with
+// no selection continue to fall back to their first uploaded photo.
+export async function setMediaThumbnail(media: EntityDoc[], mediaId: string) {
+  const target = media.find((item) => item.id === mediaId);
+  if (!target || target.type !== 'image') return;
+
+  const batch = writeBatch(db);
+  media.forEach((item) => {
+    const shouldBeThumbnail = item.id === mediaId;
+    if (Boolean(item.isThumbnail) === shouldBeThumbnail) return;
+    batch.update(doc(projectCol('media'), item.id), {
+      isThumbnail: shouldBeThumbnail,
+      updatedAt: serverTimestamp(),
+    });
+  });
+  await batch.commit();
 }
 
 // Remove a media file from Storage and its Firestore record.

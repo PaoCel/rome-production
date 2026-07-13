@@ -8,7 +8,8 @@
     "build": "./node_modules/.bin/tsc --noEmit && ./node_modules/.bin/vite build",
     "preview": "./node_modules/.bin/vite preview",
     "lint": "./node_modules/.bin/tsc --noEmit",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node scripts/seed.mjs",
+    "import:applications": "node scripts/importCastingApplications.mjs"
   },
   "dependencies": {
     "firebase": "^11.1.0",

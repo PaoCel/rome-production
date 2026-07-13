@@ -32,6 +32,8 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
 
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+  const [minLikes, setMinLikes] = useState('');
+  const [maxDislikes, setMaxDislikes] = useState('');
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<EntityDoc | null>(null);
   const [detail, setDetail] = useState<EntityDoc | null>(null);
@@ -66,8 +68,13 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
+    const minimumLikes = minLikes === '' ? null : Number(minLikes);
+    const maximumDislikes = maxDislikes === '' ? null : Number(maxDislikes);
     return options.filter((option) => {
       if (roleFilter && option[linkField] !== roleFilter) return false;
+      const counts = voteState.counts.get(option.id) || EMPTY_COUNTS;
+      if (minimumLikes !== null && counts.likes < minimumLikes) return false;
+      if (maximumDislikes !== null && counts.dislikes > maximumDislikes) return false;
       if (!query) return true;
       const role = roleMap.get(option[linkField]);
       const roleName = role?.[reqConfig.titleField];
@@ -76,7 +83,7 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
         roleName,
       ].some((value) => typeof value === 'string' && value.toLowerCase().includes(query));
     });
-  }, [options, roleFilter, search, linkField, roleMap, reqConfig.titleField]);
+  }, [options, roleFilter, minLikes, maxDislikes, search, linkField, roleMap, reqConfig.titleField, voteState.counts]);
 
   const liveDetail = detail ? options.find((option) => option.id === detail.id) || null : null;
 
@@ -193,6 +200,28 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
               </option>
             ))}
           </select>
+          <div className="grid grid-cols-2 gap-2 sm:flex">
+            <input
+              type="number"
+              min="0"
+              inputMode="numeric"
+              className="input min-w-0 py-1.5 text-sm sm:w-28"
+              value={minLikes}
+              onChange={(event) => setMinLikes(event.target.value)}
+              placeholder="Min likes"
+              aria-label="Minimum number of likes"
+            />
+            <input
+              type="number"
+              min="0"
+              inputMode="numeric"
+              className="input min-w-0 py-1.5 text-sm sm:w-32"
+              value={maxDislikes}
+              onChange={(event) => setMaxDislikes(event.target.value)}
+              placeholder="Max dislikes"
+              aria-label="Maximum number of dislikes"
+            />
+          </div>
           {canManage && (
             <button
               type="button"

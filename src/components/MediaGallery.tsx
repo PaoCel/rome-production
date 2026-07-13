@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react';
 import { useRelated } from '../hooks/useCollection';
-import { deleteMedia, uploadMedia } from '../services/storage';
+import { deleteMedia, setMediaThumbnail, uploadMedia } from '../services/storage';
 import { useAuth } from '../contexts/AuthContext';
 import MediaViewer, { isPdf } from './MediaViewer';
 import AppIcon from './icons/AppIcon';
 import type { EntityDoc, RelatedType } from '../types';
-import { sortMediaByUpload } from '../utils/media';
+import { preferredThumbnail, sortMediaByUpload } from '../utils/media';
 
 const videoPreviewSrc = (url: string) => `${url}#t=0.1`;
+const MEDIA_ACCEPT = 'image/*,video/*,video/quicktime,.mov,.qt,.pdf,.doc,.docx,.xls,.xlsx';
 
 // Reusable media gallery with upload + delete + in-site preview.
 export default function MediaGallery({
@@ -26,13 +27,15 @@ export default function MediaGallery({
   const media = useRelated('media', relatedType, relatedId);
   const { displayName } = useAuth();
   const [busy, setBusy] = useState(false);
+  const [thumbnailBusyId, setThumbnailBusyId] = useState<string | null>(null);
   const [viewing, setViewing] = useState<EntityDoc | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const sortedMedia = sortMediaByUpload(media);
+  const thumbnailMedia = preferredThumbnail(sortedMedia);
 
   // Hero cover: prefer a photo, fall back to a video.
   const heroMedia = hero && !profileGrid
-    ? sortedMedia.find((m) => m.type === 'image') || sortedMedia.find((m) => m.type === 'video')
+    ? thumbnailMedia
     : undefined;
   const gridMedia = heroMedia
     ? sortedMedia.filter((m) => m.id !== heroMedia.id)
@@ -54,6 +57,28 @@ export default function MediaGallery({
     }
   }
 
+  async function handleDelete(item: EntityDoc) {
+    try {
+      await deleteMedia(item.id, item.storagePath, item.posterStoragePath);
+    } catch (err) {
+      console.error(err);
+      alert('Could not delete this file. Check your permissions and try again.');
+    }
+  }
+
+  async function chooseThumbnail(item: EntityDoc) {
+    if (item.type !== 'image' || thumbnailBusyId) return;
+    setThumbnailBusyId(item.id);
+    try {
+      await setMediaThumbnail(media, item.id);
+    } catch (err) {
+      console.error(err);
+      alert('Could not set the thumbnail. Please try again.');
+    } finally {
+      setThumbnailBusyId(null);
+    }
+  }
+
   // Image, video and PDF preview in-site; other docs open in a new tab.
   const canPreview = (m: EntityDoc) =>
     m.type === 'image' || m.type === 'video' || isPdf(m.fileName);
@@ -61,7 +86,12 @@ export default function MediaGallery({
   return (
     <section>
       <div className="mb-2 flex items-center justify-between gap-3">
-        <h4 className="text-sm font-semibold text-slate-700">Media</h4>
+        <div className="flex min-w-0 items-baseline gap-2">
+          <h4 className="text-sm font-semibold text-slate-700">Media</h4>
+          {!readOnly && sortedMedia.some((item) => item.type === 'image') && (
+            <span className="truncate text-[11px] text-slate-400">★ Choose thumbnail</span>
+          )}
+        </div>
         {!readOnly && !profileGrid && (
           <>
             <button
@@ -75,7 +105,7 @@ export default function MediaGallery({
               ref={inputRef}
               type="file"
               multiple
-              accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
+              accept={MEDIA_ACCEPT}
               className="hidden"
               onChange={(e) => handleFiles(e.target.files)}
             />
@@ -157,13 +187,21 @@ export default function MediaGallery({
                   <button
                     type="button"
                     className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-slate-900/65 text-white opacity-100 shadow-sm transition hover:bg-red-600 sm:opacity-0 sm:group-hover:opacity-100"
-                    onClick={() => deleteMedia(m.id, m.storagePath, m.posterStoragePath)}
+                    onClick={() => handleDelete(m)}
                     aria-label={`Delete ${m.fileName}`}
                   >
                     <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
                       <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                     </svg>
                   </button>
+                )}
+
+                {!readOnly && m.type === 'image' && (
+                  <ThumbnailButton
+                    selected={thumbnailMedia?.id === m.id}
+                    busy={thumbnailBusyId === m.id}
+                    onClick={() => chooseThumbnail(m)}
+                  />
                 )}
 
                 {preview && (
@@ -186,7 +224,7 @@ export default function MediaGallery({
               ref={inputRef}
               type="file"
               multiple
-              accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
+              accept={MEDIA_ACCEPT}
               className="hidden"
               onChange={(e) => handleFiles(e.target.files)}
             />
@@ -220,6 +258,11 @@ export default function MediaGallery({
               alt={heroMedia.fileName}
               className="aspect-[16/9] w-full object-cover transition hover:scale-[1.02]"
             />
+          )}
+          {heroMedia.type === 'image' && (
+            <span className="absolute left-2 top-2 rounded-full bg-brand-600/90 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
+              Thumbnail
+            </span>
           )}
         </button>
       )}
@@ -278,6 +321,14 @@ export default function MediaGallery({
                   </a>
                 )}
 
+                {!readOnly && m.type === 'image' && (
+                  <ThumbnailButton
+                    selected={thumbnailMedia?.id === m.id}
+                    busy={thumbnailBusyId === m.id}
+                    onClick={() => chooseThumbnail(m)}
+                  />
+                )}
+
                 <div className="flex items-center justify-between gap-1 px-2 py-1">
                   <button
                     className="min-w-0 flex-1 truncate text-left text-[11px] text-slate-500 hover:text-slate-700"
@@ -289,7 +340,7 @@ export default function MediaGallery({
                   {!readOnly && (
                     <button
                       className="shrink-0 text-slate-300 hover:text-red-500"
-                      onClick={() => deleteMedia(m.id, m.storagePath, m.posterStoragePath)}
+                      onClick={() => handleDelete(m)}
                       aria-label="Delete media"
                     >
                       <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
@@ -306,5 +357,39 @@ export default function MediaGallery({
 
       <MediaViewer item={viewing} onClose={() => setViewing(null)} />
     </section>
+  );
+}
+
+function ThumbnailButton({
+  selected,
+  busy,
+  onClick,
+}: {
+  selected: boolean;
+  busy: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={`absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-white shadow-sm transition disabled:cursor-wait disabled:opacity-60 ${
+        selected
+          ? 'bg-brand-600'
+          : 'bg-slate-900/65 opacity-100 hover:bg-brand-600 sm:opacity-0 sm:group-hover:opacity-100'
+      }`}
+      onClick={() => !selected && onClick()}
+      disabled={busy}
+      aria-pressed={selected}
+      aria-label={selected ? 'Current thumbnail' : 'Set as thumbnail'}
+      title={selected ? 'Current thumbnail' : 'Set as thumbnail'}
+    >
+      {busy ? (
+        <span className="text-xs">…</span>
+      ) : (
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+          <path d="M10 2.4l2.25 4.56 5.03.73-3.64 3.55.86 5.01L10 13.88l-4.5 2.37.86-5.01-3.64-3.55 5.03-.73L10 2.4z" />
+        </svg>
+      )}
+    </button>
   );
 }

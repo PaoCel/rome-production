@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
-import type { EntityDoc, FieldConfig } from '../../types';
+import type { EntityDoc, FieldConfig, LanguageEntry } from '../../types';
 import { OWNERS } from '../../data/owners';
+import LanguagesField from './LanguagesField';
 
 // Generic form rendered from a FieldConfig[] schema.
 // The special "contact" field maps to contactId + contactName.
@@ -138,6 +139,14 @@ function renderField(
             </option>
           ))}
         </select>
+      );
+
+    case 'languages':
+      return (
+        <LanguagesField
+          value={(values[f.name] as LanguageEntry[]) || []}
+          onChange={(next) => set(f.name, next)}
+        />
       );
 
     case 'contact':

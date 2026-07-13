@@ -53,6 +53,7 @@ export const INVITABLE_SECTIONS: Exclude<Section, 'dashboard' | 'settings'>[] = 
 export const OWNER_EMAILS = [
   'paolocelestini23@gmail.com',
   'spaminutili24@gmail.com',
+  'mirko.valle20@gmail.com',
 ];
 
 export const OWNER_PROFILE: AccessProfile = { role: 'owner', sections: ALL_SECTIONS };

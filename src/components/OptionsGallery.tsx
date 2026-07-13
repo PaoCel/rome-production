@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { EntityConfig } from '../data/entities';
+import { linkedRequirementIds } from '../data/entities';
 import type { EntityDoc } from '../types';
 import { useCollection } from '../hooks/useCollection';
 import { createItem, updateItem } from '../services/firestore';
@@ -22,6 +23,7 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
   const optionConfig = reqConfig.optionConfig!;
   const linkField = optionConfig.requirementLinkField || 'requirementId';
   const selField = reqConfig.selectedOptionField || 'selectedOptionId';
+  const multi = !!optionConfig.multiRequirement;
 
   const { items: options, loading } = useCollection(optionConfig.collection);
   const { items: requirements } = useCollection(reqConfig.collection);
@@ -35,6 +37,7 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
   const [committingId, setCommittingId] = useState<string | null>(null);
   const [budgetMsg, setBudgetMsg] = useState('');
   const [newReqId, setNewReqId] = useState('');
+  const [checklistReqIds, setChecklistReqIds] = useState<string[]>([]);
 
   const reqMap = useMemo(() => {
     const m = new Map<string, EntityDoc>();
@@ -42,29 +45,45 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
     return m;
   }, [requirements]);
 
-  const reqName = (o: EntityDoc) => {
-    const r = reqMap.get(o[linkField]);
-    return r ? r[reqConfig.titleField] : undefined;
+  const idsFor = (o: EntityDoc) => (multi ? linkedRequirementIds(o, optionConfig) : [o[linkField]].filter(Boolean));
+
+  const reqNames = (o: EntityDoc) => {
+    const names = idsFor(o)
+      .map((id) => reqMap.get(id)?.[reqConfig.titleField])
+      .filter(Boolean);
+    return names.length ? names.join(', ') : undefined;
   };
-  const isSelected = (o: EntityDoc) => {
-    const r = reqMap.get(o[linkField]);
-    return !!r && r[selField] === o.id;
-  };
+  const isSelected = (o: EntityDoc) => idsFor(o).some((id) => reqMap.get(id)?.[selField] === o.id);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return options.filter((o) => {
-      if (reqFilter && o[linkField] !== reqFilter) return false;
+      if (reqFilter && !idsFor(o).includes(reqFilter)) return false;
       if (!q) return true;
       return Object.values(o).some((v) => typeof v === 'string' && v.toLowerCase().includes(q));
     });
-  }, [options, reqFilter, search, linkField]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options, reqFilter, search, linkField, multi]);
 
   const liveDetail = detail ? options.find((o) => o.id === detail.id) || null : null;
 
+  function toggleChecklist(id: string) {
+    setChecklistReqIds((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]));
+  }
+
+  function startEdit(o: EntityDoc) {
+    if (multi) setChecklistReqIds(linkedRequirementIds(o, optionConfig));
+    setCreating(false);
+    setEditing(o);
+  }
+
   async function handleSubmit(values: Record<string, any>) {
     if (editing) {
-      await updateItem(optionConfig.collection, editing.id, values);
+      const payload = multi ? { ...values, [linkField]: checklistReqIds } : values;
+      await updateItem(optionConfig.collection, editing.id, payload);
+    } else if (multi) {
+      if (checklistReqIds.length === 0) return;
+      await createItem(optionConfig.collection, { ...values, [linkField]: checklistReqIds });
     } else {
       const reqId = reqFilter || newReqId;
       if (!reqId) return;
@@ -77,19 +96,22 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
   async function handleDelete(o: EntityDoc) {
     if (!confirm(`Delete "${o[optionConfig.titleField] || 'this option'}"?`)) return;
     await deleteOptionCascade(optionConfig, o);
-    const r = reqMap.get(o[linkField]);
-    if (r && r[selField] === o.id) {
-      await updateItem(reqConfig.collection, r.id, { [selField]: '' });
-    }
+    const toClear = idsFor(o)
+      .map((id) => reqMap.get(id))
+      .filter((r): r is EntityDoc => !!r && r[selField] === o.id);
+    await Promise.all(toClear.map((r) => updateItem(reqConfig.collection, r.id, { [selField]: '' })));
     if (detail?.id === o.id) setDetail(null);
   }
 
   async function select(o: EntityDoc) {
-    const reqId = o[linkField];
-    if (!reqId) return;
-    const next = isSelected(o) ? '' : o.id;
-    await updateItem(reqConfig.collection, reqId, { [selField]: next });
+    const targetReqId = multi ? reqFilter : o[linkField];
+    if (!targetReqId) return;
+    const currentlySelected = reqMap.get(targetReqId)?.[selField] === o.id;
+    await updateItem(reqConfig.collection, targetReqId, { [selField]: currentlySelected ? '' : o.id });
   }
+
+  const selectDisabled = multi && !reqFilter;
+  const selectDisabledReason = 'Filter by a role first';
 
   async function commit(o: EntityDoc) {
     if (!optionConfig.budgetSource || committingId) return;
@@ -109,7 +131,11 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
   const noRequirements = requirements.length === 0;
 
   function openCreate() {
-    setNewReqId(reqFilter || (requirements[0]?.id ?? ''));
+    if (multi) {
+      setChecklistReqIds(reqFilter ? [reqFilter] : []);
+    } else {
+      setNewReqId(reqFilter || (requirements[0]?.id ?? ''));
+    }
     setEditing(null);
     setCreating(true);
   }
@@ -169,7 +195,7 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
               key={o.id}
               option={o}
               optionConfig={optionConfig}
-              requirementName={reqName(o)}
+              requirementName={reqNames(o)}
               isSelected={isSelected(o)}
               committing={committingId === o.id}
               onOpen={() => setDetail(o)}
@@ -177,11 +203,12 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
               onCommit={() => canManage && commit(o)}
               onEdit={() => {
                 if (!canManage) return;
-                setCreating(false);
-                setEditing(o);
+                startEdit(o);
               }}
               onDelete={() => canManage && handleDelete(o)}
               readOnly={!canManage}
+              selectDisabled={selectDisabled}
+              selectDisabledReason={selectDisabledReason}
             />
           ))}
         </div>
@@ -196,21 +223,51 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
           setEditing(null);
         }}
       >
-        {creating && !editing && (
+        {multi ? (
           <div className="mb-4">
-            <label className="label">{reqConfig.singular}</label>
-            <select
-              className="input"
-              value={newReqId}
-              onChange={(e) => setNewReqId(e.target.value)}
-            >
-              {requirements.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r[reqConfig.titleField] || 'Untitled'}
-                </option>
-              ))}
-            </select>
+            <label className="label">{reqConfig.singular}s</label>
+            <div className="flex flex-wrap gap-2">
+              {requirements.map((r) => {
+                const checked = checklistReqIds.includes(r.id);
+                return (
+                  <label
+                    key={r.id}
+                    className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-sm ${
+                      checked
+                        ? 'border-brand-400 bg-brand-50 text-brand-700'
+                        : 'border-slate-200 text-slate-600'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      className="h-3.5 w-3.5 rounded border-slate-300 text-brand-600 focus:ring-brand-200"
+                      checked={checked}
+                      onChange={() => toggleChecklist(r.id)}
+                    />
+                    {r[reqConfig.titleField] || 'Untitled'}
+                  </label>
+                );
+              })}
+            </div>
           </div>
+        ) : (
+          creating &&
+          !editing && (
+            <div className="mb-4">
+              <label className="label">{reqConfig.singular}</label>
+              <select
+                className="input"
+                value={newReqId}
+                onChange={(e) => setNewReqId(e.target.value)}
+              >
+                {requirements.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r[reqConfig.titleField] || 'Untitled'}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )
         )}
 
         <EntityForm
@@ -248,18 +305,20 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
           <OptionDetail
             option={liveDetail}
             optionConfig={optionConfig}
-            requirementName={reqName(liveDetail)}
+            requirementName={reqNames(liveDetail)}
             isSelected={isSelected(liveDetail)}
             committing={committingId === liveDetail.id}
             budgetMsg={budgetMsg}
-          onSelect={() => canManage && select(liveDetail)}
-          onCommit={() => canManage && commit(liveDetail)}
-          onEdit={() => {
-            if (!canManage) return;
-            setEditing(liveDetail);
-            setDetail(null);
-          }}
-          readOnly={!canManage}
+            onSelect={() => canManage && select(liveDetail)}
+            onCommit={() => canManage && commit(liveDetail)}
+            onEdit={() => {
+              if (!canManage) return;
+              startEdit(liveDetail);
+              setDetail(null);
+            }}
+            readOnly={!canManage}
+            selectDisabled={selectDisabled}
+            selectDisabledReason={selectDisabledReason}
           />
         )}
       </SidePanel>

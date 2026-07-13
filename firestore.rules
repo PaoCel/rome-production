@@ -15,7 +15,8 @@ service cloud.firestore {
       return isSignedIn()
         && email() in [
           'paolocelestini23@gmail.com',
-          'spaminutili24@gmail.com'
+          'spaminutili24@gmail.com',
+          'mirko.valle20@gmail.com'
         ];
     }
 
@@ -34,7 +35,7 @@ service cloud.firestore {
         ? 'invoices'
         : collectionName in ['locationRequirements', 'locationOptions']
         ? 'locations'
-        : collectionName in ['castRoles', 'castingOptions', 'castingVotes']
+        : collectionName in ['castRoles', 'castingOptions']
         ? 'casting'
         : collectionName in ['crewRequirements', 'crewOptions']
         ? 'crew'
@@ -78,11 +79,37 @@ service cloud.firestore {
           && inviteQuery(projectId, sectionForCollection(collectionName)));
     }
 
-    function canReadRelated(projectId) {
+    function canAccessRelated(projectId, data) {
       return isOwner()
         || (isSignedIn()
-          && sectionForRelatedType(resource.data.relatedType) != ''
-          && inviteQuery(projectId, sectionForRelatedType(resource.data.relatedType)));
+          && sectionForRelatedType(data.relatedType) != ''
+          && inviteQuery(projectId, sectionForRelatedType(data.relatedType)));
+    }
+
+    function canAccessTask(projectId, data) {
+      return canReadCollection(projectId, 'tasks')
+        || canAccessRelated(projectId, data);
+    }
+
+    function sectionForBudgetSource(sourceType) {
+      return sourceType in ['location', 'locationOption']
+        ? 'locations'
+        : sourceType in ['castingCandidate', 'castingOption']
+        ? 'casting'
+        : sourceType in ['crewOption']
+        ? 'crew'
+        : sourceType in ['propOption']
+        ? 'props'
+        : sourceType in ['productionOption']
+        ? 'production'
+        : '';
+    }
+
+    function canAccessBudgetItem(projectId, data) {
+      return canReadCollection(projectId, 'budgetItems')
+        || (isSignedIn()
+          && sectionForBudgetSource(data.sourceType) != ''
+          && inviteQuery(projectId, sectionForBudgetSource(data.sourceType)));
     }
 
     match /projects/{projectId} {
@@ -94,13 +121,31 @@ service cloud.firestore {
       }
 
       match /media/{docId} {
-        allow read: if canReadRelated(projectId);
-        allow create, update, delete: if isOwner();
+        allow read, delete: if canAccessRelated(projectId, resource.data);
+        allow create: if canAccessRelated(projectId, request.resource.data);
+        allow update: if canAccessRelated(projectId, resource.data)
+          && canAccessRelated(projectId, request.resource.data);
       }
 
       match /comments/{docId} {
-        allow read: if canReadRelated(projectId);
-        allow create, update, delete: if isOwner();
+        allow read, delete: if canAccessRelated(projectId, resource.data);
+        allow create: if canAccessRelated(projectId, request.resource.data);
+        allow update: if canAccessRelated(projectId, resource.data)
+          && canAccessRelated(projectId, request.resource.data);
+      }
+
+      match /tasks/{docId} {
+        allow read, delete: if canAccessTask(projectId, resource.data);
+        allow create: if canAccessTask(projectId, request.resource.data);
+        allow update: if canAccessTask(projectId, resource.data)
+          && canAccessTask(projectId, request.resource.data);
+      }
+
+      match /budgetItems/{docId} {
+        allow read, delete: if canAccessBudgetItem(projectId, resource.data);
+        allow create: if canAccessBudgetItem(projectId, request.resource.data);
+        allow update: if canAccessBudgetItem(projectId, resource.data)
+          && canAccessBudgetItem(projectId, request.resource.data);
       }
 
       // Every casting viewer can cast exactly one like/dislike per profile.
@@ -125,13 +170,12 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly([
             'optionId', 'voterId', 'value', 'updatedAt'
           ]);
-        allow delete: if canReadCollection(projectId, 'castingOptions')
-          && resource.data.voterId == request.auth.uid;
+        allow delete: if canReadCollection(projectId, 'castingOptions');
       }
 
       match /{subCollection}/{docId} {
         allow read: if canReadCollection(projectId, subCollection);
-        allow create, update, delete: if isOwner();
+        allow create, update, delete: if canReadCollection(projectId, subCollection);
       }
     }
 
