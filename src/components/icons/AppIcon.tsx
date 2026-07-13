@@ -96,14 +96,6 @@ const icons = {
       <path d="M12 12v8.5" />
     </Svg>
   ),
-  contacts: (props: IconProps) => (
-    <Svg {...props}>
-      <path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" />
-      <path d="M8 8h8" />
-      <circle cx="12" cy="12" r="2" />
-      <path d="M8.5 17a3.8 3.8 0 0 1 7 0" />
-    </Svg>
-  ),
   risks: (props: IconProps) => (
     <Svg {...props}>
       <path d="M12 4 21 20H3L12 4Z" />
@@ -187,7 +179,6 @@ const rasterIcons = new Set<AppIconName>([
   'crew',
   'props',
   'production',
-  'contacts',
   'risks',
   'settings',
   'decisions',

@@ -16,7 +16,6 @@ export type CollectionName =
   | 'castingCandidates'
   | 'castingVotes'
   | 'productionOptions'
-  | 'contacts'
   | 'risks'
   | 'decisions'
   | 'invoices'
@@ -38,7 +37,6 @@ export type RelatedType =
   | 'location'
   | 'castingCandidate'
   | 'productionOption'
-  | 'contact'
   | 'risk'
   | 'decision'
   | 'invoice'
@@ -93,7 +91,6 @@ export type FieldType =
   | 'checkbox'
   | 'date'
   | 'owner'
-  | 'contact'
   | 'languages';
 
 export interface LanguageEntry {

@@ -67,9 +67,6 @@ export default function EntityFields({
 }
 
 export function displayValue(f: FieldConfig, item: EntityDoc): React.ReactNode {
-  if (f.type === 'contact') {
-    return item.contactName || '—';
-  }
   if (f.type === 'languages') {
     const entries = Array.isArray(item[f.name]) ? item[f.name] : [];
     const labelled = entries.filter((e: any) => e?.language);

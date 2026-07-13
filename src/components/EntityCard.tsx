@@ -22,7 +22,7 @@ export default function EntityCard({
 }) {
   const title = item[config.titleField] || 'Untitled';
   const subtitle = (config.subtitleFields || [])
-    .map((f) => (f === 'contactName' ? item.contactName : item[f]))
+    .map((f) => item[f])
     .filter(Boolean)
     .join(' · ');
 

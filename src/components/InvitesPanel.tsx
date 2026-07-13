@@ -15,7 +15,6 @@ const SECTION_LABELS: Record<Section, string> = {
   crew: 'Crew',
   props: 'Props & Wardrobe',
   production: 'Production',
-  contacts: 'Contacts',
   risks: 'Risks & Decisions',
   settings: 'Settings',
 };

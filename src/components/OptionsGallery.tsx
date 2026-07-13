@@ -28,7 +28,6 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
 
   const { items: options, loading } = useCollection(optionConfig.collection);
   const { items: requirements } = useCollection(reqConfig.collection);
-  const { items: contacts } = useCollection('contacts', canManage);
 
   const [search, setSearch] = useState('');
   const [reqFilter, setReqFilter] = useState('');
@@ -293,7 +292,6 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
         <EntityForm
           fields={optionConfig.fields}
           initial={editing}
-          contacts={contacts}
           submitLabel={editing ? 'Save changes' : `Add ${optionConfig.singular.toLowerCase()}`}
           onSubmit={handleSubmit}
           onCancel={() => {

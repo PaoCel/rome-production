@@ -177,7 +177,6 @@ export default function TasksPage() {
         <EntityForm
           fields={TASK_FIELDS}
           initial={editing}
-          contacts={[]}
           submitLabel={editing ? 'Save changes' : 'Create task'}
           onSubmit={handleSubmit}
           onCancel={() => {

@@ -4,18 +4,15 @@ import { OWNERS } from '../../data/owners';
 import LanguagesField from './LanguagesField';
 
 // Generic form rendered from a FieldConfig[] schema.
-// The special "contact" field maps to contactId + contactName.
 export default function EntityForm({
   fields,
   initial,
-  contacts,
   submitLabel,
   onSubmit,
   onCancel,
 }: {
   fields: FieldConfig[];
   initial?: EntityDoc | null;
-  contacts: EntityDoc[];
   submitLabel: string;
   onSubmit: (values: Record<string, any>) => Promise<void> | void;
   onCancel: () => void;
@@ -42,7 +39,7 @@ export default function EntityForm({
         {fields.map((f) => (
           <div key={f.name} className={f.full || f.type === 'textarea' ? 'sm:col-span-2' : ''}>
             {f.type !== 'checkbox' && <label className="label">{f.label}</label>}
-            {renderField(f, values, set, contacts)}
+            {renderField(f, values, set)}
           </div>
         ))}
       </div>
@@ -63,7 +60,6 @@ function renderField(
   f: FieldConfig,
   values: Record<string, any>,
   set: (name: string, value: any) => void,
-  contacts: EntityDoc[],
 ) {
   switch (f.type) {
     case 'textarea':
@@ -147,26 +143,6 @@ function renderField(
           value={(values[f.name] as LanguageEntry[]) || []}
           onChange={(next) => set(f.name, next)}
         />
-      );
-
-    case 'contact':
-      return (
-        <select
-          className="input"
-          value={values.contactId || ''}
-          onChange={(e) => {
-            const c = contacts.find((x) => x.id === e.target.value);
-            set('contactId', c?.id || '');
-            set('contactName', c?.name || '');
-          }}
-        >
-          <option value="">No contact</option>
-          {contacts.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
       );
 
     default:

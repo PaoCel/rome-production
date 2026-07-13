@@ -5,7 +5,6 @@ import {
   BUDGET_CATEGORIES,
   BUDGET_STAGES,
   BUDGET_STATUSES,
-  CONTACT_TYPES,
   INVOICE_STATUSES,
   DECISION_STATUSES,
   DEPARTMENTS,
@@ -73,7 +72,6 @@ export const LOCATION_OPTION_CONFIG: EntityConfig = {
   fields: [
     { name: 'optionName', label: 'Option name', type: 'text', full: true },
     { name: 'address', label: 'Address', type: 'text' },
-    { name: 'contact', label: 'Contact', type: 'contact' },
     { name: 'availability', label: 'Availability', type: 'select', options: AVAILABILITY_OPTIONS },
     { name: 'permitNeeded', label: 'Permit needed', type: 'select', options: PERMIT_OPTIONS },
     { name: 'permitStatus', label: 'Permit status', type: 'select', options: PERMIT_STATUSES },
@@ -129,7 +127,6 @@ export const CASTING_OPTION_CONFIG: EntityConfig = {
   budgetSource: 'castingOption',
   fields: [
     { name: 'candidateName', label: 'Candidate name', type: 'text', full: true },
-    { name: 'contact', label: 'Contact', type: 'contact' },
     { name: 'phone', label: 'Phone', type: 'text' },
     { name: 'email', label: 'Email', type: 'text' },
     { name: 'city', label: 'City', type: 'text' },
@@ -191,7 +188,6 @@ export const CREW_OPTION_CONFIG: EntityConfig = {
   fields: [
     { name: 'candidateName', label: 'Candidate / supplier name', type: 'text', full: true },
     { name: 'role', label: 'Role', type: 'text' },
-    { name: 'contact', label: 'Contact', type: 'contact' },
     { name: 'phone', label: 'Phone', type: 'text' },
     { name: 'email', label: 'Email', type: 'text' },
     { name: 'city', label: 'City', type: 'text' },
@@ -301,7 +297,6 @@ export const PRODUCTION_OPTION_CONFIG: EntityConfig = {
     { name: 'optionSource', label: 'Option / supplier', type: 'text', full: true },
     { name: 'area', label: 'Area', type: 'select', options: PRODUCTION_AREAS },
     { name: 'requirement', label: 'Requirement', type: 'text' },
-    { name: 'contact', label: 'Contact', type: 'contact' },
     { name: 'availability', label: 'Availability', type: 'text' },
     { name: 'owner', label: 'Owner', type: 'owner' },
     { name: 'status', label: 'Status', type: 'select', options: SELECTION_STATUSES },
@@ -334,27 +329,6 @@ export const INVOICE_CONFIG: EntityConfig = {
     { name: 'issueDate', label: 'Issue date', type: 'date' },
     { name: 'dueDate', label: 'Due date', type: 'date' },
     { name: 'owner', label: 'Owner', type: 'owner' },
-    { name: 'notes', label: 'Notes', type: 'textarea', full: true },
-  ],
-};
-
-export const CONTACT_CONFIG: EntityConfig = {
-  collection: 'contacts',
-  singular: 'Contact',
-  titleField: 'name',
-  subtitleFields: ['type', 'contactPerson'],
-  pillFields: ['type', 'status'],
-  filters: ['type', 'status'],
-  relatedType: 'contact',
-  comments: true,
-  fields: [
-    { name: 'name', label: 'Name', type: 'text', full: true },
-    { name: 'type', label: 'Type', type: 'select', options: CONTACT_TYPES },
-    { name: 'contactPerson', label: 'Contact person', type: 'text' },
-    { name: 'phone', label: 'Phone', type: 'text' },
-    { name: 'email', label: 'Email', type: 'text' },
-    { name: 'website', label: 'Website', type: 'text' },
-    { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Preferred', 'Inactive'] },
     { name: 'notes', label: 'Notes', type: 'textarea', full: true },
   ],
 };

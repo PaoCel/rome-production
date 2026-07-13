@@ -104,7 +104,7 @@ export async function addToBudget(
     budgetStage: stage || 'Committed',
     committed: COMMITTED_STAGES.includes(stage || ''),
     paymentStatus: paymentFromStage(stage),
-    supplierContact: source.contactName || '',
+    supplierContact: '',
     sourceType,
     sourceId: dedupId,
     sourceOptionId: source.id, // which specific option is currently committed
