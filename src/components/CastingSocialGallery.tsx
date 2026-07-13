@@ -36,7 +36,7 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<EntityDoc | null>(null);
   const [detail, setDetail] = useState<EntityDoc | null>(null);
-  const [newRoleId, setNewRoleId] = useState('');
+  const [roleId, setRoleId] = useState('');
   const [votingId, setVotingId] = useState<string | null>(null);
   const [voteError, setVoteError] = useState('');
   const [committingId, setCommittingId] = useState<string | null>(null);
@@ -105,17 +105,22 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
   }
 
   function openCreate() {
-    setNewRoleId(roleFilter || roles[0]?.id || '');
+    setRoleId(roleFilter || roles[0]?.id || '');
     setEditing(null);
     setCreating(true);
   }
 
+  function startEdit(option: EntityDoc) {
+    setRoleId(option[linkField] || '');
+    setCreating(false);
+    setEditing(option);
+  }
+
   async function handleSubmit(values: Record<string, any>) {
+    if (!roleId) return;
     if (editing) {
-      await updateItem(optionConfig.collection, editing.id, values);
+      await updateItem(optionConfig.collection, editing.id, { ...values, [linkField]: roleId });
     } else {
-      const roleId = roleFilter || newRoleId;
-      if (!roleId) return;
       await createItem(optionConfig.collection, { ...values, [linkField]: roleId });
     }
     setCreating(false);
@@ -258,10 +263,7 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
                 setVoteError('');
                 setDetail(option);
               }}
-              onEdit={() => {
-                setCreating(false);
-                setEditing(option);
-              }}
+              onEdit={() => startEdit(option)}
               onDelete={() => handleDelete(option)}
               readOnly={!canManage}
             />
@@ -277,18 +279,16 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
           setEditing(null);
         }}
       >
-        {creating && !editing && (
-          <div className="mb-4">
-            <label className="label">Role</label>
-            <select className="input" value={newRoleId} onChange={(event) => setNewRoleId(event.target.value)}>
-              {roles.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role[reqConfig.titleField] || 'Untitled role'}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        <div className="mb-4">
+          <label className="label">Role</label>
+          <select className="input" value={roleId} onChange={(event) => setRoleId(event.target.value)}>
+            {roles.map((role) => (
+              <option key={role.id} value={role.id}>
+                {role[reqConfig.titleField] || 'Untitled role'}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <EntityForm
           fields={optionConfig.fields}
@@ -334,7 +334,7 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
           onSelect={() => select(liveDetail)}
           onCommit={() => commit(liveDetail)}
           onEdit={() => {
-            setEditing(liveDetail);
+            startEdit(liveDetail);
             setDetail(null);
           }}
         />
