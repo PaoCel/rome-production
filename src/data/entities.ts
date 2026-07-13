@@ -174,7 +174,6 @@ export const CREW_OPTION_CONFIG: EntityConfig = {
   collection: 'crewOptions',
   singular: 'Crew option',
   titleField: 'candidateName',
-  subtitleFields: ['role'],
   pillFields: ['budgetStage'],
   costField: 'feeEstimate',
   filters: ['budgetStage'],
@@ -187,7 +186,6 @@ export const CREW_OPTION_CONFIG: EntityConfig = {
   budgetSource: 'crewOption',
   fields: [
     { name: 'candidateName', label: 'Candidate / supplier name', type: 'text', full: true },
-    { name: 'role', label: 'Role', type: 'text' },
     { name: 'phone', label: 'Phone', type: 'text' },
     { name: 'email', label: 'Email', type: 'text' },
     { name: 'city', label: 'City', type: 'text' },
