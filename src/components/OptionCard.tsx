@@ -6,6 +6,7 @@ import Money from './ui/Money';
 import CardMenu from './ui/CardMenu';
 import AppIcon from './icons/AppIcon';
 import { mapHref, mapLabel } from '../utils/maps';
+import { preferredThumbnail } from '../utils/media';
 
 const videoPreviewSrc = (url: string) => `${url}#t=0.1`;
 
@@ -22,6 +23,8 @@ export default function OptionCard({
   onEdit,
   onDelete,
   readOnly = false,
+  selectDisabled = false,
+  selectDisabledReason = '',
 }: {
   option: EntityDoc;
   optionConfig: EntityConfig;
@@ -34,16 +37,21 @@ export default function OptionCard({
   onEdit: () => void;
   onDelete: () => void;
   readOnly?: boolean;
+  selectDisabled?: boolean;
+  selectDisabledReason?: string;
 }) {
   const media = useRelated('media', optionConfig.relatedType!, option.id);
-  // Prefer a photo for the cover; fall back to a video so video-only options
-  // still show something at a glance.
-  const cover = media.find((m) => m.type === 'image') || media.find((m) => m.type === 'video');
+  // Use the explicitly selected photo, then fall back to the first photo/video.
+  const cover = preferredThumbnail(media);
   const shotCount = media.filter((m) => m.type === 'image' || m.type === 'video').length;
 
   const title = option[optionConfig.titleField] || 'Untitled option';
   const pills = optionConfig.pillFields.map((n) => option[n]).filter(Boolean) as string[];
   const cost = optionConfig.costField ? option[optionConfig.costField] : undefined;
+  const emphasizeReq = !!optionConfig.emphasizeRequirement && !!requirementName;
+  const heading = emphasizeReq ? requirementName! : title;
+  const caption = emphasizeReq ? title : requirementName;
+  const captionLabel = emphasizeReq ? 'source' : 'for';
   const address =
     optionConfig.subtitleFields?.includes('address') && typeof option.address === 'string'
       ? option.address
@@ -103,12 +111,12 @@ export default function OptionCard({
       <div className="flex flex-1 flex-col p-3.5">
         <button onClick={onOpen} className="text-left">
           <h3 className="break-words font-semibold text-slate-800 group-hover:text-brand-700">
-            {title}
+            {heading}
           </h3>
         </button>
-        {requirementName && (
-          <p className="mt-0.5 truncate text-xs text-slate-400" title={requirementName}>
-            for: {requirementName}
+        {caption && (
+          <p className="mt-0.5 truncate text-xs text-slate-400" title={caption}>
+            {captionLabel}: {caption}
           </p>
         )}
 
@@ -153,6 +161,8 @@ export default function OptionCard({
                 : 'btn-secondary flex-1 px-2.5 py-1.5 text-xs'
             }
             onClick={onSelect}
+            disabled={selectDisabled}
+            title={selectDisabled ? selectDisabledReason : ''}
           >
             {isSelected ? (
               <>

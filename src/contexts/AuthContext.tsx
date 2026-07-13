@@ -102,7 +102,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       loading,
       access,
-      canManage: access.role === 'owner',
+      // Every approved user can manage the sections in their access profile.
+      // SectionGuard and Firebase rules keep invitees scoped to those sections.
+      canManage: access.role !== 'none',
       displayName: user?.displayName || user?.email?.split('@')[0] || 'User',
       login: async (email, password) => {
         const cred = await signInWithEmailAndPassword(auth, email, password);

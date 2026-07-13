@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { EntityConfig } from '../data/entities';
+import { linkedRequirementIds } from '../data/entities';
 import type { EntityDoc } from '../types';
 import { useCollection } from '../hooks/useCollection';
 import { createItem, updateItem } from '../services/firestore';
@@ -26,8 +27,10 @@ export default function LinkedOptions({
   const optionConfig = config.optionConfig!;
   const linkField = optionConfig.requirementLinkField || 'requirementId';
   const selectedField = config.selectedOptionField || 'selectedOptionId';
+  const multi = !!optionConfig.multiRequirement;
 
   const { items: allOptions } = useCollection(optionConfig.collection);
+  const { items: allRequirements } = useCollection(config.collection, multi);
   const { items: contacts } = useCollection('contacts', !readOnly);
 
   const [creating, setCreating] = useState(false);
@@ -35,14 +38,19 @@ export default function LinkedOptions({
   const [budgetMsg, setBudgetMsg] = useState('');
   const [committingId, setCommittingId] = useState<string | null>(null);
 
-  const options = allOptions.filter((o) => o[linkField] === requirement.id);
+  const options = allOptions.filter((o) =>
+    multi ? linkedRequirementIds(o, optionConfig).includes(requirement.id) : o[linkField] === requirement.id,
+  );
   const selectedId = requirement[selectedField] as string | undefined;
 
   async function handleSubmit(values: Record<string, any>) {
     if (editing) {
       await updateItem(optionConfig.collection, editing.id, values);
     } else {
-      await createItem(optionConfig.collection, { ...values, [linkField]: requirement.id });
+      await createItem(optionConfig.collection, {
+        ...values,
+        [linkField]: multi ? [requirement.id] : requirement.id,
+      });
     }
     setCreating(false);
     setEditing(null);
@@ -52,7 +60,11 @@ export default function LinkedOptions({
     if (!confirm(`Delete "${o[optionConfig.titleField] || 'this option'}"?`)) return;
     // Cascade: also removes the option's media, comments and budget item.
     await deleteOptionCascade(optionConfig, o);
-    if (selectedId === o.id) {
+    if (multi) {
+      // A multi-linked candidate may also be selected on roles not shown in this panel.
+      const stale = allRequirements.filter((r) => r[selectedField] === o.id);
+      await Promise.all(stale.map((r) => updateItem(config.collection, r.id, { [selectedField]: '' })));
+    } else if (selectedId === o.id) {
       await updateItem(config.collection, requirement.id, { [selectedField]: '' });
     }
   }

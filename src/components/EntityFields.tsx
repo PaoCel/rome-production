@@ -70,6 +70,12 @@ export function displayValue(f: FieldConfig, item: EntityDoc): React.ReactNode {
   if (f.type === 'contact') {
     return item.contactName || '—';
   }
+  if (f.type === 'languages') {
+    const entries = Array.isArray(item[f.name]) ? item[f.name] : [];
+    const labelled = entries.filter((e: any) => e?.language);
+    if (labelled.length === 0) return null;
+    return labelled.map((e: any) => (e.level ? `${e.language} (${e.level})` : e.language)).join(' · ');
+  }
   const raw = item[f.name];
   if (raw === undefined || raw === '' || raw === null) return null;
 
@@ -106,6 +112,13 @@ export function displayValue(f: FieldConfig, item: EntityDoc): React.ReactNode {
   if (f.name === 'email' && typeof raw === 'string') {
     return (
       <a href={`mailto:${raw}`} className="break-all text-brand-600 hover:underline">
+        {raw}
+      </a>
+    );
+  }
+  if (f.name === 'phone' && typeof raw === 'string') {
+    return (
+      <a href={`tel:${raw}`} className="break-all text-brand-600 hover:underline">
         {raw}
       </a>
     );

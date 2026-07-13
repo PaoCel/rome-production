@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useCollection } from '../hooks/useCollection';
+import { useRelated } from '../hooks/useCollection';
 import { createItem } from '../services/firestore';
 import Pill from './ui/Pill';
 import type { RelatedType } from '../types';
@@ -14,13 +14,9 @@ export default function RelatedTasks({
   relatedId: string;
   contextTitle: string;
 }) {
-  const { items } = useCollection('tasks');
+  const items = useRelated('tasks', relatedType, relatedId);
   const [title, setTitle] = useState('');
   const [adding, setAdding] = useState(false);
-
-  const related = items.filter(
-    (t) => t.relatedType === relatedType && t.relatedId === relatedId,
-  );
 
   async function add() {
     const value = title.trim();
@@ -46,11 +42,11 @@ export default function RelatedTasks({
   return (
     <section>
       <h4 className="mb-2 text-sm font-semibold text-slate-700">
-        Related tasks {related.length > 0 && <span className="text-slate-400">({related.length})</span>}
+        Related tasks {items.length > 0 && <span className="text-slate-400">({items.length})</span>}
       </h4>
 
       <div className="space-y-1.5">
-        {related.map((t) => (
+        {items.map((t) => (
           <div
             key={t.id}
             className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between"

@@ -61,6 +61,7 @@ export interface Media extends EntityDoc {
   type: MediaType;
   posterStoragePath?: string;
   posterUrl?: string;
+  isThumbnail?: boolean;
   relatedType: RelatedType;
   relatedId: string;
   uploadedBy?: string;
@@ -92,7 +93,13 @@ export type FieldType =
   | 'checkbox'
   | 'date'
   | 'owner'
-  | 'contact';
+  | 'contact'
+  | 'languages';
+
+export interface LanguageEntry {
+  language: string;
+  level: string;
+}
 
 export interface FieldConfig {
   name: string;

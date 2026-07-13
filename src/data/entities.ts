@@ -1,4 +1,4 @@
-import type { CollectionName, FieldConfig, RelatedType } from '../types';
+import type { CollectionName, EntityDoc, FieldConfig, RelatedType } from '../types';
 import type { BudgetSourceType } from '../services/budget';
 import {
   AVAILABILITY_OPTIONS,
@@ -9,7 +9,6 @@ import {
   INVOICE_STATUSES,
   DECISION_STATUSES,
   DEPARTMENTS,
-  OPTION_STATUSES,
   PERMIT_OPTIONS,
   PERMIT_STATUSES,
   PRODUCTION_AREAS,
@@ -42,6 +41,17 @@ export interface EntityConfig {
   optionConfig?: EntityConfig; // child options config; presence marks a requirement
   requirementLinkField?: string; // field on the option pointing to its requirement (default 'requirementId')
   selectedOptionField?: string; // field on the requirement holding the chosen option id (default 'selectedOptionId')
+  multiRequirement?: boolean; // option can link to several requirements at once (requirementLinkField holds an array)
+  emphasizeRequirement?: boolean; // show the linked requirement's name as the card heading instead of the option's own title
+}
+
+// Normalizes an option's requirement link (scalar or array) into a list of ids.
+export function linkedRequirementIds(option: EntityDoc, optionConfig: EntityConfig): string[] {
+  const field = optionConfig.requirementLinkField || 'requirementId';
+  const raw = option[field];
+  if (Array.isArray(raw)) return raw.filter(Boolean);
+  if (typeof raw === 'string' && raw) return [raw];
+  return [];
 }
 
 // ── Locations (two-tier: requirement → options) ──────────────────────────────
@@ -51,9 +61,9 @@ export const LOCATION_OPTION_CONFIG: EntityConfig = {
   singular: 'Location option',
   titleField: 'optionName',
   subtitleFields: ['address'],
-  pillFields: ['status', 'budgetStage', 'permitStatus'],
+  pillFields: ['budgetStage', 'permitStatus'],
   costField: 'costEstimate',
-  filters: ['status', 'budgetStage'],
+  filters: ['budgetStage'],
   relatedType: 'locationOption',
   requirementLinkField: 'requirementId',
   media: true,
@@ -68,7 +78,6 @@ export const LOCATION_OPTION_CONFIG: EntityConfig = {
     { name: 'permitStatus', label: 'Permit status', type: 'select', options: PERMIT_STATUSES },
     { name: 'costEstimate', label: 'Cost estimate', type: 'number' },
     { name: 'actualCost', label: 'Actual cost', type: 'number' },
-    { name: 'status', label: 'Status', type: 'select', options: OPTION_STATUSES },
     { name: 'budgetStage', label: 'Budget stage', type: 'select', options: BUDGET_STAGES },
     { name: 'link', label: 'Link', type: 'text', full: true },
     { name: 'notes', label: 'Notes', type: 'textarea', full: true },
@@ -109,9 +118,9 @@ export const CASTING_OPTION_CONFIG: EntityConfig = {
   singular: 'Casting option',
   titleField: 'candidateName',
   subtitleFields: ['age'],
-  pillFields: ['status', 'budgetStage'],
+  pillFields: ['budgetStage'],
   costField: 'feeEstimate',
-  filters: ['status', 'budgetStage'],
+  filters: ['budgetStage'],
   relatedType: 'castingOption',
   requirementLinkField: 'requirementId',
   media: true,
@@ -120,12 +129,15 @@ export const CASTING_OPTION_CONFIG: EntityConfig = {
   fields: [
     { name: 'candidateName', label: 'Candidate name', type: 'text', full: true },
     { name: 'contact', label: 'Contact', type: 'contact' },
+    { name: 'phone', label: 'Phone', type: 'text' },
+    { name: 'email', label: 'Email', type: 'text' },
+    { name: 'city', label: 'City', type: 'text' },
     { name: 'age', label: 'Age', type: 'text' },
     { name: 'description', label: 'Bio / description', type: 'textarea', full: true },
+    { name: 'languages', label: 'Languages', type: 'languages', full: true },
     { name: 'availability', label: 'Availability', type: 'select', options: AVAILABILITY_OPTIONS },
     { name: 'feeEstimate', label: 'Fee estimate', type: 'number' },
     { name: 'travelNeeded', label: 'Travel needed', type: 'text' },
-    { name: 'status', label: 'Status', type: 'select', options: OPTION_STATUSES },
     { name: 'budgetStage', label: 'Budget stage', type: 'select', options: BUDGET_STAGES },
     { name: 'reelLink', label: 'Reel / link', type: 'text', full: true },
     { name: 'notes', label: 'Notes', type: 'textarea', full: true },
@@ -165,11 +177,12 @@ export const CREW_OPTION_CONFIG: EntityConfig = {
   singular: 'Crew option',
   titleField: 'candidateName',
   subtitleFields: ['role'],
-  pillFields: ['status', 'budgetStage'],
+  pillFields: ['budgetStage'],
   costField: 'feeEstimate',
-  filters: ['status', 'budgetStage'],
+  filters: ['budgetStage'],
   relatedType: 'crewOption',
-  requirementLinkField: 'requirementId',
+  requirementLinkField: 'requirementIds',
+  multiRequirement: true,
   media: true,
   comments: true,
   budgetSource: 'crewOption',
@@ -177,10 +190,13 @@ export const CREW_OPTION_CONFIG: EntityConfig = {
     { name: 'candidateName', label: 'Candidate / supplier name', type: 'text', full: true },
     { name: 'role', label: 'Role', type: 'text' },
     { name: 'contact', label: 'Contact', type: 'contact' },
+    { name: 'phone', label: 'Phone', type: 'text' },
+    { name: 'email', label: 'Email', type: 'text' },
+    { name: 'city', label: 'City', type: 'text' },
+    { name: 'languages', label: 'Languages', type: 'languages', full: true },
     { name: 'availability', label: 'Availability', type: 'select', options: AVAILABILITY_OPTIONS },
     { name: 'feeEstimate', label: 'Fee estimate', type: 'number' },
     { name: 'travelNeeded', label: 'Travel needed', type: 'text' },
-    { name: 'status', label: 'Status', type: 'select', options: OPTION_STATUSES },
     { name: 'budgetStage', label: 'Budget stage', type: 'select', options: BUDGET_STAGES },
     { name: 'link', label: 'Link', type: 'text', full: true },
     { name: 'notes', label: 'Notes', type: 'textarea', full: true },
@@ -219,11 +235,12 @@ export const PROP_OPTION_CONFIG: EntityConfig = {
   singular: 'Prop source',
   titleField: 'optionSource',
   subtitleFields: ['supplier'],
-  pillFields: ['status', 'budgetStage'],
+  pillFields: ['budgetStage'],
   costField: 'costEstimate',
-  filters: ['status', 'budgetStage'],
+  filters: ['budgetStage'],
   relatedType: 'propOption',
   requirementLinkField: 'requirementId',
+  emphasizeRequirement: true,
   media: true,
   comments: true,
   budgetSource: 'propOption',
@@ -233,7 +250,6 @@ export const PROP_OPTION_CONFIG: EntityConfig = {
     { name: 'costEstimate', label: 'Cost estimate', type: 'number' },
     { name: 'actualCost', label: 'Actual cost', type: 'number' },
     { name: 'availability', label: 'Availability', type: 'select', options: AVAILABILITY_OPTIONS },
-    { name: 'status', label: 'Status', type: 'select', options: OPTION_STATUSES },
     { name: 'budgetStage', label: 'Budget stage', type: 'select', options: BUDGET_STAGES },
     { name: 'link', label: 'Link', type: 'text', full: true },
     { name: 'notes', label: 'Notes', type: 'textarea', full: true },

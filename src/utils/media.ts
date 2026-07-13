@@ -6,5 +6,14 @@ export function sortMediaByUpload(media: EntityDoc[]) {
 }
 
 export function firstUploadedPhoto(media: EntityDoc[]) {
-  return sortMediaByUpload(media).find((item) => item.type === 'image');
+  const sorted = sortMediaByUpload(media);
+  return sorted.find((item) => item.type === 'image' && item.isThumbnail)
+    || sorted.find((item) => item.type === 'image');
+}
+
+export function preferredThumbnail(media: EntityDoc[]) {
+  const sorted = sortMediaByUpload(media);
+  return sorted.find((item) => item.type === 'image' && item.isThumbnail)
+    || sorted.find((item) => item.type === 'image')
+    || sorted.find((item) => item.type === 'video');
 }

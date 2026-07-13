@@ -15,7 +15,8 @@ service firebase.storage {
       return isSignedIn()
         && email() in [
           'paolocelestini23@gmail.com',
-          'spaminutili24@gmail.com'
+          'spaminutili24@gmail.com',
+          'mirko.valle20@gmail.com'
         ];
     }
 
@@ -51,7 +52,8 @@ service firebase.storage {
     match /projects/{projectId}/{relatedType}/{relatedId}/{fileName} {
       allow read: if isOwner()
         || (sectionForRelatedType(relatedType) != '' && invitedTo(projectId, sectionForRelatedType(relatedType)));
-      allow write: if isOwner();
+      allow write: if isOwner()
+        || (sectionForRelatedType(relatedType) != '' && invitedTo(projectId, sectionForRelatedType(relatedType)));
     }
 
     match /{allPaths=**} {

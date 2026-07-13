@@ -19,6 +19,8 @@ export default function OptionDetail({
   onCommit,
   onEdit,
   readOnly = false,
+  selectDisabled = false,
+  selectDisabledReason = '',
 }: {
   option: EntityDoc;
   optionConfig: EntityConfig;
@@ -30,10 +32,16 @@ export default function OptionDetail({
   onCommit: () => void;
   onEdit: () => void;
   readOnly?: boolean;
+  selectDisabled?: boolean;
+  selectDisabledReason?: string;
 }) {
   const title = option[optionConfig.titleField] || 'Untitled option';
   const pills = optionConfig.pillFields.map((n) => option[n]).filter(Boolean) as string[];
   const useLocationGrid = optionConfig.relatedType === 'locationOption';
+  const emphasizeReq = !!optionConfig.emphasizeRequirement && !!requirementName;
+  const heading = emphasizeReq ? requirementName! : title;
+  const caption = emphasizeReq ? title : requirementName;
+  const captionLabel = emphasizeReq ? 'source' : 'for';
 
   return (
     <div className="space-y-6">
@@ -41,9 +49,9 @@ export default function OptionDetail({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <p className="section-label">{optionConfig.singular}</p>
-            <h3 className="mt-1 break-words font-display text-2xl font-semibold text-slate-900">{title}</h3>
-            {requirementName && (
-              <p className="mt-0.5 text-sm text-slate-400">for: {requirementName}</p>
+            <h3 className="mt-1 break-words font-display text-2xl font-semibold text-slate-900">{heading}</h3>
+            {caption && (
+              <p className="mt-0.5 text-sm text-slate-400">{captionLabel}: {caption}</p>
             )}
           </div>
           {!readOnly && (
@@ -77,6 +85,8 @@ export default function OptionDetail({
         <button
           className={isSelected ? 'btn-secondary w-full sm:w-auto' : 'btn-primary w-full sm:w-auto'}
           onClick={onSelect}
+          disabled={selectDisabled}
+          title={selectDisabled ? selectDisabledReason : ''}
         >
           {isSelected ? 'Deselect' : 'Select this option'}
         </button>
