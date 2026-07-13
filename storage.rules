@@ -42,8 +42,6 @@ service firebase.storage {
         ? 'props'
         : relatedType == 'productionOption'
         ? 'production'
-        : relatedType == 'contact'
-        ? 'contacts'
         : relatedType in ['risk', 'decision']
         ? 'risks'
         : '';

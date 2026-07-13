@@ -43,8 +43,6 @@ service cloud.firestore {
         ? 'props'
         : collectionName in ['productionOptions']
         ? 'production'
-        : collectionName in ['contacts']
-        ? 'contacts'
         : collectionName in ['risks', 'decisions']
         ? 'risks'
         : '';
@@ -65,8 +63,6 @@ service cloud.firestore {
         ? 'props'
         : relatedType in ['productionOption']
         ? 'production'
-        : relatedType in ['contact']
-        ? 'contacts'
         : relatedType in ['risk', 'decision']
         ? 'risks'
         : '';

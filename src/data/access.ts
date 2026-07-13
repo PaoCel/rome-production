@@ -10,7 +10,6 @@ export type Section =
   | 'crew'
   | 'props'
   | 'production'
-  | 'contacts'
   | 'risks'
   | 'settings';
 
@@ -32,7 +31,6 @@ export const ALL_SECTIONS: Section[] = [
   'crew',
   'props',
   'production',
-  'contacts',
   'risks',
   'settings',
 ];
@@ -46,7 +44,6 @@ export const INVITABLE_SECTIONS: Exclude<Section, 'dashboard' | 'settings'>[] = 
   'crew',
   'props',
   'production',
-  'contacts',
   'risks',
 ];
 

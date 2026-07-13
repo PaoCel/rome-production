@@ -31,7 +31,6 @@ export default function LinkedOptions({
 
   const { items: allOptions } = useCollection(optionConfig.collection);
   const { items: allRequirements } = useCollection(config.collection, multi);
-  const { items: contacts } = useCollection('contacts', !readOnly);
 
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<EntityDoc | null>(null);
@@ -219,7 +218,6 @@ export default function LinkedOptions({
           <EntityForm
             fields={optionConfig.fields}
             initial={editing}
-            contacts={contacts}
             submitLabel={editing ? 'Save option' : 'Add option'}
             onSubmit={handleSubmit}
             onCancel={() => {

@@ -120,18 +120,6 @@ export const DECISION_STATUSES = ['Needed', 'Pending', 'Decided'];
 
 export const PERMIT_OPTIONS = ['Yes', 'No', 'TBD'];
 
-export const CONTACT_TYPES = [
-  'Location owner',
-  'Talent / Agency',
-  'Crew',
-  'Supplier',
-  'Insurance',
-  'Authority',
-  'Catering',
-  'Transport',
-  'Other',
-];
-
 // Tailwind classes for status / priority pills. Fallback is neutral grey.
 export const PILL_COLORS: Record<string, string> = {
   // Priority

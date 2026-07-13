@@ -28,7 +28,6 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
   const { items: options, loading } = useCollection(optionConfig.collection);
   const { items: roles } = useCollection(reqConfig.collection);
   const { items: votes } = useCollection('castingVotes');
-  const { items: contacts } = useCollection('contacts', canManage);
 
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
@@ -294,7 +293,6 @@ export default function CastingSocialGallery({ reqConfig }: { reqConfig: EntityC
         <EntityForm
           fields={optionConfig.fields}
           initial={editing}
-          contacts={contacts}
           submitLabel={editing ? 'Save changes' : 'Add candidate'}
           onSubmit={handleSubmit}
           onCancel={() => {

@@ -21,7 +21,6 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/props', label: 'Props & Wardrobe', icon: 'props', group: 'Pre-production', section: 'props' },
   { to: '/production', label: 'Production', icon: 'production', group: 'Pre-production', section: 'production' },
 
-  { to: '/contacts', label: 'Contacts', icon: 'contacts', group: 'Resources', section: 'contacts' },
   { to: '/risks', label: 'Risks & Decisions', icon: 'risks', group: 'Resources', section: 'risks' },
 
   { to: '/settings', label: 'Settings', icon: 'settings', group: 'System', section: 'settings' },

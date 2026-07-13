@@ -338,7 +338,6 @@ export default function BudgetPage() {
         <EntityForm
           fields={BUDGET_FIELDS}
           initial={editing}
-          contacts={[]}
           submitLabel={editing ? 'Save changes' : 'Create budget item'}
           onSubmit={handleSubmit}
           onCancel={() => {

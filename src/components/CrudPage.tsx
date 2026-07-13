@@ -21,7 +21,6 @@ import BottomSheet from './ui/BottomSheet';
 export default function CrudPage({ config }: { config: EntityConfig }) {
   const { canManage } = useAuth();
   const { items, loading } = useCollection(config.collection);
-  const { items: contacts } = useCollection('contacts', canManage);
 
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({});
@@ -128,7 +127,6 @@ export default function CrudPage({ config }: { config: EntityConfig }) {
         <EntityForm
           fields={config.fields}
           initial={editing}
-          contacts={contacts}
           submitLabel={editing ? 'Save changes' : `Create ${config.singular.toLowerCase()}`}
           onSubmit={handleSubmit}
           onCancel={() => {
