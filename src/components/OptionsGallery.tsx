@@ -14,6 +14,7 @@ import BottomSheet from './ui/BottomSheet';
 import EntityForm from './form/EntityForm';
 import MediaGallery from './MediaGallery';
 import OptionCard from './OptionCard';
+import OptionRow from './OptionRow';
 import OptionDetail from './OptionDetail';
 
 // The "CRM" view: every option being evaluated in a category, as photo cards,
@@ -188,6 +189,25 @@ export default function OptionsGallery({ reqConfig }: { reqConfig: EntityConfig 
           title={options.length === 0 ? 'No options yet' : 'No matches'}
           hint={options.length === 0 ? 'Add the candidates you are evaluating.' : 'Try clearing the filter.'}
         />
+      ) : optionConfig.layout === 'list' ? (
+        <div className="space-y-2.5">
+          {filtered.map((o) => (
+            <OptionRow
+              key={o.id}
+              option={o}
+              optionConfig={optionConfig}
+              requirementName={reqNames(o)}
+              isSelected={isSelected(o)}
+              onOpen={() => setDetail(o)}
+              onEdit={() => {
+                if (!canManage) return;
+                startEdit(o);
+              }}
+              onDelete={() => canManage && handleDelete(o)}
+              readOnly={!canManage}
+            />
+          ))}
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((o) => (

@@ -43,6 +43,7 @@ export interface EntityConfig {
   selectedOptionField?: string; // field on the requirement holding the chosen option id (default 'selectedOptionId')
   multiRequirement?: boolean; // option can link to several requirements at once (requirementLinkField holds an array)
   emphasizeRequirement?: boolean; // show the linked requirement's name as the card heading instead of the option's own title
+  layout?: 'grid' | 'list'; // OptionsGallery display: photo-first cards (default) or a compact scannable list
 }
 
 // Normalizes an option's requirement link (scalar or array) into a list of ids.
@@ -183,6 +184,7 @@ export const CREW_OPTION_CONFIG: EntityConfig = {
   relatedType: 'crewOption',
   requirementLinkField: 'requirementIds',
   multiRequirement: true,
+  layout: 'list',
   media: true,
   comments: true,
   budgetSource: 'crewOption',
